@@ -15,6 +15,7 @@ import Cart from './pages/Cart';
 import Payment from './pages/Payment';
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
+import Navbar from './components/Navbar';
 
 const themeLight = createTheme({
   palette: {
@@ -66,6 +67,7 @@ function App() {
     <ThemeProvider theme={userTheme}>
       <CssBaseline />
       <Router>
+        <Navbar />
         <Routes>
           <Route path='/' element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path='/login' element={<Login />} />
