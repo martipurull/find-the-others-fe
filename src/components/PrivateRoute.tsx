@@ -1,13 +1,11 @@
-import React from 'react'
+import { Navigate } from 'react-router-dom'
 
 interface IProps {
     children: JSX.Element
 }
 
 export default function PrivateRoute({ children }: IProps) {
-    return (
-        <div>
+    const isLoggedIn = true
 
-        </div>
-    )
+    return isLoggedIn ? children : <Navigate to='/login' />
 }
