@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { styled } from '@mui/material/styles'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -18,7 +19,7 @@ const musicianSettings = ['Profile', 'Create Band', 'Logout']
 const fanPages = ['Home', 'Discover Bands', 'Find Friends']
 const fanSettings = ['Profile', 'Invite Friends', 'Logout']
 
-export default function Navbar() {
+export default function Header() {
     const [isMusician, setIsMusician] = useState(true)
 
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
@@ -38,17 +39,23 @@ export default function Navbar() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null)
     }
+
+    const ftoAppbar = {
+        backgroundColor: '#F5F6F7',
+        color: '#233243'
+    }
+
     return (
-        <AppBar position="static">
+        <AppBar position="static" sx={{ backgroundColor: '#f5faff' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
+                        sx={{ mr: 2, display: { xs: 'none', md: 'flex' }, color: '#233243' }}
                     >
-                        LOGO
+                        FTO
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -99,15 +106,15 @@ export default function Navbar() {
                         component="div"
                         sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
                     >
-                        LOGO
-          </Typography>
+                        FTO
+                    </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {isMusician ?
                             musicianPages.map((page) => (
                                 <Button
                                     key={page}
                                     onClick={handleCloseNavMenu}
-                                    sx={{ my: 2, color: 'white', display: 'block' }}
+                                    sx={{ my: 2, color: '#233243', display: 'block' }}
                                 >
                                     {page}
                                 </Button>
@@ -116,7 +123,7 @@ export default function Navbar() {
                                 <Button
                                     key={page}
                                     onClick={handleCloseNavMenu}
-                                    sx={{ my: 2, color: 'white', display: 'block' }}
+                                    sx={{ my: 2, color: '#233243', display: 'block' }}
                                 >
                                     {page}
                                 </Button>
@@ -148,7 +155,7 @@ export default function Navbar() {
                             {isMusician ?
                                 musicianSettings.map((setting) => (
                                     <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography textAlign="center">{setting}</Typography>
+                                        <Typography sx={{ color: '#233243' }} textAlign="center">{setting}</Typography>
                                     </MenuItem>
                                 )) :
                                 fanSettings.map((setting) => (

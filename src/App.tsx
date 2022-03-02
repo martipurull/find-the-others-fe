@@ -15,7 +15,8 @@ import Cart from './pages/Cart';
 import Payment from './pages/Payment';
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import Navbar from './components/Navbar';
+import Layout from './components/Layout';
+import ProjectPage from './pages/ProjectPage';
 
 const themeLight = createTheme({
   palette: {
@@ -49,7 +50,8 @@ const themeDark = createTheme({
     text: {
       primary: '#f5faff',
       secondary: '#c3e0ff'
-    }
+    },
+    mode: 'dark'
   },
   typography: {
     fontFamily: 'Space Grotesk',
@@ -67,22 +69,24 @@ function App() {
     <ThemeProvider theme={userTheme}>
       <CssBaseline />
       <Router>
-        <Navbar />
-        <Routes>
-          <Route path='/' element={<PrivateRoute><Home /></PrivateRoute>} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/new-band' element={<PrivateRoute><CreateBand /></PrivateRoute>} />
-          <Route path='/new-project' element={<PrivateRoute><CreateProject /></PrivateRoute>} />
-          <Route path='/jobs' element={<PrivateRoute><Jobs /></PrivateRoute>} />
-          <Route path='/new-job' element={<PrivateRoute><CreateJob /></PrivateRoute>} />
-          <Route path='/shop' element={<PrivateRoute><Shop /></PrivateRoute>} />
-          <Route path='/shop-backoffice' element={<PrivateRoute><ShopBackOffice /></PrivateRoute>} />
-          <Route path='/subscribe' element={<PrivateRoute><Subscription /></PrivateRoute>} />
-          <Route path='/cart' element={<PrivateRoute><Cart /></PrivateRoute>} />
-          <Route path='/payment' element={<PrivateRoute><Payment /></PrivateRoute>} />
-          <Route path='*' element={<NotFound />} />
-        </Routes>
+        <Layout>
+          <Routes>
+            <Route path='/' element={<PrivateRoute><Home /></PrivateRoute>} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+            <Route path='/new-band' element={<PrivateRoute><CreateBand /></PrivateRoute>} />
+            <Route path='/projects/:projectId' element={<PrivateRoute><ProjectPage /></PrivateRoute>} />
+            <Route path='/new-project' element={<PrivateRoute><CreateProject /></PrivateRoute>} />
+            <Route path='/jobs' element={<PrivateRoute><Jobs /></PrivateRoute>} />
+            <Route path='/new-job' element={<PrivateRoute><CreateJob /></PrivateRoute>} />
+            <Route path='/shop' element={<PrivateRoute><Shop /></PrivateRoute>} />
+            <Route path='/shop-backoffice' element={<PrivateRoute><ShopBackOffice /></PrivateRoute>} />
+            <Route path='/subscribe' element={<PrivateRoute><Subscription /></PrivateRoute>} />
+            <Route path='/cart' element={<PrivateRoute><Cart /></PrivateRoute>} />
+            <Route path='/payment' element={<PrivateRoute><Payment /></PrivateRoute>} />
+            <Route path='*' element={<NotFound />} />
+          </Routes>
+        </Layout>
       </Router>
     </ThemeProvider>
   )
