@@ -7,8 +7,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import ListItemText from '@mui/material/ListItemText'
 import Avatar from '@mui/material/Avatar'
-import WAvatar from '../assets/WAvatar.jpeg'
-import MAvatar from '../assets/MAvatar.jpeg'
+import MemberList from './MemberList'
 
 export default function ProjectSummary() {
     return (
@@ -21,25 +20,7 @@ export default function ProjectSummary() {
                     </Grid>
                     <Grid item xs={4}>
                         <Typography variant='h6' pl={4} >Members and roles</Typography>
-                        <List dense sx={{ width: '100%' }}>
-                            {/* MAP THROUGH PROJECT MEMBERS HERE */}
-                            <ListItem>
-                                <ListItemButton>
-                                    <ListItemAvatar>
-                                        <Avatar src={WAvatar} />
-                                    </ListItemAvatar>
-                                    <ListItemText primary='Member Name' secondary='Member role' />
-                                </ListItemButton>
-                            </ListItem>
-                            <ListItem>
-                                <ListItemButton>
-                                    <ListItemAvatar>
-                                        <Avatar src={MAvatar} />
-                                    </ListItemAvatar>
-                                    <ListItemText primary='Member Name' secondary='Member role' />
-                                </ListItemButton>
-                            </ListItem>
-                        </List>
+                        <MemberList />
                     </Grid>
                 </Grid>
             </Paper>

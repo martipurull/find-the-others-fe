@@ -20,7 +20,7 @@ import { Button } from '@mui/material'
 export default function ProjectCards() {
     return (
         <>
-            <Grid item xs={12} sm={6} md={3} spacing={4}>
+            <Grid item xs={12} sm={6} md={3} spacing={4} >
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                     <Typography variant='h4'>To Do</Typography>
                     <IconButton size='small' sx={{ pl: 2 }}><AddIcon fontSize='large' /></IconButton>
@@ -125,6 +125,9 @@ export default function ProjectCards() {
                     <IconButton sx={{ pl: 2 }}><BarChartOutlinedIcon fontSize='large' /></IconButton>
                 </Box>
                 <MusicPlayer />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3} spacing={2} mt={3}>
+                <Button variant='outlined' size='large' color='error'>LEAVE PROJECT</Button>
             </Grid>
         </>
     )
