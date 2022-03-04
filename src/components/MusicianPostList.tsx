@@ -12,7 +12,7 @@ import CardMedia from '@mui/material/CardMedia'
 export default function MusicianPostList() {
     return (
         <List sx={{ width: '100%', maxWidth: 360 }}>
-            <ListItem alignItems='center'>
+            <ListItem alignItems='center' sx={{ bgcolor: 'rgba(0,0,0,0.6)', ml: 5 }}>
                 <ListItemAvatar>
                     <Avatar alt='personAvatar' src={MPPortrait} />
                 </ListItemAvatar>
