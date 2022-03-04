@@ -55,7 +55,7 @@ export default function CreateProject() {
                     <Box component='form' noValidate autoComplete='off'>
                         <Grid container spacing={1}>
                             <Grid item xs={12} md={3}>
-                                <TextField required label='Project Name' variant='standard' />
+                                <TextField required label='Project Title' variant='standard' />
                             </Grid>
                             <Grid item xs={12} md={3}>
                                 <TextField required label='Project Leader' inputProps={{ readOnly: true }} variant='standard' defaultValue='LoggedIn User' />
@@ -75,7 +75,7 @@ export default function CreateProject() {
                                 <MemberList />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField id="new-project-description" label="Project Description" multiline rows={6} placeholder='Write down the main ideas for the project: make it exciting for your collaborators!' sx={{ width: '82%' }} />
+                                <TextField sx={{ width: '82%' }} id="new-project-description" label="Project Description" multiline rows={6} placeholder='Write down the main ideas for the project: make it exciting for your collaborators!' />
                             </Grid>
                             <Grid item xs={12} md={3}>
                                 <Box sx={{ display: 'flex', direction: 'column' }}>
