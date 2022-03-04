@@ -5,9 +5,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Register from './pages/Register';
 import CreateBand from './pages/CreateBand';
 import CreateProject from './pages/CreateProject';
-import Jobs from './pages/Jobs';
 import Login from './pages/Login';
-import CreateJob from './pages/CreateJob';
 import Shop from './pages/Shop';
 import ShopBackOffice from './pages/ShopBackOffice';
 import Subscription from './pages/Subscription';
@@ -17,6 +15,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import Layout from './components/Layout';
 import ProjectPage from './pages/ProjectPage';
+import Gigs from './pages/Gigs';
+import CreateGig from './pages/CreateGig';
 
 const themeLight = createTheme({
   palette: {
@@ -77,8 +77,8 @@ function App() {
             <Route path='/new-band' element={<PrivateRoute><CreateBand /></PrivateRoute>} />
             <Route path='/projects/:projectId' element={<PrivateRoute><ProjectPage /></PrivateRoute>} />
             <Route path='/new-project' element={<PrivateRoute><CreateProject /></PrivateRoute>} />
-            <Route path='/jobs' element={<PrivateRoute><Jobs /></PrivateRoute>} />
-            <Route path='/new-job' element={<PrivateRoute><CreateJob /></PrivateRoute>} />
+            <Route path='/gigs' element={<PrivateRoute><Gigs /></PrivateRoute>} />
+            <Route path='/new-gig' element={<PrivateRoute><CreateGig /></PrivateRoute>} />
             <Route path='/shop' element={<PrivateRoute><Shop /></PrivateRoute>} />
             <Route path='/shop-backoffice' element={<PrivateRoute><ShopBackOffice /></PrivateRoute>} />
             <Route path='/subscribe' element={<PrivateRoute><Subscription /></PrivateRoute>} />

@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box'
 import Footer from "./Footer";
 import Header from "./Header";
 
