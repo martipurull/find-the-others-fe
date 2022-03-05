@@ -8,10 +8,10 @@ interface IProps {
 
 export default function Layout({ children }: IProps) {
     return (
-        <>
+        <Box>
             <Header />
             {children}
             <Footer />
-        </>
+        </Box>
     )
 }

@@ -77,6 +77,7 @@ function App() {
             <Route path='/register' element={<Register />} />
             <Route path='/me' element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path='/new-band' element={<PrivateRoute><CreateBand /></PrivateRoute>} />
+            <Route path='/bands/:bandId' element={<PrivateRoute><ProjectPage /></PrivateRoute>} />
             <Route path='/projects/:projectId' element={<PrivateRoute><ProjectPage /></PrivateRoute>} />
             <Route path='/new-project' element={<PrivateRoute><CreateProject /></PrivateRoute>} />
             <Route path='/gigs' element={<PrivateRoute><Gigs /></PrivateRoute>} />
