@@ -22,7 +22,7 @@ export default function MusicianPostList() {
                 />
                 <Box
                     component='img'
-                    sx={{ height: 150 }}
+                    sx={{ maxHeight: 150, maxWidth: 150, pl: 1 }}
                     alt='Music Project'
                     src={PostImg}
                 />

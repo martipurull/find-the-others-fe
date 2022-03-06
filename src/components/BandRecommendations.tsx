@@ -7,6 +7,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemButton from '@mui/material/ListItemButton'
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import bandLogo from '../assets/bandLogo.png'
+import Typography from '@mui/material/Typography'
 
 const likedBands = [
     {
@@ -34,25 +35,30 @@ const likedBands = [
 
 export default function BandRecommendations() {
     return (
-        <List component='nav'>
-            {
-                likedBands.map(band => (
-                    <ListItem sx={{ bgcolor: 'rgba(0,0,0,0.8)', width: '75%' }}>
-                        <ListItemAvatar>
-                            <Avatar sx={{ bgcolor: 'rgba(0,0,0,0.8)' }}>
-                                <img src={band.bandAvatar} alt={`${band.bandName} logo`} style={{ width: '50px', objectFit: 'cover' }} />
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={band.bandName} />
-                        <ListItemIcon>
+        <>
+            <Typography variant='h6' component='h2' sx={{ pl: 1 }}>Discover More Artists</Typography>
+            <List component='nav'>
+                {
+                    likedBands.map(band => (
+                        <ListItem sx={{ bgcolor: 'rgba(0,0,0,0.8)', width: '75%' }}>
                             <ListItemButton>
-                                Play Latest
-                                <PlayArrowOutlinedIcon />
+                                <ListItemAvatar>
+                                    <Avatar sx={{ bgcolor: 'rgba(0,0,0,0.8)' }}>
+                                        <img src={band.bandAvatar} alt={`${band.bandName} logo`} style={{ width: '50px', objectFit: 'cover' }} />
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={band.bandName} />
                             </ListItemButton>
-                        </ListItemIcon>
-                    </ListItem>
-                ))
-            }
-        </List>
+                            <ListItemIcon>
+                                <ListItemButton>
+                                    Latest
+                                <PlayArrowOutlinedIcon />
+                                </ListItemButton>
+                            </ListItemIcon>
+                        </ListItem>
+                    ))
+                }
+            </List>
+        </>
     )
 }

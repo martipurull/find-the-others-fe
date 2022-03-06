@@ -18,6 +18,7 @@ import ProjectPage from './pages/ProjectPage';
 import Gigs from './pages/Gigs';
 import CreateGig from './pages/CreateGig';
 import Profile from './pages/Profile';
+import BandPage from './pages/BandPage';
 
 const themeLight = createTheme({
   palette: {
@@ -77,7 +78,7 @@ function App() {
             <Route path='/register' element={<Register />} />
             <Route path='/me' element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path='/new-band' element={<PrivateRoute><CreateBand /></PrivateRoute>} />
-            <Route path='/bands/:bandId' element={<PrivateRoute><ProjectPage /></PrivateRoute>} />
+            <Route path='/bands/:bandId' element={<PrivateRoute><BandPage /></PrivateRoute>} />
             <Route path='/projects/:projectId' element={<PrivateRoute><ProjectPage /></PrivateRoute>} />
             <Route path='/new-project' element={<PrivateRoute><CreateProject /></PrivateRoute>} />
             <Route path='/gigs' element={<PrivateRoute><Gigs /></PrivateRoute>} />

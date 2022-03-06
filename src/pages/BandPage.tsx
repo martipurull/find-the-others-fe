@@ -1,16 +1,14 @@
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
-import ProjectSummary from '../components/ProjectSummary'
-import ProjectCards from '../components/ProjectCards'
+import BandSummary from '../components/BandSummary'
 
-export default function ProjectPage() {
+export default function BandPage() {
     return (
         <Container maxWidth='xl'>
             <Grid container style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Grid item xs={12}>
-                    <ProjectSummary />
+                    <BandSummary />
                 </Grid>
-                <ProjectCards />
             </Grid>
         </Container>
     )
