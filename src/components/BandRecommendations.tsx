@@ -36,6 +36,7 @@ const likedBands = [
 export default function BandRecommendations() {
     return (
         <>
+            {/* INCLUDE SEARCH BAND BY NAME AND GENRE: RESULTS SHOULD REPLACE DEFAULT RECOMMENDATIONS */}
             <Typography variant='h6' component='h2' sx={{ pl: 1 }}>Discover More Artists</Typography>
             <List component='nav'>
                 {
