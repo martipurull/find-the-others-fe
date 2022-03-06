@@ -8,7 +8,7 @@ interface IProps {
 
 export default function Layout({ children }: IProps) {
     return (
-        <Box>
+        <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <Header />
             {children}
             <Footer />
