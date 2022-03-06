@@ -30,6 +30,8 @@ const connections = [
     'Kelly Snyder',
 ];
 
+const bandsUserIsMemberOf = ['Tender Tantrums', 'The Bloody Foreigners']
+
 function addSelectedStyle(name: string, collaborators: string[], theme: Theme) {
     return { fontWeight: collaborators.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightBold }
 }
@@ -39,6 +41,7 @@ export default function CreateProject() {
     const theme = useTheme()
     const [collaborators, setCollaborators] = useState<string[]>([])
     const [dateValue, setDateValue] = useState<Date | null>(new Date())
+    const [selectedBand, setSelectedBand] = useState<string>('')
 
     const handleChange = (event: SelectChangeEvent<typeof collaborators>) => {
         const { target: { value } } = event
@@ -53,12 +56,34 @@ export default function CreateProject() {
                 </Grid>
                 <Grid item xs={12} md={8}>
                     <Box component='form' noValidate autoComplete='off'>
-                        <Grid container spacing={1}>
+                        <Grid container spacing={8} sx={{ display: 'flex', alignItems: 'space-between' }}>
+                            <Grid item xs={12} md={3}>
+                                <TextField required label='Project Leader' inputProps={{ readOnly: true }} variant='standard' defaultValue='LoggedIn User' />
+                            </Grid>
                             <Grid item xs={12} md={3}>
                                 <TextField required label='Project Title' variant='standard' />
                             </Grid>
                             <Grid item xs={12} md={3}>
-                                <TextField required label='Project Leader' inputProps={{ readOnly: true }} variant='standard' defaultValue='LoggedIn User' />
+                                <FormControl required variant='standard' sx={{ m: 1, minWidth: 200 }}>
+                                    <InputLabel id='band-select'>Band</InputLabel>
+                                    <Select labelId='band-select' id='band-select' value={selectedBand} onChange={(e) => setSelectedBand(e.target.value)}>
+                                        {bandsUserIsMemberOf.map((band, i) => (
+                                            <MenuItem key={i} value={band}>{band}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <Box sx={{ display: 'flex', direction: 'column' }}>
+                                    <Stack spacing={10}>
+                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                            <DatePicker views={['day', 'month', 'year']} label='Project Due Date' value={dateValue} onChange={(newValue) => setDateValue(newValue)} renderInput={(params) => <TextField {...params} helperText={null} />} />
+                                        </LocalizationProvider>
+                                    </Stack>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <TextField sx={{ width: '82%' }} id="new-project-description" label="Project Description" multiline rows={6} placeholder='Write down the main ideas for the project: make it exciting for your collaborators!' />
                             </Grid>
                             <Grid item xs={12} md={3}>
                                 <FormControl sx={{ m: 1, width: 250 }}>
@@ -74,18 +99,8 @@ export default function CreateProject() {
                                 {/* ADDED COLLABORATORS SHOULD BE PASSED AS PROP SO IT CAN MAP THROUGH THE APPROPRIATE */}
                                 <MemberList />
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField sx={{ width: '82%' }} id="new-project-description" label="Project Description" multiline rows={6} placeholder='Write down the main ideas for the project: make it exciting for your collaborators!' />
-                            </Grid>
-                            <Grid item xs={12} md={3}>
-                                <Box sx={{ display: 'flex', direction: 'column' }}>
-                                    <Stack spacing={10}>
-                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                            <DatePicker views={['day', 'month', 'year']} label='Project Due Date' value={dateValue} onChange={(newValue) => setDateValue(newValue)} renderInput={(params) => <TextField {...params} helperText={null} />} />
-                                        </LocalizationProvider>
-                                        <Button variant='contained' color='success'>Create New Project</Button>
-                                    </Stack>
-                                </Box>
+                            <Grid item xs={12}>
+                                <Button variant='contained' color='success' fullWidth>Create New Project</Button>
                             </Grid>
                         </Grid>
                     </Box>
