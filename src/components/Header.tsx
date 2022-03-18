@@ -12,14 +12,17 @@ import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
+import FTOLogo from '../assets/find-the-others-logo_1_1_1.png'
+import { useNavigate } from 'react-router-dom'
 
-const musicianPages = ['Dashboard', 'Create Gig', 'Find Gig']
-const musicianSettings = ['Profile', 'Create Band', 'Logout']
+const musicianPages = [{ text: 'Dashboard', link: '/' }, { text: 'bands', link: '/bands' }, { text: 'Find Gig', link: '/gigs' }]
+const musicianSettings = [{ text: 'Profile', link: '/me' }, { text: 'Create Band', link: '/new-band' }, { text: 'Create Project', link: '/new-project' }, { text: 'Logout', link: '/logout' }]
 
-const fanPages = ['Home', 'Discover Bands', 'Find Friends']
-const fanSettings = ['Profile', 'Invite Friends', 'Logout']
+const fanPages = [{ text: 'Home', link: '/' }, { text: 'bands', link: '/bands' }]
+const fanSettings = [{ text: 'Profile', link: '/me' }, { text: 'Logout', link: '/logout' }]
 
 export default function Header() {
+    const navigate = useNavigate()
     const [isMusician, setIsMusician] = useState(true)
 
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
@@ -49,15 +52,13 @@ export default function Header() {
         <AppBar position="sticky" sx={{ backgroundColor: '#f5faff' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="div"
-                        sx={{ mr: 2, display: { xs: 'none', md: 'flex' }, color: '#233243' }}
+                    <Box
+                        sx={{ height: 30, width: 32, mr: 1, mb: 0.25 }}
+                        component='img'
+                        src={FTOLogo}
+                        alt='Company Logo'
                     >
-                        FTO
-                    </Typography>
-
+                    </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
@@ -88,14 +89,14 @@ export default function Header() {
                             }}
                         >
                             {isMusician ?
-                                musicianPages.map((page) => (
-                                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                        <Typography textAlign="center">{page}</Typography>
+                                musicianPages.map((page, i) => (
+                                    <MenuItem key={i} onClick={() => navigate(page.link)}>
+                                        <Typography textAlign="center">{page.text}</Typography>
                                     </MenuItem>
                                 )) :
-                                fanPages.map((page) => (
-                                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                        <Typography textAlign="center">{page}</Typography>
+                                fanPages.map((page, i) => (
+                                    <MenuItem key={i} onClick={() => navigate(page.link)}>
+                                        <Typography textAlign="center">{page.text}</Typography>
                                     </MenuItem>
                                 ))}
                         </Menu>
@@ -110,22 +111,22 @@ export default function Header() {
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {isMusician ?
-                            musicianPages.map((page) => (
+                            musicianPages.map((page, i) => (
                                 <Button
-                                    key={page}
-                                    onClick={handleCloseNavMenu}
+                                    key={i}
+                                    onClick={() => navigate(page.link)}
                                     sx={{ my: 2, color: '#233243', display: 'block' }}
                                 >
-                                    {page}
+                                    {page.text}
                                 </Button>
                             )) :
-                            fanPages.map((page) => (
+                            fanPages.map((page, i) => (
                                 <Button
-                                    key={page}
-                                    onClick={handleCloseNavMenu}
+                                    key={i}
+                                    onClick={() => navigate(page.link)}
                                     sx={{ my: 2, color: '#233243', display: 'block' }}
                                 >
-                                    {page}
+                                    {page.text}
                                 </Button>
                             ))}
                     </Box>
@@ -153,14 +154,14 @@ export default function Header() {
                             onClose={handleCloseUserMenu}
                         >
                             {isMusician ?
-                                musicianSettings.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography sx={{ color: '#233243' }} textAlign="center">{setting}</Typography>
+                                musicianSettings.map((setting, i) => (
+                                    <MenuItem key={i} onClick={() => { navigate(setting.link); handleCloseUserMenu() }}>
+                                        <Typography sx={{ color: '#F5F6F7' }} textAlign="center">{setting.text}</Typography>
                                     </MenuItem>
                                 )) :
-                                fanSettings.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography textAlign="center">{setting}</Typography>
+                                fanSettings.map((setting, i) => (
+                                    <MenuItem key={i} onClick={() => { navigate(setting.link); handleCloseUserMenu() }}>
+                                        <Typography textAlign="center">{setting.text}</Typography>
                                     </MenuItem>
                                 ))}
                         </Menu>

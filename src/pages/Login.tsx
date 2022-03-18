@@ -26,8 +26,10 @@ export default function Login() {
                                 <TextField label='Password' InputLabelProps={{ sx: { color: '#F5F6F7' } }} variant='standard' required type='password' />
                             </Grid>
                         </Grid>
-                        <Button variant='outlined' type='submit' sx={{ marginRight: '2.5rem' }} >Log in</Button>
-                        <Button variant='outlined' sx={{ marginLeft: '2.5rem' }} onClick={() => navigate('/register')} >Register</Button>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mx: 15 }}>
+                            <Button variant='outlined' type='submit' >Log in</Button>
+                            <Button variant='outlined' onClick={() => navigate('/register')} >Register</Button>
+                        </Box>
                     </Box>
                 </Grid>
             </Grid>

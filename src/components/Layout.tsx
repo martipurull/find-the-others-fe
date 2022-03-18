@@ -7,11 +7,12 @@ interface IProps {
 }
 
 export default function Layout({ children }: IProps) {
+    const isUserLoggedIn = true
     return (
         <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <Header />
+            {isUserLoggedIn ? <Header /> : null}
             {children}
-            <Footer />
+            {isUserLoggedIn ? <Footer /> : null}
         </Box>
     )
 }

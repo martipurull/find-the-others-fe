@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import { useNavigate } from 'react-router-dom'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import Avatar from '@mui/material/Avatar'
 
 export default function Register() {
     const navigate = useNavigate()
@@ -38,17 +40,26 @@ export default function Register() {
                                 <TextField label='Confirm Password' variant='standard' required type='password' InputLabelProps={{ style: { color: '#F5F6F7' } }} />
                             </Grid>
                             <Grid item xs={12} sx={{ marginTop: '1rem' }}>
-                                <FormControl>
-                                    <FormLabel sx={{ color: '#f5faff' }}>Are you a musician or a fan?</FormLabel>
-                                    <RadioGroup row>
-                                        <FormControlLabel value='musician' control={<Radio />} label='musician' />
-                                        <FormControlLabel value='fan' control={<Radio />} label='fan' />
-                                    </RadioGroup>
-                                </FormControl>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+                                    <Box>
+                                        <FormControl>
+                                            <FormLabel sx={{ color: '#f5faff' }}>Are you a musician or a fan?</FormLabel>
+                                            <RadioGroup row>
+                                                <FormControlLabel value='musician' control={<Radio />} label='musician' />
+                                                <FormControlLabel value='fan' control={<Radio />} label='fan' />
+                                            </RadioGroup>
+                                        </FormControl>
+                                    </Box>
+                                    <Box>
+                                        <Button variant='outlined' sx={{ p: 1.25 }}>Add photo <Avatar sx={{ ml: 2 }}><PersonOutlineIcon /></Avatar></Button>
+                                    </Box>
+                                </Box>
                             </Grid>
                         </Grid>
-                        <Button variant='outlined' type='submit' style={{ marginRight: '2.5rem' }}>Register</Button>
-                        <Button variant='outlined' style={{ marginLeft: '2.5rem' }} onClick={() => navigate('/login')} >Login</Button>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mx: 15 }}>
+                            <Button variant='outlined' type='submit' >Log in</Button>
+                            <Button variant='outlined' onClick={() => navigate('/register')} >Register</Button>
+                        </Box>
                     </Box>
                 </Grid>
             </Grid>
