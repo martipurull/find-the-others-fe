@@ -6,8 +6,12 @@ import ListItemText from '@mui/material/ListItemText'
 import Avatar from '@mui/material/Avatar'
 import WAvatar from '../assets/WAvatar.jpeg'
 import MAvatar from '../assets/MAvatar.jpeg'
+import Button from '@mui/material/Button'
 
 export default function MemberList() {
+    const isConnection = true
+    const isConnectionSent = true
+    const isConnectionReceived = false
     return (
         <List dense sx={{ width: '100%' }}>
             {/* MAP THROUGH PROJECT MEMBERS HERE */}
@@ -18,6 +22,16 @@ export default function MemberList() {
                     </ListItemAvatar>
                     <ListItemText primary='Member Name' secondary='Member role' />
                 </ListItemButton>
+                {
+                    !isConnection && <Button size='small' variant='outlined' color='primary'>Connect</Button>
+
+                }
+                {
+                    isConnectionSent && <Button size='small' variant='outlined' color='warning'>Withdraw Request</Button>
+                }
+                {
+                    isConnectionReceived && <Button size='small' variant='outlined' color='success'>Accept Request</Button>
+                }
             </ListItem>
             <ListItem>
                 <ListItemButton>

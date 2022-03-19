@@ -6,7 +6,7 @@ import ProjectCards from '../components/ProjectCards'
 export default function ProjectPage() {
     return (
         <Container maxWidth='xl'>
-            <Grid container style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Grid container style={{ display: 'flex', justifyContent: 'flex-end' }} spacing={2}>
                 <Grid item xs={12}>
                     <ProjectSummary />
                 </Grid>
