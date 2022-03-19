@@ -7,6 +7,7 @@ import Box from '@mui/material/Box'
 import { useNavigate } from 'react-router-dom'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import Avatar from '@mui/material/Avatar'
+import UseOAuth from '../components/UseOAuth'
 
 export default function Register() {
     const navigate = useNavigate()
@@ -57,9 +58,10 @@ export default function Register() {
                             </Grid>
                         </Grid>
                         <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mx: 15 }}>
-                            <Button variant='outlined' type='submit' >Log in</Button>
-                            <Button variant='outlined' onClick={() => navigate('/register')} >Register</Button>
+                            <Button variant='outlined' type='submit' onClick={() => navigate('/login')} >Log in</Button>
+                            <Button variant='outlined'>Register</Button>
                         </Box>
+                        <UseOAuth />
                     </Box>
                 </Grid>
             </Grid>

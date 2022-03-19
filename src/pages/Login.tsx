@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import { useNavigate } from 'react-router-dom'
+import UseOAuth from '../components/UseOAuth'
 
 export default function Login() {
     const navigate = useNavigate()
@@ -30,6 +31,7 @@ export default function Login() {
                             <Button variant='outlined' type='submit' >Log in</Button>
                             <Button variant='outlined' onClick={() => navigate('/register')} >Register</Button>
                         </Box>
+                        <UseOAuth />
                     </Box>
                 </Grid>
             </Grid>
