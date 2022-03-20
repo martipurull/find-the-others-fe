@@ -46,7 +46,7 @@ const modalStyle = {
     p: 4,
 }
 
-export default function EditProject() {
+export default function EditBand() {
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
@@ -62,7 +62,7 @@ export default function EditProject() {
 
     return (
         <Box sx={{ mx: 1 }}>
-            <Button sx={{ mr: 2 }} variant='outlined' endIcon={<EditOutlinedIcon />} onClick={handleOpen}>Edit Project</Button>
+            <Button sx={{ mr: 2 }} variant='outlined' endIcon={<EditOutlinedIcon />} onClick={handleOpen}>Edit Band</Button>
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"

@@ -18,10 +18,10 @@ import { useNavigate } from 'react-router'
 import GigApplication from '../components/GigApplication'
 
 const gigs = [
-    { gigName: 'A gig', instrumentRequired: 'drums', expectedHours: 4 },
-    { gigName: 'Another gig', instrumentRequired: 'bass', expectedHours: 2 },
-    { gigName: 'Yet another gig', instrumentRequired: 'rhythm guitar', expectedHours: 1 },
-    { gigName: 'Choir for rock song', instrumentRequired: 'singer', expectedHours: 2 }
+    { gigName: 'A gig', instrumentRequired: 'drums', expectedHours: 4, userHasApplied: false },
+    { gigName: 'Another gig', instrumentRequired: 'bass', expectedHours: 2, userHasApplied: true },
+    { gigName: 'Yet another gig', instrumentRequired: 'rhythm guitar', expectedHours: 1, userHasApplied: false },
+    { gigName: 'Choir for rock song', instrumentRequired: 'singer', expectedHours: 2, userHasApplied: false }
 ]
 
 
@@ -53,7 +53,7 @@ export default function Gigs() {
                                                 </Avatar>
                                             </ListItemAvatar>
                                             <ListItemText primary={`WANTED: ${gig.instrumentRequired} for ${gig.gigName.toLowerCase()}.`} secondary={`Expected duration: ${gig.expectedHours}${gig.expectedHours > 1 ? ` hours` : ` hour`}`} />
-                                            <GigApplication />
+                                            <GigApplication hasApplied={gig.userHasApplied} />
                                         </ListItem>
                                     </Box>
                                 ))}

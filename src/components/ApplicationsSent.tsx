@@ -28,7 +28,7 @@ export default function ApplicationsSent() {
 
     return (
         <List dense sx={{ width: '100%' }}>
-            {/* MAP THROUGH PROJECT MEMBERS HERE */}
+            {/* MAP THROUGH APPLICATIONS HERE */}
             <ListItem>
                 <Grid container>
                     <ListItemButton onClick={handleOpen}>
