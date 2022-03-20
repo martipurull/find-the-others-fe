@@ -9,7 +9,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
-import ListItemIcon from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
 import ListItemAvatar from '@mui/material/ListItemAvatar'
