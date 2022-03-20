@@ -14,6 +14,8 @@ import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
+import { useNavigate } from 'react-router'
+import GigApplication from '../components/GigApplication'
 
 const gigs = [
     { gigName: 'A gig', instrumentRequired: 'drums', expectedHours: 4 },
@@ -24,6 +26,8 @@ const gigs = [
 
 
 export default function Gigs() {
+    const navigate = useNavigate()
+
     return (
         <Container maxWidth="xl" sx={{ minHeight: '75vh', minWidth: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -49,13 +53,13 @@ export default function Gigs() {
                                                 </Avatar>
                                             </ListItemAvatar>
                                             <ListItemText primary={`WANTED: ${gig.instrumentRequired} for ${gig.gigName.toLowerCase()}.`} secondary={`Expected duration: ${gig.expectedHours}${gig.expectedHours > 1 ? ` hours` : ` hour`}`} />
-                                            <Button variant='outlined' size='small' color='success'>APPLY FOR GIG</Button>
+                                            <GigApplication />
                                         </ListItem>
                                     </Box>
                                 ))}
                             </List>
                             <Typography component='h3' variant='h6' sx={{ mt: 3 }}>Looking for musicians for your own project?</Typography>
-                            <Button color='primary' size='large' variant='contained' sx={{ mt: 3, mb: 3 }}>OFFER A GIG</Button>
+                            <Button color='primary' size='large' variant='contained' sx={{ mt: 3, mb: 3 }} onClick={() => navigate('/new-gig')}>OFFER A GIG</Button>
                         </Grid>
                     </Grid>
                 </Grid>
