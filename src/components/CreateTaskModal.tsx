@@ -64,7 +64,7 @@ export default function CreateTaskModal() {
 
     return (
         <>
-            <IconButton size='small' sx={{ mb: 0.75, px: 1 }} onClick={handleOpen}><AddOutlinedIcon fontSize='large' /></IconButton>
+            <IconButton size='small' sx={{ px: 1 }} onClick={handleOpen}><AddOutlinedIcon fontSize='large' /></IconButton>
 
             <Modal
                 aria-labelledby="transition-modal-title"

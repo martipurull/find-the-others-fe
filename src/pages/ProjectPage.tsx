@@ -1,7 +1,7 @@
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import ProjectSummary from '../components/ProjectSummary'
-import ProjectCards from '../components/ProjectCards'
+import ProjectWorkspace from '../components/ProjectWorkspace'
 
 export default function ProjectPage() {
     return (
@@ -10,9 +10,7 @@ export default function ProjectPage() {
                 <Grid item xs={12}>
                     <ProjectSummary />
                 </Grid>
-
-                <ProjectCards />
-
+                <ProjectWorkspace />
             </Grid>
         </Container>
     )
