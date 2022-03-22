@@ -1,24 +1,24 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import NotFound from './pages/NotFound';
-import Home from './pages/Home';
-import PrivateRoute from './components/PrivateRoute';
-import Register from './pages/Register';
-import CreateBand from './pages/CreateBand';
-import CreateProject from './pages/CreateProject';
-import Login from './pages/Login';
-import Shop from './pages/Shop';
-import ShopBackOffice from './pages/ShopBackOffice';
-import Subscription from './pages/Subscription';
-import Cart from './pages/Cart';
-import Payment from './pages/Payment';
+import NotFound from './pages/NotFound'
+import Home from './pages/Home'
+import PrivateRoute from './components/PrivateRoute'
+import Register from './pages/Register'
+import CreateBand from './pages/CreateBand'
+import CreateProject from './pages/CreateProject'
+import Login from './pages/Login'
+import Shop from './pages/Shop'
+import ShopBackOffice from './pages/ShopBackOffice'
+import Subscription from './pages/Subscription'
+import Cart from './pages/Cart'
+import Payment from './pages/Payment'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import Layout from './components/Layout';
-import ProjectPage from './pages/ProjectPage';
-import Gigs from './pages/Gigs';
-import CreateGig from './pages/CreateGig';
-import Profile from './pages/Profile';
-import BandPage from './pages/BandPage';
+import Layout from './components/Layout'
+import ProjectPage from './pages/ProjectPage'
+import Gigs from './pages/Gigs'
+import CreateGig from './pages/CreateGig'
+import Profile from './pages/Profile'
+import BandPage from './pages/BandPage'
 
 const themeLight = createTheme({
   palette: {

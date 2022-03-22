@@ -10,7 +10,9 @@ export default function ProjectPage() {
                 <Grid item xs={12}>
                     <ProjectSummary />
                 </Grid>
+
                 <ProjectCards />
+
             </Grid>
         </Container>
     )

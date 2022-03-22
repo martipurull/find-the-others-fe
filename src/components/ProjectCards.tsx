@@ -17,8 +17,6 @@ import Button from '@mui/material/Button'
 import EditTaskModal from './EditTaskModal'
 import CreateTaskModal from './CreateTaskModal'
 import AddTrackToDate from './AddTrackToDate'
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
-import AudiotrackIcon from '@mui/icons-material/Audiotrack'
 import { useState } from 'react'
 import Modal from '@mui/material/Modal'
 import Backdrop from '@mui/material/Backdrop'
@@ -34,6 +32,10 @@ const modalStyle = {
     p: 4,
 }
 
+const ItemTypes = {
+    TASK: 'task'
+}
+
 export default function ProjectCards() {
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
@@ -41,6 +43,7 @@ export default function ProjectCards() {
 
     return (
         <>
+
             <Grid item xs={12} sm={6} md={3} spacing={2} >
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                     <Typography variant='h5' pt={1.25}>To Do</Typography>
@@ -51,7 +54,7 @@ export default function ProjectCards() {
                 <Card sx={{ minWidth: 200, maxWidth: 300, my: 2 }}>
                     <CardContent>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant='h6'>Task Title</Typography>
+                            <Typography variant='h6'>DRAG ME!</Typography>
                             <Avatar src={MAvatar} />
                         </Box>
                         <Typography variant='body2'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ab vero excepturi saepe at soluta quisquam, expedita optio fuga.</Typography>
