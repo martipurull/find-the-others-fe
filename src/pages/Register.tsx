@@ -8,9 +8,66 @@ import { useNavigate } from 'react-router-dom'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import Avatar from '@mui/material/Avatar'
 import UseOAuth from '../components/UseOAuth'
+import useAxios from '../hooks/useAxios'
+import { useDispatch } from 'react-redux'
+import { FormEvent, useState } from 'react'
+import { IUserDetails } from '../types'
+import { userLoginAction } from '../redux/actions/actions'
 
 export default function Register() {
     const navigate = useNavigate()
+    const { axiosRequest } = useAxios()
+    const dispatch = useDispatch()
+
+    const [userError, setUserError] = useState(false)
+    const [passwordError, setPasswordError] = useState(false)
+    const [badRequestError, setBadRequestError] = useState(false)
+    const [userDetails, setUserDetails] = useState<IUserDetails>({
+        firstName: '',
+        lastName: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    })
+    const [formFieldError, setFormFieldError] = useState({
+        firstName: false,
+        lastName: false,
+        username: false,
+        email: false,
+        password: false,
+        confirmPassword: false
+    })
+
+    const handleInput = (field: string, value: string) => {
+        setUserDetails(details => ({
+            ...details,
+            [field]: value
+        }))
+    }
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault()
+        setUserError(false)
+        setPasswordError(false)
+        setFormFieldError({ firstName: false, lastName: false, username: false, email: false, password: false, confirmPassword: false })
+
+        const { firstName, lastName, username, email, password, confirmPassword } = userDetails
+        if (!firstName) setFormFieldError(errors => ({ ...errors, firstName: true }))
+        if (!lastName) setFormFieldError(errors => ({ ...errors, lastName: true }))
+        if (!username) setFormFieldError(errors => ({ ...errors, username: true }))
+        if (!email) setFormFieldError(errors => ({ ...errors, email: true }))
+        if (!password) setFormFieldError(errors => ({ ...errors, password: true }))
+        if (!confirmPassword) setFormFieldError(errors => ({ ...errors, confirmPassword: true }))
+        if (password !== confirmPassword) setPasswordError(true)
+
+        const response = await axiosRequest('/user/access/register', 'POST', userDetails)
+        if (response.status === 400) setBadRequestError(true)
+        if (response.status === 201) {
+            dispatch(userLoginAction())
+            navigate('/')
+        }
+    }
 
     return (
         <Container maxWidth='md' sx={{ minHeight: '75vh', minWidth: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

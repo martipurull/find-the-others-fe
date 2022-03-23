@@ -7,6 +7,18 @@ interface IReduxStoreUser {
     currentUser: IUser | null
 }
 
+interface IUserCredentials {
+    email: string
+    password: string
+}
+
+interface IUserDetails extends IUserCredentials {
+    confirmPassword: string
+    firstName: string
+    lastName: string
+    username: string
+}
+
 interface IUser {
     _id: string
     firstName: string
