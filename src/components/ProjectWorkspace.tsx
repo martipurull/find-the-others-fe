@@ -42,6 +42,8 @@ export default function ProjectWorkspace() {
     const [doingTasks, setDoingTasks] = useState<ITask[]>(fakeTasks.filter(task => task.status === 'doing'))
     const [doneTasks, setDoneTasks] = useState<ITask[]>(fakeTasks.filter(task => task.status === 'done'))
 
+
+    //add to onDragEnd: fetch to change status of task based on which TaskList it sits
     const onDragEnd = (result: DropResult) => {
         const { source, destination } = result
         if (!destination) return;
