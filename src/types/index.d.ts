@@ -17,6 +17,7 @@ interface IUserDetails extends IUserCredentials {
     firstName: string
     lastName: string
     username: string
+    musicianOrFan: string
 }
 
 interface IUser {
@@ -26,7 +27,7 @@ interface IUser {
     email: string
     password: string
     username: string
-    isMusician: boolean
+    musicianOrFan: boolean
     refreshJWT: string
     facebookId: string
     googleId: string

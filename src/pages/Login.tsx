@@ -6,9 +6,59 @@ import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import { useNavigate } from 'react-router-dom'
 import UseOAuth from '../components/UseOAuth'
+import { useDispatch } from 'react-redux'
+import useAxios from '../hooks/useAxios'
+import { FormEvent, useState } from 'react'
+import { IUserCredentials } from '../types'
+import { userLoginAction } from '../redux/actions/actions'
 
 export default function Login() {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const { axiosRequest } = useAxios()
+
+    const [loading, setLoading] = useState(false)
+    const [userError, setUserError] = useState(false)
+    const [invalidDetails, setInvalidDetails] = useState(false)
+    const [userCredentials, setUserCredentials] = useState<IUserCredentials>({
+        email: '',
+        password: ''
+    })
+    const [loginError, setLoginError] = useState({
+        email: false,
+        password: false
+    })
+
+    const handleInput = (field: string, value: string) => {
+        setUserCredentials(credentials => ({
+            ...credentials,
+            [field]: value
+        }))
+    }
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault()
+        setUserError(false)
+        setInvalidDetails(false)
+        setLoginError({ email: false, password: false })
+        if (!userCredentials.email) setLoginError(errors => ({ ...errors, email: true }))
+        if (!userCredentials.password) setLoginError(errors => ({ ...errors, password: true }))
+        if (!userCredentials.email || !userCredentials.password) setUserError(true)
+
+        if (!userError) {
+            setLoading(true)
+            const response = await axiosRequest('/user/access/login', 'POST', userCredentials)
+            if (response.status === 400) {
+                setInvalidDetails(true)
+                setLoading(false)
+            }
+            if (response.status === 200) {
+                dispatch(userLoginAction())
+                setLoading(false)
+                navigate('/')
+            }
+        }
+    }
 
     return (
         <Container maxWidth='md' sx={{ minHeight: '75vh', minWidth: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

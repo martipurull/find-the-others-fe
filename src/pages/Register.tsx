@@ -13,6 +13,8 @@ import { useDispatch } from 'react-redux'
 import { FormEvent, useState } from 'react'
 import { IUserDetails } from '../types'
 import { userLoginAction } from '../redux/actions/actions'
+import { Blob } from 'buffer'
+import fs from 'fs'
 
 export default function Register() {
     const navigate = useNavigate()
@@ -22,13 +24,15 @@ export default function Register() {
     const [userError, setUserError] = useState(false)
     const [passwordError, setPasswordError] = useState(false)
     const [badRequestError, setBadRequestError] = useState(false)
+    const [avatarFile, setAvatarFile] = useState<File>()
     const [userDetails, setUserDetails] = useState<IUserDetails>({
         firstName: '',
         lastName: '',
         username: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        musicianOrFan: ''
     })
     const [formFieldError, setFormFieldError] = useState({
         firstName: false,
@@ -61,7 +65,18 @@ export default function Register() {
         if (!confirmPassword) setFormFieldError(errors => ({ ...errors, confirmPassword: true }))
         if (password !== confirmPassword) setPasswordError(true)
 
-        const response = await axiosRequest('/user/access/register', 'POST', userDetails)
+
+
+        const dataToAxios = new FormData()
+        dataToAxios.append('firstName', userDetails.firstName)
+        dataToAxios.append('lastName', userDetails.lastName)
+        dataToAxios.append('username', userDetails.username)
+        dataToAxios.append('email', userDetails.email)
+        dataToAxios.append('password', userDetails.password)
+        dataToAxios.append('musicianOrFan', userDetails.musicianOrFan)
+        avatarFile && dataToAxios.append('userAvatar', avatarFile)
+
+        const response = await axiosRequest('/user/access/register', 'POST', dataToAxios)
         if (response.status === 400) setBadRequestError(true)
         if (response.status === 201) {
             dispatch(userLoginAction())
@@ -77,39 +92,42 @@ export default function Register() {
 
                     {/* ALERTS ON FORM SUBMISSION ERRORS/VALIDATION GO HERE */}
 
-                    <Box component='form' noValidate autoComplete='off'>
+                    <Box component='form' noValidate autoComplete='off' onSubmit={handleSubmit}>
                         <Grid container spacing={3} style={{ marginBottom: '3rem' }}>
                             <Grid item xs={12} md={6}>
-                                <TextField label='First Name' variant='standard' required InputLabelProps={{ style: { color: '#F5F6F7' } }} />
+                                <TextField label='First Name' variant='standard' required InputLabelProps={{ style: { color: '#F5F6F7' } }} value={userDetails.firstName} onChange={e => handleInput('firstName', e.target.value)} error={formFieldError.firstName} />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField label='Last Name' variant='standard' required InputLabelProps={{ style: { color: '#F5F6F7' } }} />
+                                <TextField label='Last Name' variant='standard' required InputLabelProps={{ style: { color: '#F5F6F7' } }} value={userDetails.lastName} onChange={e => handleInput('lastName', e.target.value)} error={formFieldError.lastName} />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField label='Username' variant='standard' required InputLabelProps={{ style: { color: '#F5F6F7' } }} />
+                                <TextField label='Username' variant='standard' required InputLabelProps={{ style: { color: '#F5F6F7' } }} value={userDetails.username} onChange={e => handleInput('username', e.target.value)} error={formFieldError.username} />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField label='Email Address' variant='standard' required type='email' InputLabelProps={{ style: { color: '#F5F6F7' } }} />
+                                <TextField label='Email Address' variant='standard' required type='email' InputLabelProps={{ style: { color: '#F5F6F7' } }} value={userDetails.email} onChange={e => handleInput('email', e.target.value)} error={formFieldError.email} />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField label='Password' variant='standard' required type='password' InputLabelProps={{ style: { color: '#F5F6F7' } }} />
+                                <TextField label='Password' variant='standard' required type='password' InputLabelProps={{ style: { color: '#F5F6F7' } }} value={userDetails.password} onChange={e => handleInput('password', e.target.value)} error={formFieldError.password} />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField label='Confirm Password' variant='standard' required type='password' InputLabelProps={{ style: { color: '#F5F6F7' } }} />
+                                <TextField label='Confirm Password' variant='standard' required type='password' InputLabelProps={{ style: { color: '#F5F6F7' } }} value={userDetails.confirmPassword} onChange={e => handleInput('confirmPassword', e.target.value)} error={formFieldError.confirmPassword} />
                             </Grid>
                             <Grid item xs={12} sx={{ marginTop: '1rem' }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
                                     <Box>
                                         <FormControl>
                                             <FormLabel sx={{ color: '#f5faff' }}>Are you a musician or a fan?</FormLabel>
-                                            <RadioGroup row>
+                                            <RadioGroup row value={userDetails.musicianOrFan} onChange={e => handleInput('musicianOrFan', e.target.value)}>
                                                 <FormControlLabel value='musician' control={<Radio />} label='musician' />
                                                 <FormControlLabel value='fan' control={<Radio />} label='fan' />
                                             </RadioGroup>
                                         </FormControl>
                                     </Box>
                                     <Box>
-                                        <Button variant='outlined' sx={{ p: 1.25 }}>Add photo <Avatar sx={{ ml: 2 }}><PersonOutlineIcon /></Avatar></Button>
+                                        <Button variant='outlined' sx={{ p: 1.25 }}>
+                                            Add photo <Avatar sx={{ ml: 2 }}><PersonOutlineIcon /></Avatar>
+                                            <input type="file" hidden onChange={e => setAvatarFile(e.target.files![0])} />
+                                        </Button>
                                     </Box>
                                 </Box>
                             </Grid>
