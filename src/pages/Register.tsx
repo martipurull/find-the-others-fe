@@ -13,8 +13,6 @@ import { useDispatch } from 'react-redux'
 import { FormEvent, useState } from 'react'
 import { IUserDetails } from '../types'
 import { userLoginAction } from '../redux/actions/actions'
-import { Blob } from 'buffer'
-import fs from 'fs'
 
 export default function Register() {
     const navigate = useNavigate()
@@ -63,6 +61,7 @@ export default function Register() {
         if (!email) setFormFieldError(errors => ({ ...errors, email: true }))
         if (!password) setFormFieldError(errors => ({ ...errors, password: true }))
         if (!confirmPassword) setFormFieldError(errors => ({ ...errors, confirmPassword: true }))
+        if (!firstName || !lastName || !username || !email || !password || !confirmPassword) setUserError(true)
         if (password !== confirmPassword) setPasswordError(true)
 
 
@@ -90,7 +89,9 @@ export default function Register() {
                 <Grid item xs={12} md={8} style={{ textAlign: 'center' }}>
                     <Typography component='h1' variant='h2' style={{ marginBottom: '3rem' }}>Register now to <span className='app-name'>find the others</span>...</Typography>
 
-                    {/* ALERTS ON FORM SUBMISSION ERRORS/VALIDATION GO HERE */}
+                    {userError && <Alert variant='outlined' severity='error'>Please make sure you have entered correct information for all required fields.</Alert>}
+                    {passwordError && <Alert variant='outlined' severity='error'>Please make sure your passwords match!</Alert>}
+                    {badRequestError && <Alert variant='outlined' severity='error'>Something went wrong with your request. Please try again.</Alert>}
 
                     <Box component='form' noValidate autoComplete='off' onSubmit={handleSubmit}>
                         <Grid container spacing={3} style={{ marginBottom: '3rem' }}>
@@ -133,8 +134,8 @@ export default function Register() {
                             </Grid>
                         </Grid>
                         <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mx: 15 }}>
-                            <Button variant='outlined' type='submit' onClick={() => navigate('/login')} >Log in</Button>
-                            <Button variant='outlined'>Register</Button>
+                            <Button variant='outlined' onClick={() => navigate('/login')} >Log in</Button>
+                            <Button variant='outlined' type='submit'>Register</Button>
                         </Box>
                         <UseOAuth />
                     </Box>

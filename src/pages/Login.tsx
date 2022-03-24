@@ -68,13 +68,13 @@ export default function Login() {
 
                     {/* ALERTS ON FORM SUBMISSION ERRORS/VALIDATION GO HERE */}
 
-                    <Box component='form' noValidate autoComplete='off' >
+                    <Box component='form' noValidate autoComplete='off' onSubmit={handleSubmit} >
                         <Grid container spacing={3} sx={{ marginBottom: '3rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <Grid item xs={12} md={3}>
-                                <TextField label='Email Address' InputLabelProps={{ sx: { color: '#F5F6F7' } }} variant='standard' required type='email' />
+                                <TextField label='Email Address' InputLabelProps={{ sx: { color: '#F5F6F7' } }} variant='standard' required type='email' value={userCredentials.email} onChange={e => handleInput('email', e.target.value)} />
                             </Grid>
                             <Grid item xs={12} md={3}>
-                                <TextField label='Password' InputLabelProps={{ sx: { color: '#F5F6F7' } }} variant='standard' required type='password' />
+                                <TextField label='Password' InputLabelProps={{ sx: { color: '#F5F6F7' } }} variant='standard' required type='password' value={userCredentials.password} onChange={e => handleInput('password', e.target.value)} />
                             </Grid>
                         </Grid>
                         <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mx: 15 }}>
