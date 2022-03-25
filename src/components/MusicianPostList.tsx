@@ -34,7 +34,7 @@ export default function MusicianPostList() {
                 <Avatar sx={{ mt: 1 }}><AddAPhotoIcon /></Avatar>
             </Paper>
             <List >
-                <ListItem alignItems='center' sx={{ bgcolor: 'rgba(0,0,0,0.6)', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start' }}>
+                <Box alignItems='center' sx={{ bgcolor: 'rgba(0,0,0,0.6)', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start', p: 2 }}>
                     <Box sx={{ display: 'flex', mb: 1 }}>
                         <ListItemAvatar sx={{ mt: 1.05 }}>
                             <Avatar alt='personAvatar' src={MPPortrait} />
@@ -71,7 +71,7 @@ export default function MusicianPostList() {
                             </Box>
                         </Box>
                     }
-                </ListItem>
+                </Box>
             </List>
         </Box>
     )

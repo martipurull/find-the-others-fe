@@ -9,19 +9,19 @@ export const ACTIONS = {
     CLEAR_USER_INFO_FROM_CURRENT_USER: 'CLEAR_USER_INFO_FROM_CURRENT_USER'
 }
 
-export const userLoginAction = () => {
+export const userLoginAction = () => ({
     type: ACTIONS.USER_LOGIN
-}
+})
 
 export const addUserInfoAction = (userInfo: IUser) => ({
     type: ACTIONS.ADD_USER_INFO_TO_CURRENT_USER,
     payload: userInfo
 })
 
-export const userLogoutAction = () => {
+export const userLogoutAction = () => ({
     type: ACTIONS.USER_LOGOUT
-}
+})
 
-export const clearUserInfoAction = () => {
+export const clearUserInfoAction = () => ({
     type: ACTIONS.CLEAR_USER_INFO_FROM_CURRENT_USER
-}
+})

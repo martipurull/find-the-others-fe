@@ -10,7 +10,7 @@ import Avatar from '@mui/material/Avatar'
 import UseOAuth from '../components/UseOAuth'
 import useAxios from '../hooks/useAxios'
 import { useDispatch } from 'react-redux'
-import { FormEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { IUserDetails } from '../types'
 import { userLoginAction } from '../redux/actions/actions'
 
@@ -23,6 +23,7 @@ export default function Register() {
     const [passwordError, setPasswordError] = useState(false)
     const [badRequestError, setBadRequestError] = useState(false)
     const [avatarFile, setAvatarFile] = useState<File>()
+    const [avatarPreview, setAvatarPreview] = useState<string>('')
     const [userDetails, setUserDetails] = useState<IUserDetails>({
         firstName: '',
         lastName: '',
@@ -83,15 +84,21 @@ export default function Register() {
         }
     }
 
+    const handleAvatarUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        setAvatarFile(e.target.files![0])
+        const imgUrl = URL.createObjectURL(e.target.files![0])
+        setAvatarPreview(imgUrl)
+    }
+
     return (
         <Container maxWidth='md' sx={{ minHeight: '75vh', minWidth: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Grid item xs={12} md={8} style={{ textAlign: 'center' }}>
                     <Typography component='h1' variant='h2' style={{ marginBottom: '3rem' }}>Register now to <span className='app-name'>find the others</span>...</Typography>
 
-                    {userError && <Alert variant='outlined' severity='error'>Please make sure you have entered correct information for all required fields.</Alert>}
-                    {passwordError && <Alert variant='outlined' severity='error'>Please make sure your passwords match!</Alert>}
-                    {badRequestError && <Alert variant='outlined' severity='error'>Something went wrong with your request. Please try again.</Alert>}
+                    {userError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>Please make sure you have entered correct information for all required fields.</Alert>}
+                    {passwordError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>Please make sure your passwords match!</Alert>}
+                    {badRequestError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>Something went wrong with your request. Please try again.</Alert>}
 
                     <Box component='form' noValidate autoComplete='off' onSubmit={handleSubmit}>
                         <Grid container spacing={3} style={{ marginBottom: '3rem' }}>
@@ -124,10 +131,11 @@ export default function Register() {
                                             </RadioGroup>
                                         </FormControl>
                                     </Box>
-                                    <Box>
-                                        <Button variant='outlined' sx={{ p: 1.25 }}>
-                                            Add photo <Avatar sx={{ ml: 2 }}><PersonOutlineIcon /></Avatar>
-                                            <input type="file" hidden onChange={e => setAvatarFile(e.target.files![0])} />
+                                    <Box component="form">
+                                        <Button variant='outlined' sx={{ p: 1.25 }} component='label'>
+                                            Add photo
+                                            <Avatar sx={{ ml: 2 }}>{avatarFile ? <img src={avatarPreview} style={{ width: '50px', objectFit: 'cover' }} /> : <PersonOutlineIcon />}</Avatar>
+                                            <input type="file" hidden onChange={e => handleAvatarUpload(e)} />
                                         </Button>
                                     </Box>
                                 </Box>

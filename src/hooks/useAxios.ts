@@ -9,7 +9,7 @@ function useAxios() {
     const axiosRequest = async (url: string, method: Method, data = {}) => {
         try {
             return await instance({ baseURL, url, method, data, withCredentials: true })
-        } catch (error) {
+        } catch (error: any) {
             return error.toJSON()
         }
     }
