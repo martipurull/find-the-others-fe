@@ -15,7 +15,7 @@ export default function MemberList() {
     return (
         <List dense sx={{ width: '100%' }}>
             {/* MAP THROUGH PROJECT MEMBERS HERE */}
-            <ListItem>
+            <ListItem sx={{ display: 'flex' }}>
                 <ListItemButton>
                     <ListItemAvatar>
                         <Avatar src={WAvatar} />
@@ -23,14 +23,14 @@ export default function MemberList() {
                     <ListItemText primary='Member Name' secondary='Member role' />
                 </ListItemButton>
                 {
-                    !isConnection && <Button size='small' variant='outlined' color='primary'>Connect</Button>
+                    !isConnection && <Button sx={{ width: '30%' }} size='small' variant='outlined' color='primary'>Connect</Button>
 
                 }
                 {
-                    isConnectionSent && <Button size='small' variant='outlined' color='warning'>Withdraw Request</Button>
+                    isConnectionSent && <Button sx={{ width: '30%' }} size='small' variant='outlined' color='warning'>Cancel</Button>
                 }
                 {
-                    isConnectionReceived && <Button size='small' variant='outlined' color='success'>Accept Request</Button>
+                    isConnectionReceived && <Button sx={{ width: '30%' }} size='small' variant='outlined' color='success'>Accept</Button>
                 }
             </ListItem>
             <ListItem>

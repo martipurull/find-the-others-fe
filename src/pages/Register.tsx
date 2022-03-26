@@ -131,7 +131,7 @@ export default function Register() {
                                             </RadioGroup>
                                         </FormControl>
                                     </Box>
-                                    <Box component="form">
+                                    <Box>
                                         <Button variant='outlined' sx={{ p: 1.25 }} component='label'>
                                             Add photo
                                             <Avatar sx={{ ml: 2 }}>{avatarFile ? <img src={avatarPreview} style={{ width: '50px', objectFit: 'cover' }} /> : <PersonOutlineIcon />}</Avatar>

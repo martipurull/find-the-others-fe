@@ -76,53 +76,55 @@ export default function ProjectWorkspace() {
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            <Grid item xs={12} sm={6} md={3} spacing={2} >
-                <TaskList droppableId={'TodoList'} listTitle={'To Do'} icon={<CreateTaskModal />} tasks={toDoTasks} setterFunction={setToDoTasks} />
+            <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} md={3}  >
+                    <TaskList droppableId={'TodoList'} listTitle={'To Do'} icon={<CreateTaskModal />} tasks={toDoTasks} setterFunction={setToDoTasks} />
 
-            </Grid>
-            <Grid item xs={12} sm={6} md={3} spacing={2}>
-                <TaskList droppableId={'DoingList'} listTitle={'Doing'} icon={<FastForwardOutlinedIcon fontSize='large' sx={{ ml: 1, mt: 1 }} />} tasks={doingTasks} setterFunction={setDoingTasks} />
+                </Grid>
+                <Grid item xs={12} sm={6} md={3} >
+                    <TaskList droppableId={'DoingList'} listTitle={'Doing'} icon={<FastForwardOutlinedIcon fontSize='large' sx={{ ml: 1, mt: 1 }} />} tasks={doingTasks} setterFunction={setDoingTasks} />
 
-            </Grid>
-            <Grid item xs={12} sm={6} md={3} spacing={2}>
-                <TaskList droppableId={'DoneList'} listTitle={'Done'} icon={<DoneOutlinedIcon fontSize='large' sx={{ ml: 1, mt: 1 }} />} tasks={doneTasks} setterFunction={setDoneTasks} />
+                </Grid>
+                <Grid item xs={12} sm={6} md={3} >
+                    <TaskList droppableId={'DoneList'} listTitle={'Done'} icon={<DoneOutlinedIcon fontSize='large' sx={{ ml: 1, mt: 1 }} />} tasks={doneTasks} setterFunction={setDoneTasks} />
 
-            </Grid>
-            <Grid item xs={12} sm={6} md={3} spacing={2}>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-                    <Typography variant='h5' pt={1.25}>Track So Far</Typography> <BarChartOutlinedIcon fontSize='large' sx={{ ml: 1, my: 1.25 }} />
-                </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ml: -2 }}>
-                    <MusicPlayer />
-                    <AddTrackToDate />
-                </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3} spacing={2} mt={3}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', }}>
-                    <Button variant='outlined' size='large' color='error'>LEAVE PROJECT</Button>
-                    <Button variant='contained' size='large' color='success' onClick={handleOpen}>COMPLETE PROJECT</Button>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3} >
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                        <Typography variant='h5' pt={1.25}>Track So Far</Typography> <BarChartOutlinedIcon fontSize='large' sx={{ ml: 1, my: 1.25 }} />
+                    </Box>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ml: -2 }}>
+                        <MusicPlayer />
+                        <AddTrackToDate />
+                    </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3} mt={3}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', }}>
+                        <Button variant='outlined' size='large' color='error'>LEAVE PROJECT</Button>
+                        <Button variant='contained' size='large' color='success' onClick={handleOpen}>COMPLETE PROJECT</Button>
 
-                    <Modal
-                        aria-labelledby="transition-modal-title"
-                        aria-describedby="transition-modal-description"
-                        open={open}
-                        onClose={handleClose}
-                        closeAfterTransition
-                        BackdropComponent={Backdrop}
-                        BackdropProps={{ timeout: 500 }}
-                    >
-                        <Box sx={modalStyle}>
-                            <Typography sx={{ my: 1 }} id="transition-modal-title" variant="h4" component="h3">Complete Project And Send Final Track</Typography>
-                            <Typography sx={{ my: 1 }} variant='h6' component='h4'>Are you sure you want to complete this project?</Typography>
-                            <Typography sx={{ my: 1 }} variant='body1' component='p'>Once you do, it will no longer be active and the current "Track So Far" will be sent to the project's bands.</Typography>
-                            <Typography sx={{ my: 1 }} variant='body2' component='p'>The song won't be automatically published, but it will be available for the band admins to release.</Typography>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-                                <Button color='success' variant='contained' onClick={handleClose}>Complete Project</Button>
-                                <Button color='warning' variant='outlined' type='submit' onClick={handleClose}>Cancel</Button>
+                        <Modal
+                            aria-labelledby="transition-modal-title"
+                            aria-describedby="transition-modal-description"
+                            open={open}
+                            onClose={handleClose}
+                            closeAfterTransition
+                            BackdropComponent={Backdrop}
+                            BackdropProps={{ timeout: 500 }}
+                        >
+                            <Box sx={modalStyle}>
+                                <Typography sx={{ my: 1 }} id="transition-modal-title" variant="h4" component="h3">Complete Project And Send Final Track</Typography>
+                                <Typography sx={{ my: 1 }} variant='h6' component='h4'>Are you sure you want to complete this project?</Typography>
+                                <Typography sx={{ my: 1 }} variant='body1' component='p'>Once you do, it will no longer be active and the current "Track So Far" will be sent to the project's bands.</Typography>
+                                <Typography sx={{ my: 1 }} variant='body2' component='p'>The song won't be automatically published, but it will be available for the band admins to release.</Typography>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                                    <Button color='success' variant='contained' onClick={handleClose}>Complete Project</Button>
+                                    <Button color='warning' variant='outlined' type='submit' onClick={handleClose}>Cancel</Button>
+                                </Box>
                             </Box>
-                        </Box>
-                    </Modal>
-                </Box>
+                        </Modal>
+                    </Box>
+                </Grid>
             </Grid>
         </DragDropContext>
     )

@@ -1,6 +1,8 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import thunk from 'redux-thunk'
 import { composeWithDevTools } from '@redux-devtools/extension'
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
 import { IInitialState } from '../../types'
 import userReducer from '../reducers/userReducer'
 import projectReducer from '../reducers/projectReducer'
@@ -23,4 +25,10 @@ const mainReducer = combineReducers({
     bands: bandReducer
 })
 
-export const storeConfig = createStore(mainReducer, initialState, composeWithDevTools(applyMiddleware(thunk)))
+const persistConfig = { key: 'root', storage }
+
+const persistedReducer = persistReducer(persistConfig, mainReducer)
+
+
+export const storeConfig = createStore(persistedReducer, initialState, composeWithDevTools(applyMiddleware(thunk)))
+export const persistor = persistStore(storeConfig)
