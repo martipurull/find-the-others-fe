@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { IUserDetails } from '../types'
 import { userLoginAction } from '../redux/actions/actions'
+import { useDebounce } from 'use-debounce'
 
 export default function Register() {
     const navigate = useNavigate()
@@ -22,6 +23,8 @@ export default function Register() {
     const [userError, setUserError] = useState(false)
     const [passwordError, setPasswordError] = useState(false)
     const [badRequestError, setBadRequestError] = useState(false)
+    const [emailTakenError, setEmailTakenError] = useState(false)
+    const [emailAvailable, setEmailAvailable] = useState(false)
     const [avatarFile, setAvatarFile] = useState<File>()
     const [avatarPreview, setAvatarPreview] = useState<string>('')
     const [userDetails, setUserDetails] = useState<IUserDetails>({
@@ -41,6 +44,23 @@ export default function Register() {
         password: false,
         confirmPassword: false
     })
+    const [debouncedEmail] = useDebounce(userDetails.email, 1000)
+
+    const handleCheckEmail = async (emailDebounced: string) => {
+        const response = await axiosRequest('/user/access/check-email', 'POST', { email: emailDebounced })
+        if (response.status === 400) {
+            setEmailAvailable(false)
+            setEmailTakenError(true)
+        }
+        if (response.status === 200) {
+            setEmailTakenError(false)
+            setEmailAvailable(true)
+        }
+    }
+
+    useEffect(() => {
+        handleCheckEmail(debouncedEmail)
+    }, [debouncedEmail])
 
     const handleInput = (field: string, value: string) => {
         setUserDetails(details => ({
@@ -99,6 +119,8 @@ export default function Register() {
                     {userError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>Please make sure you have entered correct information for all required fields.</Alert>}
                     {passwordError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>Please make sure your passwords match!</Alert>}
                     {badRequestError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>Something went wrong with your request. Please try again.</Alert>}
+                    {debouncedEmail && emailTakenError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>This email is already taken. Please use a new one.</Alert>}
+                    {debouncedEmail && emailAvailable && <Alert sx={{ mb: 5 }} variant='outlined' severity='success'>Great, this email is available!</Alert>}
 
                     <Box component='form' noValidate autoComplete='off' onSubmit={handleSubmit}>
                         <Grid container spacing={3} style={{ marginBottom: '3rem' }}>
