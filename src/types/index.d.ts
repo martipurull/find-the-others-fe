@@ -1,10 +1,15 @@
 interface IInitialState {
-    user: IReduxStoreUser
+    user: IReduxStoreUser,
+    userProjects: IReduxStoreProjects
 }
 
 interface IReduxStoreUser {
     isLoggedIn: boolean
     currentUser: IUser | null
+}
+
+interface IReduxStoreProjects {
+    projects: IProject[]
 }
 
 interface IUserCredentials {

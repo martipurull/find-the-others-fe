@@ -14,15 +14,18 @@ export const initialState: IInitialState = {
     user: {
         isLoggedIn: false,
         currentUser: null
+    },
+    userProjects: {
+        projects: []
     }
 }
 
 const mainReducer = combineReducers({
     user: userReducer,
-    projects: projectReducer,
-    posts: postReducer,
-    gigs: gigReducer,
-    bands: bandReducer
+    userProjects: projectReducer,
+    userPosts: postReducer,
+    userGigs: gigReducer,
+    userBands: bandReducer
 })
 
 const persistConfig = { key: 'root', storage }

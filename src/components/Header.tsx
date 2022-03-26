@@ -14,17 +14,13 @@ import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 import FTOLogo from '../assets/find-the-others-logo_1_1_1.png'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { IInitialState } from '../types'
-
-const musicianPages = [{ text: 'Dashboard', link: '/' }, { text: 'bands', link: '/bands' }, { text: 'Find Gig', link: '/gigs' }]
-const musicianSettings = [{ text: 'Profile', link: '/me' }, { text: 'Create Band', link: '/new-band' }, { text: 'Create Project', link: '/new-project' }, { text: 'Logout', link: '/logout' }]
-
-const fanPages = [{ text: 'Home', link: '/' }, { text: 'bands', link: '/bands' }]
-const fanSettings = [{ text: 'Profile', link: '/me' }, { text: 'Logout', link: '/logout' }]
+import { clearUserInfoAction, userLogoutAction } from '../redux/actions/actions'
 
 export default function Header() {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const musicianOrFan = useSelector((state: IInitialState) => state.user.currentUser?.musicianOrFan)
     const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
 
@@ -46,9 +42,10 @@ export default function Header() {
         setAnchorElUser(null)
     }
 
-    const ftoAppbar = {
-        backgroundColor: '#F5F6F7',
-        color: '#233243'
+    const handleLogout = () => {
+        dispatch(userLogoutAction())
+        dispatch(clearUserInfoAction())
+        navigate('/')
     }
 
     return (
@@ -73,36 +70,31 @@ export default function Header() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{
-                                display: { xs: 'block', md: 'none' },
-                            }}
-                        >
-                            {musicianOrFan === 'musician'
-                                ? musicianPages.map((page, i) => (
-                                    <MenuItem key={i} onClick={() => navigate(page.link)}>
-                                        <Typography textAlign="center">{page.text}</Typography>
+                        {
+                            musicianOrFan === 'musician'
+                                ?
+                                <Menu id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'left' }} open={Boolean(anchorElNav)} onClose={handleCloseNavMenu} sx={{ display: { xs: 'block', md: 'none' } }}>
+
+                                    <MenuItem onClick={() => navigate('/')}>
+                                        <Typography textAlign="center">Dashboard</Typography>
                                     </MenuItem>
-                                ))
-                                : fanPages.map((page, i) => (
-                                    <MenuItem key={i} onClick={() => navigate(page.link)}>
-                                        <Typography textAlign="center">{page.text}</Typography>
+                                    <MenuItem onClick={() => navigate('/gigs')}>
+                                        <Typography textAlign="center">Gigs</Typography>
                                     </MenuItem>
-                                ))}
-                        </Menu>
+                                    <MenuItem onClick={() => navigate('/bands')}>
+                                        <Typography textAlign="center">Bands</Typography>
+                                    </MenuItem>
+                                </Menu>
+                                :
+                                <Menu id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'left' }} open={Boolean(anchorElNav)} onClose={handleCloseNavMenu} sx={{ display: { xs: 'block', md: 'none' } }}>
+                                    <MenuItem onClick={() => navigate('/')}>
+                                        <Typography textAlign="center">Home</Typography>
+                                    </MenuItem>
+                                    <MenuItem onClick={() => navigate('/bands')}>
+                                        <Typography textAlign="center">Bands</Typography>
+                                    </MenuItem>
+                                </Menu>
+                        }
                     </Box>
                     <Typography
                         variant="h6"
@@ -114,24 +106,18 @@ export default function Header() {
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {musicianOrFan === 'musician'
-                            ? musicianPages.map((page, i) => (
-                                <Button
-                                    key={i}
-                                    onClick={() => navigate(page.link)}
-                                    sx={{ my: 2, color: '#233243', display: 'block' }}
-                                >
-                                    {page.text}
-                                </Button>
-                            ))
-                            : fanPages.map((page, i) => (
-                                <Button
-                                    key={i}
-                                    onClick={() => navigate(page.link)}
-                                    sx={{ my: 2, color: '#233243', display: 'block' }}
-                                >
-                                    {page.text}
-                                </Button>
-                            ))}
+                            ?
+                            <>
+                                <Button onClick={() => navigate('/')} sx={{ my: 2, color: '#233243', display: 'block' }}>Dashboard</Button>
+                                <Button onClick={() => navigate('/gigs')} sx={{ my: 2, color: '#233243', display: 'block' }}>Gigs</Button>
+                                <Button onClick={() => navigate('/bands')} sx={{ my: 2, color: '#233243', display: 'block' }}>Bands</Button>
+                            </>
+                            :
+                            <>
+                                <Button onClick={() => navigate('/')} sx={{ my: 2, color: '#233243', display: 'block' }}>Dashboard</Button>
+                                <Button onClick={() => navigate('/bands')} sx={{ my: 2, color: '#233243', display: 'block' }}>Bands</Button>
+                            </>
+                        }
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
@@ -141,34 +127,38 @@ export default function Header() {
                                 <Typography variant="body2" sx={{ color: '#233243', ml: 2, fontWeight: 'bold', fontSize: 12 }}>{loggedUser?.firstName} {loggedUser?.lastName}</Typography>
                             </IconButton>
                         </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {musicianOrFan === 'musician'
-                                ? musicianSettings.map((setting, i) => (
-                                    <MenuItem key={i} onClick={() => { navigate(setting.link); handleCloseUserMenu() }}>
-                                        <Typography sx={{ color: '#F5F6F7' }} textAlign="center">{setting.text}</Typography>
+                        {
+                            musicianOrFan === 'musician'
+                                ?
+                                <Menu sx={{ mt: '45px' }} id="menu-appbar" anchorEl={anchorElUser} anchorOrigin={{ vertical: 'top', horizontal: 'right', }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right', }} open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
+
+                                    <MenuItem onClick={() => { navigate('/me'); handleCloseUserMenu() }}>
+                                        <Typography sx={{ color: '#F5F6F7' }} textAlign="center">Profile</Typography>
                                     </MenuItem>
-                                ))
-                                : fanSettings.map((setting, i) => (
-                                    <MenuItem key={i} onClick={() => { navigate(setting.link); handleCloseUserMenu() }}>
-                                        <Typography textAlign="center">{setting.text}</Typography>
+                                    <MenuItem onClick={() => { navigate('/new-gig'); handleCloseUserMenu() }}>
+                                        <Typography sx={{ color: '#F5F6F7' }} textAlign="center">Create New Gig</Typography>
                                     </MenuItem>
-                                ))}
-                        </Menu>
+                                    <MenuItem onClick={() => { navigate('/new-project'); handleCloseUserMenu() }}>
+                                        <Typography sx={{ color: '#F5F6F7' }} textAlign="center">Create New Project</Typography>
+                                    </MenuItem>
+                                    <MenuItem onClick={() => { navigate('/new-band'); handleCloseUserMenu() }}>
+                                        <Typography sx={{ color: '#F5F6F7' }} textAlign="center">Create New Band</Typography>
+                                    </MenuItem>
+                                    <MenuItem onClick={handleLogout}>
+                                        <Typography sx={{ color: '#F5F6F7' }} textAlign="center">Logout</Typography>
+                                    </MenuItem>
+                                </Menu>
+                                :
+                                <Menu sx={{ mt: '45px' }} id="menu-appbar" anchorEl={anchorElUser} anchorOrigin={{ vertical: 'top', horizontal: 'right', }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right', }} open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
+                                    <MenuItem onClick={() => { navigate('/me'); handleCloseUserMenu() }}>
+                                        <Typography sx={{ color: '#F5F6F7' }} textAlign="center">Profile</Typography>
+                                    </MenuItem>
+                                    <MenuItem onClick={handleLogout}>
+                                        <Typography sx={{ color: '#F5F6F7' }} textAlign="center">Logout</Typography>
+                                    </MenuItem>
+                                </Menu>
+                        }
+
                     </Box>
                 </Toolbar>
             </Container>

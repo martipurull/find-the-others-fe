@@ -2,10 +2,15 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import { CardActionArea, Typography } from '@mui/material'
-import ProjectImg from '../assets/projectImg2.svg'
+import ProjectImg from '../assets/projectImg3.jpeg'
 import { useNavigate } from 'react-router-dom'
+import { IProject } from '../types'
 
-export default function ProjectItem() {
+interface IProps {
+    projectDetails: IProject
+}
+
+export default function ProjectItem({ projectDetails }: IProps) {
     const navigate = useNavigate()
     return (
         <Card sx={{ maxWidth: 350 }} onClick={() => navigate('/projects/1')}>
