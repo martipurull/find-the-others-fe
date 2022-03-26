@@ -14,6 +14,8 @@ import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 import FTOLogo from '../assets/find-the-others-logo_1_1_1.png'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { IInitialState } from '../types'
 
 const musicianPages = [{ text: 'Dashboard', link: '/' }, { text: 'bands', link: '/bands' }, { text: 'Find Gig', link: '/gigs' }]
 const musicianSettings = [{ text: 'Profile', link: '/me' }, { text: 'Create Band', link: '/new-band' }, { text: 'Create Project', link: '/new-project' }, { text: 'Logout', link: '/logout' }]
@@ -23,7 +25,8 @@ const fanSettings = [{ text: 'Profile', link: '/me' }, { text: 'Logout', link: '
 
 export default function Header() {
     const navigate = useNavigate()
-    const [isMusician, setIsMusician] = useState(true)
+    const musicianOrFan = useSelector((state: IInitialState) => state.user.currentUser?.musicianOrFan)
+    const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
 
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
@@ -88,13 +91,13 @@ export default function Header() {
                                 display: { xs: 'block', md: 'none' },
                             }}
                         >
-                            {isMusician ?
-                                musicianPages.map((page, i) => (
+                            {musicianOrFan === 'musician'
+                                ? musicianPages.map((page, i) => (
                                     <MenuItem key={i} onClick={() => navigate(page.link)}>
                                         <Typography textAlign="center">{page.text}</Typography>
                                     </MenuItem>
-                                )) :
-                                fanPages.map((page, i) => (
+                                ))
+                                : fanPages.map((page, i) => (
                                     <MenuItem key={i} onClick={() => navigate(page.link)}>
                                         <Typography textAlign="center">{page.text}</Typography>
                                     </MenuItem>
@@ -110,8 +113,8 @@ export default function Header() {
                         FTO
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {isMusician ?
-                            musicianPages.map((page, i) => (
+                        {musicianOrFan === 'musician'
+                            ? musicianPages.map((page, i) => (
                                 <Button
                                     key={i}
                                     onClick={() => navigate(page.link)}
@@ -119,8 +122,8 @@ export default function Header() {
                                 >
                                     {page.text}
                                 </Button>
-                            )) :
-                            fanPages.map((page, i) => (
+                            ))
+                            : fanPages.map((page, i) => (
                                 <Button
                                     key={i}
                                     onClick={() => navigate(page.link)}
@@ -133,8 +136,9 @@ export default function Header() {
 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, }}>
+                                <Avatar alt="Remy Sharp" src={loggedUser?.avatar} />
+                                <Typography variant="body2" sx={{ color: '#233243', ml: 2, fontWeight: 'bold', fontSize: 12 }}>{loggedUser?.firstName} {loggedUser?.lastName}</Typography>
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -153,13 +157,13 @@ export default function Header() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {isMusician ?
-                                musicianSettings.map((setting, i) => (
+                            {musicianOrFan === 'musician'
+                                ? musicianSettings.map((setting, i) => (
                                     <MenuItem key={i} onClick={() => { navigate(setting.link); handleCloseUserMenu() }}>
                                         <Typography sx={{ color: '#F5F6F7' }} textAlign="center">{setting.text}</Typography>
                                     </MenuItem>
-                                )) :
-                                fanSettings.map((setting, i) => (
+                                ))
+                                : fanSettings.map((setting, i) => (
                                     <MenuItem key={i} onClick={() => { navigate(setting.link); handleCloseUserMenu() }}>
                                         <Typography textAlign="center">{setting.text}</Typography>
                                     </MenuItem>

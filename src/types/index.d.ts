@@ -27,7 +27,7 @@ interface IUser {
     email: string
     password: string
     username: string
-    musicianOrFan: boolean
+    musicianOrFan: string
     refreshJWT: string
     facebookId: string
     googleId: string
