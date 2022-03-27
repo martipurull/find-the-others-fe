@@ -84,6 +84,9 @@ export default function Header() {
                                     <MenuItem onClick={() => navigate('/bands')}>
                                         <Typography textAlign="center">Bands</Typography>
                                     </MenuItem>
+                                    <MenuItem onClick={() => navigate('/connect')}>
+                                        <Typography textAlign="center">Connect</Typography>
+                                    </MenuItem>
                                 </Menu>
                                 :
                                 <Menu id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'left' }} open={Boolean(anchorElNav)} onClose={handleCloseNavMenu} sx={{ display: { xs: 'block', md: 'none' } }}>
@@ -92,6 +95,9 @@ export default function Header() {
                                     </MenuItem>
                                     <MenuItem onClick={() => navigate('/bands')}>
                                         <Typography textAlign="center">Bands</Typography>
+                                    </MenuItem>
+                                    <MenuItem onClick={() => navigate('/connect')}>
+                                        <Typography textAlign="center">Connect</Typography>
                                     </MenuItem>
                                 </Menu>
                         }
@@ -111,11 +117,13 @@ export default function Header() {
                                 <Button onClick={() => navigate('/')} sx={{ my: 2, color: '#233243', display: 'block' }}>Dashboard</Button>
                                 <Button onClick={() => navigate('/gigs')} sx={{ my: 2, color: '#233243', display: 'block' }}>Gigs</Button>
                                 <Button onClick={() => navigate('/bands')} sx={{ my: 2, color: '#233243', display: 'block' }}>Bands</Button>
+                                <Button onClick={() => navigate('/connect')} sx={{ my: 2, color: '#233243', display: 'block' }}>Connect</Button>
                             </>
                             :
                             <>
                                 <Button onClick={() => navigate('/')} sx={{ my: 2, color: '#233243', display: 'block' }}>Dashboard</Button>
                                 <Button onClick={() => navigate('/bands')} sx={{ my: 2, color: '#233243', display: 'block' }}>Bands</Button>
+                                <Button onClick={() => navigate('/connect')} sx={{ my: 2, color: '#233243', display: 'block' }}>Connect</Button>
                             </>
                         }
                     </Box>
@@ -123,7 +131,7 @@ export default function Header() {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, }}>
-                                <Avatar alt="Remy Sharp" src={loggedUser?.avatar} />
+                                <Avatar alt={`${loggedUser?.firstName} ${loggedUser?.lastName}`} src={loggedUser?.avatar} />
                                 <Typography variant="body2" sx={{ color: '#233243', ml: 2, fontWeight: 'bold', fontSize: 12 }}>{loggedUser?.firstName} {loggedUser?.lastName}</Typography>
                             </IconButton>
                         </Tooltip>

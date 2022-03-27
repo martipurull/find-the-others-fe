@@ -19,6 +19,7 @@ import Gigs from './pages/Gigs'
 import CreateGig from './pages/CreateGig'
 import Profile from './pages/Profile'
 import BandPage from './pages/BandPage'
+import Connect from './pages/Connect'
 
 const themeLight = createTheme({
   palette: {
@@ -83,6 +84,7 @@ function App() {
             <Route path='/new-project' element={<PrivateRoute><CreateProject /></PrivateRoute>} />
             <Route path='/gigs' element={<PrivateRoute><Gigs /></PrivateRoute>} />
             <Route path='/new-gig' element={<PrivateRoute><CreateGig /></PrivateRoute>} />
+            <Route path='/connect' element={<PrivateRoute><Connect /></PrivateRoute>} />
             <Route path='/shop' element={<PrivateRoute><Shop /></PrivateRoute>} />
             <Route path='/shop-backoffice' element={<PrivateRoute><ShopBackOffice /></PrivateRoute>} />
             <Route path='/subscribe' element={<PrivateRoute><Subscription /></PrivateRoute>} />

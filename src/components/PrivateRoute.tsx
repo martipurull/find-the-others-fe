@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 import useAxios from '../hooks/useAxios'
-import { addUserInfoAction } from '../redux/actions/actions'
+import { fetchUserAndAddInfoAction } from '../redux/actions/actions'
 import { IInitialState } from '../types'
 
 interface IProps {
@@ -13,12 +13,13 @@ export default function PrivateRoute({ children }: IProps) {
     const isLoggedIn = useSelector((state: IInitialState) => state.user.isLoggedIn)
     const { axiosRequest } = useAxios()
 
-    const fetchUserInfo = async () => {
-        const response = await axiosRequest('/user/me', 'GET')
-        dispatch(addUserInfoAction(response.data))
-    }
+    // const fetchUserInfo = async () => {
+    //     const response = await axiosRequest('/user/me', 'GET')
+    //     dispatch(addUserInfoAction(response.data))
+    // }
 
-    if (isLoggedIn) fetchUserInfo()
+
+    if (isLoggedIn) dispatch(fetchUserAndAddInfoAction())
 
     return isLoggedIn ? children : <Navigate to='/login' />
 }
