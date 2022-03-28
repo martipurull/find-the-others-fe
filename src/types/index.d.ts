@@ -57,20 +57,35 @@ interface IUser {
 }
 
 interface IPost {
-    sender: IUser
+    sender: {
+        avatar: string
+        firstName: string
+        lastName: string
+        _id: string
+        memberOf: string[]
+    }
     isForProject: boolean
     postProject: IProject
     text: string
     image?: string
     filename?: string
-    likes: IUser[]
+    likes: string[]
     comments?: IComment[]
+    createdAt: date
+    updatedAt: date
+    noOfPostLikes: number
+    _id: string
 }
 
 export interface IComment {
-    sender: IUser
+    sender: {
+        firstName: string
+        lastName: string
+        avatar: string
+    }
     text: string
-    likes: IUser[]
+    likes: string[]
+    _id: string
 }
 
 interface IProject {

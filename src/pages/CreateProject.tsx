@@ -17,6 +17,8 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import Stack from '@mui/material/Stack'
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto'
+import IconButton from '@mui/material/IconButton'
+import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp'
 
 const connections = [
     'Oliver Hansen',
@@ -54,8 +56,8 @@ export default function CreateProject() {
 
     const handleRemoveProjectImg = () => {
         setProjectImgFile(undefined)
-        setImgPreview('')
         URL.revokeObjectURL(imgPreview)
+        setImgPreview('')
     }
 
     const handleChange = (event: SelectChangeEvent<typeof collaborators>) => {
@@ -103,19 +105,21 @@ export default function CreateProject() {
                             <Grid item xs={12} md={6}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
                                     {
-                                        projectImgFile
-                                            ? <Button variant='contained' sx={{ p: 1.25 }} component='label' color='warning' onClick={handleRemoveProjectImg}>
-                                                Remove Project Photo
-                                            </Button>
-                                            : <Button variant='contained' sx={{ p: 1.25 }} component='label'>
-                                                Add Project Photo
+                                        !projectImgFile &&
+                                        <Button variant='contained' sx={{ p: 1.25 }} component='label'>
+                                            Add Project Photo
                                             <input type="file" hidden onChange={e => handleProjectImgUpload(e)} />
-                                            </Button>
+                                        </Button>
                                     }
                                     {
                                         projectImgFile
-                                            ? <Box component='img' src={imgPreview} sx={{ ml: 2, maxWidth: '250px', objectFit: 'cover', borderRadius: '5px' }} />
-                                            : <Box><InsertPhotoIcon sx={{ fontSize: 150 }} /></Box>
+                                            ?
+                                            <Box sx={{ position: 'relative' }}>
+                                                <IconButton sx={{ position: 'absolute', left: '85%', top: '-3%' }} onClick={handleRemoveProjectImg} ><HighlightOffSharpIcon /></IconButton>
+                                                <Box component='img' src={imgPreview} sx={{ ml: 2, maxWidth: '250px', objectFit: 'cover', borderRadius: '5px' }} />
+                                            </Box>
+                                            :
+                                            <Box><InsertPhotoIcon sx={{ fontSize: 150 }} /></Box>
                                     }
                                 </Box>
                             </Grid>

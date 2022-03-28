@@ -18,10 +18,10 @@ import { useNavigate } from 'react-router'
 import GigApplication from '../components/GigApplication'
 
 const gigs = [
-    { gigName: 'A gig', instrumentRequired: 'drums', expectedHours: 4, userHasApplied: false },
-    { gigName: 'Another gig', instrumentRequired: 'bass', expectedHours: 2, userHasApplied: true },
-    { gigName: 'Yet another gig', instrumentRequired: 'rhythm guitar', expectedHours: 1, userHasApplied: false },
-    { gigName: 'Choir for rock song', instrumentRequired: 'singer', expectedHours: 2, userHasApplied: false }
+    { _id: 1, gigName: 'A gig', instrumentRequired: 'drums', expectedHours: 4, userHasApplied: false },
+    { _id: 2, gigName: 'Another gig', instrumentRequired: 'bass', expectedHours: 2, userHasApplied: true },
+    { _id: 3, gigName: 'Yet another gig', instrumentRequired: 'rhythm guitar', expectedHours: 1, userHasApplied: false },
+    { _id: 4, gigName: 'Choir for rock song', instrumentRequired: 'singer', expectedHours: 2, userHasApplied: false }
 ]
 
 
@@ -44,7 +44,7 @@ export default function Gigs() {
                         <Grid item xs={9}>
                             <List sx={{ width: '100%' }}>
                                 {gigs.map(gig => (
-                                    <Box sx={{ borderBottom: '1px solid #f5faff', mb: 2, bgcolor: 'rgba(0,0,0,0.6)' }}>
+                                    <Box key={gig._id} sx={{ borderBottom: '1px solid #f5faff', mb: 2, bgcolor: 'rgba(0,0,0,0.6)' }}>
                                         <ListItem>
                                             {/* FIND BETTER ICONS FOR INSTRUMENTS AND CREATE FUNCTION TO CHOOSE THE RIGHT ONE */}
                                             <ListItemAvatar>

@@ -1,78 +1,92 @@
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemAvatar from '@mui/material/ListItemAvatar'
-import ListItemText from '@mui/material/ListItemText'
 import Avatar from '@mui/material/Avatar'
-import MPPortrait from '../assets/MPPortrait.jpg'
 import Box from '@mui/material/Box'
-import PostImg from '../assets/postImg.svg'
 import Input from '@mui/material/Input'
-import Paper from '@mui/material/Paper'
-import WAvatar from '../assets/WAvatar.jpeg'
-import MAvatar from '../assets/MAvatar.jpeg'
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto'
-import Typography from '@mui/material/Typography'
-import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp'
-import CommentIcon from '@mui/icons-material/Comment'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemButton from '@mui/material/ListItemButton'
-import { useState } from 'react'
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react'
+import { IInitialState, IPost } from '../types'
+import { useSelector } from 'react-redux'
+import useAxios from '../hooks/useAxios'
+import IconButton from '@mui/material/IconButton'
+import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import PostList from './PostList'
+import { notifyError, notifySuccess } from '../hooks/useNotify'
 
 const ariaLabel = { 'aria-label': 'description' }
 
 export default function MusicianPostList() {
-    const [openComment, setOpenComment] = useState(false)
-    const [userLikesPost, setUserLikesPost] = useState(false)
-    const [userLikesComment, setUserLikesComment] = useState(false)
+    const { axiosRequest } = useAxios()
+    const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
+    const [newPostText, setNewPostText] = useState<string>('')
+    const [postImgFile, setPostImgFile] = useState<File>()
+    const [postImgPreview, setPostImgPreview] = useState<string>('')
+    const [posted, setPosted] = useState(false)
+    const [postError, setPostError] = useState(false)
+    const [posts, setPosts] = useState<IPost[]>([])
+
+    const handlePostImgUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        setPostImgFile(e.target.files![0])
+        const imgUrl = URL.createObjectURL(e.target.files![0])
+        setPostImgPreview(imgUrl)
+    }
+    const handleRemovePostImg = () => {
+        setPostImgFile(undefined)
+        URL.revokeObjectURL(postImgPreview)
+        setPostImgPreview('')
+    }
+
+    const handleNewPost = async (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            const dataToAxios = new FormData()
+            dataToAxios.append('text', newPostText)
+            postImgFile && dataToAxios.append('postImage', postImgFile)
+            const response = await axiosRequest('/posts', 'POST', dataToAxios)
+            if (response.status === 400 || response.status === 404 || response.status === 401) {
+                notifyError('Something went wrong!')
+            }
+
+            if (response.status === 201) {
+                notifySuccess('Posted!')
+                setNewPostText('')
+                setPostImgFile(undefined)
+                setPostImgPreview('')
+            }
+        }
+    }
+
+    const fetchPosts = async () => {
+        const response = await axiosRequest('/posts', 'GET')
+        setPosts(response.data)
+    }
+
+    useEffect(() => {
+        fetchPosts()
+    }, [posts])
 
     return (
-        <Box sx={{ width: '90%', display: 'flex', flexDirection: 'column' }}>
-            <Paper elevation={3} square sx={{ display: 'flex', py: 2, px: 1, mb: 1.5, justifyContent: 'space-around', bgcolor: 'rgba(0,0,0,1)' }}>
-                <Avatar alt='user name' src={WAvatar} sx={{ mt: 1 }} />
-                <Input multiline placeholder='Share your creative thoughts' inputProps={ariaLabel} />
-                <Avatar sx={{ mt: 1 }}><AddAPhotoIcon /></Avatar>
-            </Paper>
-            <List >
-                <Box alignItems='center' sx={{ bgcolor: 'rgba(0,0,0,0.6)', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start', p: 2 }}>
-                    <Box sx={{ display: 'flex', mb: 1 }}>
-                        <ListItemAvatar sx={{ mt: 1.05 }}>
-                            <Avatar alt='personAvatar' src={MPPortrait} />
-                        </ListItemAvatar>
-                        <ListItemText primary="Person Name" secondary='19/03/2022 at 23:12' />
+        <div>
+            <Box sx={{ width: '90%', display: 'flex', flexDirection: 'column', height: '75vh' }}>
+                <Box component='form' sx={{ bgcolor: 'rgba(0,0,0,1)', display: 'flex', flexDirection: 'column', alignItems: 'center', my: 1.5, pb: 2 }}>
+                    <ToastContainer position="top-right" newestOnTop={false} rtl={false} pauseOnFocusLoss toastStyle={{ backgroundColor: '#233243', border: 'none', color: '#f5faff', fontSize: '12px' }} />
+                    <Box sx={{ display: 'flex', py: 2, px: 1, justifyContent: 'space-around', bgcolor: 'inherit' }}>
+                        <Avatar alt='user name' src={loggedUser?.avatar} sx={{ m: 1 }} />
+                        <Input multiline placeholder='Share your creative thoughts...' inputProps={ariaLabel} value={newPostText} onChange={e => setNewPostText(e.target.value)} onKeyPress={handleNewPost} />
+                        <IconButton component='label'>
+                            <Avatar sx={{ mt: 1 }}><AddAPhotoIcon /></Avatar>
+                            <input type='file' hidden onChange={e => handlePostImgUpload(e)} />
+                        </IconButton>
                     </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <Typography>Have you heard this guy's work?</Typography>
-                    </Box>
-                    <Box
-                        component='img'
-                        sx={{ maxHeight: 150, maxWidth: 150, alignSelf: 'center' }}
-                        alt='Music Project'
-                        src={PostImg}
-                    />
-                    <ListItem sx={{ display: 'flex', justifyContent: 'space-around', mt: 3, bgcolor: 'rgba(0,0,0,1)' }}>
-                        <ListItemIcon><ListItemButton onClick={() => setUserLikesPost(!userLikesPost)}>{userLikesPost ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}</ListItemButton></ListItemIcon>
-                        <ListItemIcon><ListItemButton onClick={() => setOpenComment(!openComment)}><CommentIcon /></ListItemButton></ListItemIcon>
-                    </ListItem>
                     {
-                        openComment &&
-                        <Box sx={{ width: '100%' }}>
-                            <ListItem sx={{ display: 'flex', justifyContent: 'space-around', pt: 0.3, bgcolor: 'rgba(0,0,0,1)' }}>
-                                <Avatar alt='user name' src={WAvatar} sx={{ mt: 1, mr: 1, ml: -1 }} />
-                                <Input fullWidth multiline inputProps={ariaLabel} />
-                            </ListItem>
-                            {/* MAP THROUGH COMMENTS HERE */}
-                            <Box sx={{ mt: 1, ml: 4, display: 'flex', border: '1px solid #f5faff', p: -1, borderRadius: 4 }}>
-                                <ListItem>
-                                    <Avatar alt='user name' src={MAvatar} sx={{ mt: 1, mr: 1, ml: -1 }} />
-                                    <Typography variant='body2'>It's really good!</Typography>
-                                    <ListItemIcon sx={{ alignSelf: 'flex-end' }}><ListItemButton onClick={() => setUserLikesComment(!userLikesComment)}>{userLikesComment ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}</ListItemButton></ListItemIcon>
-                                </ListItem>
-                            </Box>
+                        postImgPreview &&
+                        <Box sx={{ position: 'relative' }}>
+                            <IconButton sx={{ position: 'absolute', left: '85%', top: '-3%' }} onClick={handleRemovePostImg} ><HighlightOffSharpIcon /></IconButton>
+                            <Box component='img' src={postImgPreview} sx={{ height: '150px', objectFit: 'cover' }} />
                         </Box>
                     }
                 </Box>
-            </List>
-        </Box>
+                <PostList posts={posts} />
+            </Box>
+        </div>
     )
 }
