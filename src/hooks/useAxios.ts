@@ -18,7 +18,7 @@ function useAxios() {
         if (error.response.status === 401 && failedRequest.url !== '/user/access/refreshToken' && failedRequest.url !== '/user/access/login') {
             await axiosRequest('/user/access/refreshToken', 'POST')
             const retryRequest = instance(failedRequest)
-            return retryRequest
+            return await retryRequest
         } else {
             return Promise.reject(error)
         }

@@ -25,6 +25,12 @@ interface IUserDetails extends IUserCredentials {
     musicianOrFan: string
 }
 
+interface IConnection {
+    _id: string
+    firstName: string
+    lastName: string
+}
+
 interface IUser {
     _id: string
     firstName: string
@@ -41,9 +47,9 @@ interface IUser {
     memberOf: IBand[]
     bandOffers: string[]
     projects: IProject[]
-    connections: string[]
-    connectionsSent: string[]
-    connectionsReceived: string[]
+    connections: IConnection[]
+    connectionsSent: IConnection[]
+    connectionsReceived: IConnection[]
     applications: IApplication[]
     followedBands: string[]
     createdAt: date
