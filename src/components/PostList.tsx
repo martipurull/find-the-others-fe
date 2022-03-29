@@ -4,7 +4,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import CommentIcon from '@mui/icons-material/Comment'
 import WAvatar from '../assets/WAvatar.jpeg'
 import MAvatar from '../assets/MAvatar.jpeg'
-import { useState, KeyboardEvent } from 'react'
+import { useState, KeyboardEvent, SetStateAction, Dispatch } from 'react'
 import useAxios from '../hooks/useAxios'
 import { IPost } from '../types'
 import { format, parseISO } from 'date-fns'
@@ -16,9 +16,10 @@ const ariaLabel = { 'aria-label': 'description' }
 
 interface IProps {
     posts: IPost[]
+    setterFunction: Dispatch<SetStateAction<IPost[]>>
 }
 
-export default function PostList({ posts }: IProps) {
+export default function PostList({ posts, setterFunction }: IProps) {
     const { axiosRequest } = useAxios()
     const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
     const [openComment, setOpenComment] = useState<string>('')
@@ -27,6 +28,17 @@ export default function PostList({ posts }: IProps) {
 
     const handleLikePost = async (postId: string) => {
         await axiosRequest('/posts/likePost', 'POST', { postId })
+        let likedPost = posts.find(({ _id }) => _id === postId)
+        if (!likedPost) return notifyError('Post cannot be found')
+        if (likedPost.likes.includes(loggedUser!._id)) {
+            const newLikes = likedPost.likes.filter(_id => _id !== loggedUser!._id)
+            likedPost.likes = newLikes
+            setterFunction([...posts, likedPost])
+        } else {
+            const newLikes = [...likedPost.likes, loggedUser!._id]
+            likedPost.likes = newLikes
+            setterFunction([...posts, likedPost])
+        }
     }
 
     const handleLikeComment = async (postId: string, commentId: string) => {

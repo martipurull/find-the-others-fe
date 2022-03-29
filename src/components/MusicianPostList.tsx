@@ -60,15 +60,15 @@ export default function MusicianPostList() {
 
     useEffect(() => {
         fetchPosts()
-    }, [posts])
-
-    useEffect(() => {
-        let fetchThemPosts = true
-        fetchPosts()
-        return () => {
-            fetchThemPosts = false
-        }
     }, [])
+
+    // useEffect(() => {
+    //     let fetchThemPosts = true
+    //     fetchPosts()
+    //     return () => {
+    //         fetchThemPosts = false
+    //     }
+    // }, [])
 
     return (
         <div>
@@ -91,7 +91,7 @@ export default function MusicianPostList() {
                         </Box>
                     }
                 </Box>
-                <PostList posts={posts} />
+                <PostList posts={posts} setterFunction={setPosts} />
             </Box>
         </div>
     )
