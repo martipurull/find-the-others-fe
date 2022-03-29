@@ -9,6 +9,7 @@ import Box from '@mui/material/Box'
 import Backdrop from '@mui/material/Backdrop'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
+import { IAppliedGig } from '../types'
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -21,62 +22,52 @@ const modalStyle = {
     p: 4,
 }
 
-export default function ApplicationsSent() {
+interface IProps {
+    applications: IAppliedGig[]
+}
+
+export default function ApplicationsSent({ applications }: IProps) {
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
 
     return (
         <List dense sx={{ width: '100%' }}>
-            {/* MAP THROUGH APPLICATIONS HERE */}
-            <ListItem>
-                <Grid container>
-                    <ListItemButton onClick={handleOpen}>
-                        <Grid item xs={12} md={6}>
-                            <ListItemText primary='Application Title' secondary='Bands: Band One, Band Two' />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <ListItemText primary='Instrument: guitar' secondary='Genre: rock' />
-                        </Grid>
-                    </ListItemButton>
-                    <Modal
-                        aria-labelledby="transition-modal-title"
-                        aria-describedby="transition-modal-description"
-                        open={open}
-                        onClose={handleClose}
-                        closeAfterTransition
-                        BackdropComponent={Backdrop}
-                        BackdropProps={{ timeout: 500 }}
-                    >
-                        <Box sx={modalStyle}>
-                            <Typography id="transition-modal-title" variant="h6" component="h2">
-                                Gig Description
+            {
+                applications.map(application => (
+                    <ListItem key={application._id}>
+                        <Grid container>
+                            <ListItemButton onClick={handleOpen}>
+                                <Grid item xs={12} md={6}>
+                                    <ListItemText primary={application.title} secondary={`Project: ${application.project.title}`} />
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <ListItemText primary={`Instrument: ${application.instrument}`} secondary={`Genre: ${application.genre}`} />
+                                </Grid>
+                            </ListItemButton>
+                            <Modal
+                                aria-labelledby="transition-modal-title"
+                                aria-describedby="transition-modal-description"
+                                open={open}
+                                onClose={handleClose}
+                                closeAfterTransition
+                                BackdropComponent={Backdrop}
+                                BackdropProps={{ timeout: 500 }}
+                            >
+                                <Box sx={modalStyle}>
+                                    <Typography id="transition-modal-title" variant="h6" component="h2">
+                                        Gig Description
                             </Typography>
-                            <Typography id="transition-modal-description" variant="body1">
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde aliquid repellat ut nam obcaecati id ab eos velit, quo est soluta iste placeat dolores. Nobis deleniti totam sapiente eveniet neque. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates ut adipisci ipsa animi excepturi iure accusantium eum vel placeat expedita consequuntur qui cum repellendus facere nisi repudiandae unde, optio numquam.
-                            </Typography>
-                        </Box>
-                    </Modal>
-                    <Grid item xs={12} md={2}>
-                        <Button size='small' variant='outlined' color='error' sx={{ mt: 0.5 }}>Withdraw Application</Button>
-                    </Grid>
-                </Grid>
-            </ListItem>
-            <ListItem>
-                <Grid container>
-                    <ListItemButton onClick={handleOpen}>
-                        <Grid item xs={12} md={6}>
-                            <ListItemText primary='Application Title' secondary='Bands: Band One, Band Two, Band Three' />
+                                    <Typography id="transition-modal-description" variant="body1">{application.description}</Typography>
+                                </Box>
+                            </Modal>
+                            <Grid item xs={12} md={2}>
+                                <Button size='small' variant='outlined' color='error' sx={{ mt: 0.5 }}>Withdraw Application</Button>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12} md={4}>
-                            <ListItemText primary='Instrument: keys' secondary='Genre: alternative' />
-                        </Grid>
-                    </ListItemButton>
-                    <Grid item xs={12} md={2}>
-                        <Button size='small' variant='outlined' color='error' sx={{ mt: 0.5 }}>Withdraw Application</Button>
-                    </Grid>
-                </Grid>
-            </ListItem>
+                    </ListItem>
+                ))
+            }
         </List>
     )
 }

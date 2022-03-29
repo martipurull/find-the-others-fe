@@ -23,8 +23,8 @@ export default function Register() {
     const [userError, setUserError] = useState(false)
     const [passwordError, setPasswordError] = useState(false)
     const [badRequestError, setBadRequestError] = useState(false)
-    const [emailTakenError, setEmailTakenError] = useState(false)
-    const [emailAvailable, setEmailAvailable] = useState(false)
+    const [usernameTaken, setUsernameTakenError] = useState(false)
+    const [usernameAvailable, setUsernameAvailable] = useState(false)
     const [avatarFile, setAvatarFile] = useState<File>()
     const [avatarPreview, setAvatarPreview] = useState<string>('')
     const [userDetails, setUserDetails] = useState<IUserDetails>({
@@ -44,23 +44,26 @@ export default function Register() {
         password: false,
         confirmPassword: false
     })
-    const [debouncedEmail] = useDebounce(userDetails.email, 1000)
 
-    const handleCheckEmail = async (emailDebounced: string) => {
-        const response = await axiosRequest('/user/access/check-email', 'POST', { email: emailDebounced })
+    const [debouncedUsername] = useDebounce(userDetails.username, 1000)
+
+    const handleCheckUsername = async (usernameDebounced: string) => {
+        const response = await axiosRequest('/user/access/check-username', 'POST', { username: usernameDebounced })
         if (response.status === 400) {
-            setEmailAvailable(false)
-            setEmailTakenError(true)
+            setUsernameAvailable(false)
+            setUsernameTakenError(true)
         }
         if (response.status === 200) {
-            setEmailTakenError(false)
-            setEmailAvailable(true)
+            setUsernameTakenError(false)
+            setUsernameAvailable(true)
         }
     }
 
     useEffect(() => {
-        handleCheckEmail(debouncedEmail)
-    }, [debouncedEmail])
+        handleCheckUsername(debouncedUsername)
+    }, [debouncedUsername])
+
+
 
     const handleInput = (field: string, value: string) => {
         setUserDetails(details => ({
@@ -119,8 +122,8 @@ export default function Register() {
                     {userError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>Please make sure you have entered correct information for all required fields.</Alert>}
                     {passwordError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>Please make sure your passwords match!</Alert>}
                     {badRequestError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>Something went wrong with your request. Please try again.</Alert>}
-                    {debouncedEmail && emailTakenError && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>This email is already taken. Please use a new one.</Alert>}
-                    {debouncedEmail && emailAvailable && <Alert sx={{ mb: 5 }} variant='outlined' severity='success'>Great, this email is available!</Alert>}
+                    {debouncedUsername && usernameTaken && <Alert sx={{ mb: 5 }} variant='outlined' severity='error'>This username is already taken. Please use a new one.</Alert>}
+                    {debouncedUsername && usernameAvailable && <Alert sx={{ mb: 5 }} variant='outlined' severity='success'>Great, this username is available!</Alert>}
 
                     <Box component='form' noValidate autoComplete='off' onSubmit={handleSubmit}>
                         <Grid container spacing={3} style={{ marginBottom: '3rem' }}>

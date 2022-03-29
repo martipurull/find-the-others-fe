@@ -6,26 +6,30 @@ import ListItemText from '@mui/material/ListItemText'
 import Avatar from '@mui/material/Avatar'
 import projectAvatar from '../assets/projectImg2.svg'
 
-export default function YourProjects() {
+interface IProps {
+    projects: [{
+        title: string
+        _id: string
+        projectImage?: string
+        members: [{ firstName: string, lastName: string }]
+    }]
+}
+
+export default function YourProjects({ projects }: IProps) {
     return (
         <List dense sx={{ width: '100%' }}>
-            {/* MAP THROUGH PROJECT MEMBERS HERE */}
-            <ListItem>
-                <ListItemButton>
-                    <ListItemAvatar>
-                        <Avatar src={projectAvatar} />
-                    </ListItemAvatar>
-                    <ListItemText primary='Project Title' secondary='with Member One, Member Two, Member Three, Member Four, Member Five, Member Six' />
-                </ListItemButton>
-            </ListItem>
-            <ListItem>
-                <ListItemButton>
-                    <ListItemAvatar>
-                        <Avatar src={projectAvatar} />
-                    </ListItemAvatar>
-                    <ListItemText primary='Project Title' secondary='with Member One, Member Two, Member Three, Member Four' />
-                </ListItemButton>
-            </ListItem>
+            {
+                projects.map(project => (
+                    <ListItem key={project._id}>
+                        <ListItemButton>
+                            <ListItemAvatar>
+                                <Avatar src={project.projectImage ? project.projectImage : projectAvatar} />
+                            </ListItemAvatar>
+                            <ListItemText primary={project.title} secondary={`with ${project.members.map(member => `${member.firstName} ${member.lastName}, `)}`} />
+                        </ListItemButton>
+                    </ListItem>
+                ))
+            }
         </List>
     )
 }

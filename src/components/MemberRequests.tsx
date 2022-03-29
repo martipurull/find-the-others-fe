@@ -8,33 +8,30 @@ import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import WAvatar from '../assets/WAvatar.jpeg'
 import MAvatar from '../assets/MAvatar.jpeg'
+import { IConnection } from '../types'
 
-export default function MemberRequests() {
+interface IProps {
+    requests: IConnection[]
+}
+
+export default function MemberRequests({ requests }: IProps) {
     return (
         <List dense sx={{ width: '100%' }}>
-            {/* MAP THROUGH PROJECT MEMBERS HERE */}
-            <ListItem>
-                <Box sx={{ width: '65%' }}>
-                    <ListItemButton>
-                        <ListItemAvatar>
-                            <Avatar src={WAvatar} />
-                        </ListItemAvatar>
-                        <ListItemText primary='Member Name' secondary='Band One, Band Two, Band Three' />
-                    </ListItemButton>
-                </Box>
-                <Button size='small' variant='outlined' color='success'>Accept Request</Button>
-            </ListItem>
-            <ListItem>
-                <Box sx={{ width: '65%' }}>
-                    <ListItemButton>
-                        <ListItemAvatar>
-                            <Avatar src={MAvatar} />
-                        </ListItemAvatar>
-                        <ListItemText primary='Member Name' secondary='Band One, Band Two' />
-                    </ListItemButton>
-                </Box>
-                <Button size='small' variant='outlined' color='success'>Accept Request</Button>
-            </ListItem>
+            {
+                requests.map(request => (
+                    <ListItem key={request._id}>
+                        <Box sx={{ width: '65%' }}>
+                            <ListItemButton>
+                                <ListItemAvatar>
+                                    <Avatar src={request.avatar} />
+                                </ListItemAvatar>
+                                <ListItemText primary={`${request.firstName} ${request.lastName}`} secondary={`Connections: ${request.connections.length}`} />
+                            </ListItemButton>
+                        </Box>
+                        <Button size='small' variant='outlined' color='success'>Accept Request</Button>
+                    </ListItem>
+                ))
+            }
         </List>
     )
 }

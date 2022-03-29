@@ -25,10 +25,20 @@ interface IUserDetails extends IUserCredentials {
     musicianOrFan: string
 }
 
+interface IEditDetails {
+    firstName: string
+    lastName: string
+    username: string
+    email: string
+    musicianOrFan: string
+}
+
 interface IConnection {
     _id: string
     firstName: string
     lastName: string
+    avatar: string
+    connections: string[]
 }
 
 interface IUser {
@@ -44,13 +54,19 @@ interface IUser {
     googleId: string
     avatar: string
     filename: string
-    memberOf: IBand[]
+    memberOf: [{ name: string, avatar: string, followedBy: string[], _id: string }]
     bandOffers: string[]
-    projects: IProject[]
+    projects: [
+        {
+            _id: string,
+            title: string,
+            projectImage?: string
+            members: [{ firstName: string, lastName: string }]
+        }]
     connections: IConnection[]
     connectionsSent: IConnection[]
     connectionsReceived: IConnection[]
-    applications: IApplication[]
+    applications: IAppliedGig[]
     followedBands: string[]
     createdAt: date
     updatedAt: date
@@ -132,6 +148,18 @@ interface IGig {
     specifics: string
     applications: IApplication[]
     isGigAvailable: boolean
+}
+
+interface IAppliedGig {
+    _id: string
+    title: string
+    project: {
+        _id: string
+        title: string
+    }
+    description: string
+    instrument: string
+    genre: string
 }
 
 interface INote {

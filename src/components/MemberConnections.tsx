@@ -6,27 +6,26 @@ import ListItemText from '@mui/material/ListItemText'
 import Avatar from '@mui/material/Avatar'
 import WAvatar from '../assets/WAvatar.jpeg'
 import MAvatar from '../assets/MAvatar.jpeg'
+import { IConnection } from '../types'
 
-export default function MemberConnections() {
+interface IProps {
+    connections: IConnection[]
+}
+
+export default function MemberConnections({ connections }: IProps) {
     return (
         <List dense sx={{ width: '100%' }}>
-            {/* MAP THROUGH PROJECT MEMBERS HERE */}
-            <ListItem>
-                <ListItemButton>
-                    <ListItemAvatar>
-                        <Avatar src={WAvatar} />
-                    </ListItemAvatar>
-                    <ListItemText primary='Member Name' secondary='Connections:  50' />
-                </ListItemButton>
-            </ListItem>
-            <ListItem>
-                <ListItemButton>
-                    <ListItemAvatar>
-                        <Avatar src={MAvatar} />
-                    </ListItemAvatar>
-                    <ListItemText primary='Member Name' secondary='Connections: 341' />
-                </ListItemButton>
-            </ListItem>
+            {
+                connections.map(connection => (
+                    <ListItem key={connection._id}>
+                        <ListItemButton>
+                            <ListItemAvatar>
+                                <Avatar src={connection.avatar} />
+                            </ListItemAvatar>
+                            <ListItemText primary={`${connection.firstName} ${connection.lastName}`} secondary={`Connections: ${connection.connections.length}`} />
+                        </ListItemButton>
+                    </ListItem>
+                ))}
         </List>
     )
 }
