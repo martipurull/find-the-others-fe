@@ -39,7 +39,7 @@ export default function PostList({ posts }: IProps) {
             if (response.status === 400 || response.status === 404 || response.status === 401) {
                 notifyError('Something went wrong!!')
             }
-            if (response.status === 201) {
+            if (response.status === 200) {
                 notifySuccess('Comment posted')
                 setCommentText('')
             }
