@@ -17,32 +17,60 @@ const ariaLabel = { 'aria-label': 'description' }
 interface IProps {
     posts: IPost[]
     setterFunction: Dispatch<SetStateAction<IPost[]>>
+    setUserLikes: Dispatch<SetStateAction<boolean>>
+    userLikes: boolean
 }
 
-export default function PostList({ posts, setterFunction }: IProps) {
+export default function PostList({ posts, setterFunction, userLikes, setUserLikes }: IProps) {
     const { axiosRequest } = useAxios()
     const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
     const [openComment, setOpenComment] = useState<string>('')
     const [commentText, setCommentText] = useState<string>('')
 
 
+
     const handleLikePost = async (postId: string) => {
         await axiosRequest('/posts/likePost', 'POST', { postId })
-        let likedPost = posts.find(({ _id }) => _id === postId)
-        if (!likedPost) return notifyError('Post cannot be found')
-        if (likedPost.likes.includes(loggedUser!._id)) {
-            const newLikes = likedPost.likes.filter(_id => _id !== loggedUser!._id)
-            likedPost.likes = newLikes
-            setterFunction([...posts, likedPost])
-        } else {
-            const newLikes = [...likedPost.likes, loggedUser!._id]
-            likedPost.likes = newLikes
-            setterFunction([...posts, likedPost])
-        }
+        setUserLikes(!userLikes)
+        // let likedPost = posts.find(({ _id }) => _id === postId)
+        // if (!likedPost) return notifyError('Post cannot be found')
+        // if (likedPost.likes.includes(loggedUser!._id)) {
+        //     const newLikes = likedPost.likes.filter(_id => _id !== loggedUser!._id)
+        //     likedPost.likes = newLikes
+        //     setterFunction([...posts, likedPost])
+        // } else {
+        //     const newLikes = [...likedPost.likes, loggedUser!._id]
+        //     likedPost.likes = newLikes
+        //     setterFunction([...posts, likedPost])
+        // }
     }
 
     const handleLikeComment = async (postId: string, commentId: string) => {
         await axiosRequest('/posts/comments/likeComment', 'POST', { postId, commentId })
+        setUserLikes(!userLikes)
+        // let postWithCommentToLike = posts.find(({ _id }) => _id === postId)
+        // if (!postWithCommentToLike) return notifyError('Post cannot be found')
+        // if (postWithCommentToLike.comments && postWithCommentToLike.comments.length > 0) {
+        //     let commentToLike = postWithCommentToLike.comments.find(({ _id }) => _id === commentId)
+        //     if (!commentToLike) return notifyError('Comment cannot be found.')
+        //     if (commentToLike.likes.includes(loggedUser!._id)) {
+        //         const newCommentLikes = commentToLike.likes.filter(_id => _id !== loggedUser!._id)
+        //         commentToLike.likes = newCommentLikes
+        //         let commentsWithoutCommentToLike = postWithCommentToLike.comments.filter(({ _id }) => _id !== commentId)
+        //         const newComments = [...commentsWithoutCommentToLike, commentToLike]
+        //         postWithCommentToLike.comments = newComments
+        //         setterFunction([...posts, postWithCommentToLike])
+        //     } else {
+        //         const newCommentLikes = [...commentToLike.likes, loggedUser!._id]
+        //         commentToLike.likes = newCommentLikes
+        //         let commentsWithoutCommentToLike = postWithCommentToLike.comments.filter(({ _id }) => _id !== commentId)
+        //         const newComments = [...commentsWithoutCommentToLike, commentToLike]
+        //         postWithCommentToLike.comments = newComments
+        //         setterFunction([...posts, postWithCommentToLike])
+        //     }
+        // } else {
+        //     return notifyError('This post had no comments.')
+        // }
     }
 
     const handleNewComment = async (e: KeyboardEvent, postId: string) => {

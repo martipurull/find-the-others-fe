@@ -22,6 +22,7 @@ export default function MusicianPostList() {
     const [postImgFile, setPostImgFile] = useState<File>()
     const [postImgPreview, setPostImgPreview] = useState<string>('')
     const [posts, setPosts] = useState<IPost[]>([])
+    const [userLikes, setUserLikes] = useState(false)
 
     const handlePostImgUpload = (e: ChangeEvent<HTMLInputElement>) => {
         setPostImgFile(e.target.files![0])
@@ -62,13 +63,13 @@ export default function MusicianPostList() {
         fetchPosts()
     }, [])
 
-    // useEffect(() => {
-    //     let fetchThemPosts = true
-    //     fetchPosts()
-    //     return () => {
-    //         fetchThemPosts = false
-    //     }
-    // }, [])
+    useEffect(() => {
+        let fetchThemPosts = true
+        fetchPosts()
+        return () => {
+            fetchThemPosts = false
+        }
+    }, [userLikes])
 
     return (
         <div>
@@ -91,7 +92,7 @@ export default function MusicianPostList() {
                         </Box>
                     }
                 </Box>
-                <PostList posts={posts} setterFunction={setPosts} />
+                <PostList posts={posts} setterFunction={setPosts} userLikes={userLikes} setUserLikes={setUserLikes} />
             </Box>
         </div>
     )

@@ -1,8 +1,15 @@
 import axios, { AxiosError, Method } from 'axios'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { userLogoutAction } from '../redux/actions/actions'
 
 const isAxiosError = (e: Error): e is AxiosError => e.hasOwnProperty('isAxiosError')
 
+
+
 function useAxios() {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const { REACT_APP_BE_URL: baseURL } = process.env
     const instance = axios.create()
 
@@ -10,16 +17,25 @@ function useAxios() {
         try {
             return await instance({ baseURL, url, method, data, withCredentials: true })
         } catch (error: any) {
+            console.log({ log: 'useAxios CATCH', error })
             return error.toJSON()
         }
     }
-    instance.interceptors.response.use(response => response, async error => {
+    axios.interceptors.response.use(response => response, async error => {
         const failedRequest = error.config
-        if (error.response.status === 401 && failedRequest.url !== '/user/access/refreshToken' && failedRequest.url !== '/user/access/login') {
-            await axiosRequest('/user/access/refreshToken', 'POST')
-            const retryRequest = instance(failedRequest)
-            return await retryRequest
+        if (failedRequest.url === 'users/login') return Promise.reject(failedRequest)
+        if (error.response.status === 401 && failedRequest.url !== '/user/access/refresh-token') {
+            console.log({ log: 'useAxios IF', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
+            await axiosRequest('/user/access/refresh-token', 'POST')
+            const retryRequest = axios(failedRequest)
+            return retryRequest
+        } else if (error.response.status === 400 && failedRequest.url === 'user/access/refresh-token') {
+            console.log({ log: 'useAxios ELSE IF', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
+            dispatch(userLogoutAction())
+            navigate('/login')
+            return Promise.reject(error)
         } else {
+            console.log({ log: 'useAxios ELSE', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
             return Promise.reject(error)
         }
     })
