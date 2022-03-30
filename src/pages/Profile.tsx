@@ -28,6 +28,7 @@ import Radio from '@mui/material/Radio'
 import Alert from '@mui/material/Alert'
 import { notifyError, notifySuccess } from '../hooks/useNotify'
 import { addUserInfoAction, fetchUserAndAddInfoAction } from '../redux/actions/actions'
+import { ToastContainer } from 'react-toastify'
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -129,7 +130,6 @@ export default function MusicianProfile() {
         dataToAxios.append('musicianOrFan', editDetails.musicianOrFan)
         avatarFile && dataToAxios.append('userAvatar', avatarFile)
 
-
         const response = await axiosRequest('/user/me', 'PUT', dataToAxios)
         console.log(response);
         if (response.status === 400) setBadRequestError(true)
@@ -139,7 +139,6 @@ export default function MusicianProfile() {
             dispatch(addUserInfoAction(response.data))
         } else {
             console.log('profile update fail');
-
         }
 
     }
@@ -151,9 +150,12 @@ export default function MusicianProfile() {
         if (!confirmNewPassword) setPasswordFieldError(errors => ({ ...errors, confirmNewPassword: true }))
         if (!newPassword || !confirmNewPassword || newPassword !== confirmNewPassword) setPasswordError(true)
 
-        const response = await axiosRequest('/user/me/access-password', 'PUT', { password: newPassword })
+        const response = await axiosRequest('/user/me/change-password', 'PUT', { password: newPassword })
         if (response.status === 400 || response.status === 404) notifyError('Password could not be updated.')
-        if (response.status === 200) notifySuccess('Password successfully updated!')
+        if (response.status === 200) {
+            handleClose()
+            notifySuccess('Password successfully updated!')
+        }
     }
 
     const handleAvatarUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -164,6 +166,7 @@ export default function MusicianProfile() {
 
     return (
         <Container maxWidth='lg' sx={{ minHeight: '75vh', minWidth: '100vw', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
+            <ToastContainer />
             <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
                 <Grid item xs={12} md={10} style={{ textAlign: 'center' }}>
                     <Typography component='h1' variant='h2' sx={{ mb: 8, mt: 10 }}>Your profile</Typography>
@@ -218,8 +221,8 @@ export default function MusicianProfile() {
                                         <TextField label='New Password' variant='standard' required type='password' InputLabelProps={{ style: { color: '#F5F6F7' } }} onChange={e => setNewPassword(e.target.value)} error={passwordFieldError.newPassword} />
                                         <TextField label='Confirm New Password' variant='standard' required type='password' InputLabelProps={{ style: { color: '#F5F6F7' } }} onChange={e => setConfirmNewPassword(e.target.value)} error={passwordFieldError.confirmNewPassword} />
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-                                            <Button color='success' variant='outlined' onClick={handleClose}>Change Password</Button>
-                                            <Button color='warning' variant='outlined' type='submit' onClick={handlePasswordChange}>Cancel</Button>
+                                            <Button color='success' variant='outlined' onClick={handlePasswordChange}>Change Password</Button>
+                                            <Button color='warning' variant='outlined' type='submit' onClick={handleClose}>Cancel</Button>
                                         </Box>
                                     </Box>
                                 </Modal>
