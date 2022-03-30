@@ -17,10 +17,10 @@ export const userLoginAction = () => ({
     type: ACTIONS.USER_LOGIN
 })
 
-// export const addUserInfoAction = (userInfo: IUser) => ({
-//     type: ACTIONS.ADD_USER_INFO_TO_CURRENT_USER,
-//     payload: userInfo
-// })
+export const addUserInfoAction = (userInfo: IUser) => ({
+    type: ACTIONS.ADD_USER_INFO_TO_CURRENT_USER,
+    payload: userInfo
+})
 
 export const fetchUserAndAddInfoAction = () => async (dispatch: ThunkDispatch<Action, any, any>) => {
     const response = await axios.get(`${baseURL}/user/me`, { withCredentials: true })

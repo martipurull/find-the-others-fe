@@ -9,7 +9,7 @@ import Avatar from '@mui/material/Avatar'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import KeyIcon from '@mui/icons-material/Key'
 import Modal from '@mui/material/Modal'
-import { FormEvent, useEffect, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import Backdrop from '@mui/material/Backdrop'
 import MemberRequests from '../components/MemberRequests'
 import MemberConnections from '../components/MemberConnections'
@@ -27,7 +27,7 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Radio from '@mui/material/Radio'
 import Alert from '@mui/material/Alert'
 import { notifyError, notifySuccess } from '../hooks/useNotify'
-import { fetchUserAndAddInfoAction } from '../redux/actions/actions'
+import { addUserInfoAction, fetchUserAndAddInfoAction } from '../redux/actions/actions'
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -129,16 +129,19 @@ export default function MusicianProfile() {
         dataToAxios.append('musicianOrFan', editDetails.musicianOrFan)
         avatarFile && dataToAxios.append('userAvatar', avatarFile)
 
+
         const response = await axiosRequest('/user/me', 'PUT', dataToAxios)
-        if (response.status === 400) {
-            setBadRequestError(true)
-            notifyError('Something went wrong!')
-        }
-        if (response.status === 404) notifyError('User not found!')
+        console.log(response);
+        if (response.status === 400) setBadRequestError(true)
         if (response.status === 200) {
+            console.log('profile update success');
             notifySuccess('Profile successfully updated!')
-            dispatch(fetchUserAndAddInfoAction())
+            dispatch(addUserInfoAction(response.data))
+        } else {
+            console.log('profile update fail');
+
         }
+
     }
 
     const handlePasswordChange = async () => {
@@ -151,6 +154,12 @@ export default function MusicianProfile() {
         const response = await axiosRequest('/user/me/access-password', 'PUT', { password: newPassword })
         if (response.status === 400 || response.status === 404) notifyError('Password could not be updated.')
         if (response.status === 200) notifySuccess('Password successfully updated!')
+    }
+
+    const handleAvatarUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        setAvatarFile(e.target.files![0])
+        const imgUrl = URL.createObjectURL(e.target.files![0])
+        setAvatarPreview(imgUrl)
     }
 
     return (
@@ -216,7 +225,16 @@ export default function MusicianProfile() {
                                 </Modal>
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <Button fullWidth variant='outlined' sx={{ p: 1, mt: 1 }}>Change Avatar <Avatar sx={{ ml: 2 }}>{loggedUser?.avatar ? <Box component='img' sx={{ maxHeight: '45px', objectFit: 'cover' }} src={loggedUser.avatar} /> : <PersonOutlineIcon />}</Avatar></Button>
+                                <Button fullWidth variant='outlined' sx={{ p: 1, mt: 1 }} component='label'>
+                                    Change Avatar
+                                     {
+                                        avatarFile ?
+                                            <Avatar sx={{ ml: 2 }}><Box component='img' sx={{ maxHeight: '50px', objectFit: 'cover' }} src={avatarPreview} /></Avatar>
+                                            :
+                                            <Avatar sx={{ ml: 2 }}>{loggedUser?.avatar ? <Box component='img' sx={{ maxHeight: '50px', objectFit: 'cover' }} src={loggedUser.avatar} /> : <PersonOutlineIcon />}</Avatar>
+                                    }
+                                    <input type='file' hidden onChange={e => handleAvatarUpload(e)}></input>
+                                </Button>
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <Typography id="transition-modal-title" variant="h6" component="h2" sx={{ mt: 2 }}>Your Connections</Typography>
