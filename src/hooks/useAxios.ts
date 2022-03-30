@@ -28,7 +28,6 @@ function useAxios() {
             console.log({ log: 'useAxios IF', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
             await axiosRequest('/user/access/refresh-token', 'POST')
             const retryRequest = axios(failedRequest)
-            console.log(retryRequest)
             return retryRequest
         } else if (error.response.status === 400 && failedRequest.url === 'user/access/refresh-token') {
             console.log({ log: 'useAxios ELSE IF', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })

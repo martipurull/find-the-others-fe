@@ -33,7 +33,7 @@ interface IEditDetails {
     musicianOrFan: string
 }
 
-interface IConnection {
+interface IMiniUser {
     _id: string
     firstName: string
     lastName: string
@@ -56,13 +56,7 @@ interface IUser {
     filename: string
     memberOf: [{ name: string, avatar: string, followedBy: string[], _id: string }]
     bandOffers: string[]
-    projects: [
-        {
-            _id: string,
-            title: string,
-            projectImage?: string
-            members: [{ firstName: string, lastName: string }]
-        }]
+    projects: IMiniProject[]
     connections: IConnection[]
     connectionsSent: IConnection[]
     connectionsReceived: IConnection[]
@@ -126,6 +120,14 @@ interface IProject {
     isActive: boolean
 }
 
+interface IMiniProject {
+    _id: string,
+    title: string,
+    projectImage?: string
+    members: [{ firstName: string, lastName: string }]
+    bands: IMiniBand[]
+}
+
 interface ITask {
     status: string
     musicians: IUser[]
@@ -138,15 +140,15 @@ interface ITask {
 
 interface IGig {
     title: string
-    postedBy: IUser
-    project: IProject
-    bands: IBand[]
+    project?: IMiniProject
+    bands?: IMiniBand[]
     description: string
     genre: string
     hours: number
     instrument: string
-    specifics: string
-    applications: IApplication[]
+    otherInstrument?: string
+    specifics?: string
+    applications?: IApplication[]
     isGigAvailable: boolean
 }
 
@@ -168,7 +170,7 @@ interface INote {
 }
 
 interface IApplication {
-    applicant: IUser
+    applicantId: IMiniUser
     submission: {
         audioFile: string
         filename: string
@@ -189,6 +191,13 @@ interface IBand {
     avatar: string
     filename: string
     followedBy: IUser[]
+}
+
+interface IMiniBand {
+    name: string
+    avatar: string
+    followedBy: string[]
+    _id: string
 }
 
 interface ITrack {

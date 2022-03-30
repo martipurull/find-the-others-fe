@@ -6,10 +6,10 @@ import ListItemText from '@mui/material/ListItemText'
 import Avatar from '@mui/material/Avatar'
 import WAvatar from '../assets/WAvatar.jpeg'
 import MAvatar from '../assets/MAvatar.jpeg'
-import { IConnection } from '../types'
+import { IMiniUser } from '../types'
 
 interface IProps {
-    connections: IConnection[]
+    connections: IMiniUser[]
 }
 
 export default function MemberConnections({ connections }: IProps) {

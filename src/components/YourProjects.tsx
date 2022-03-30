@@ -5,14 +5,10 @@ import ListItemAvatar from '@mui/material/ListItemAvatar'
 import ListItemText from '@mui/material/ListItemText'
 import Avatar from '@mui/material/Avatar'
 import projectAvatar from '../assets/projectImg2.svg'
+import { IMiniProject } from '../types'
 
 interface IProps {
-    projects: [{
-        title: string
-        _id: string
-        projectImage?: string
-        members: [{ firstName: string, lastName: string }]
-    }]
+    projects: IMiniProject[]
 }
 
 export default function YourProjects({ projects }: IProps) {
@@ -25,7 +21,7 @@ export default function YourProjects({ projects }: IProps) {
                             <ListItemAvatar>
                                 <Avatar src={project.projectImage ? project.projectImage : projectAvatar} />
                             </ListItemAvatar>
-                            <ListItemText primary={project.title} secondary={`with ${project.members.map(member => `${member.firstName} ${member.lastName}, `)}`} />
+                            <ListItemText primary={project.title} secondary={`with ${project.members.map(member => `${member.firstName} ${member.lastName} from ${project.bands}.`)}`} />
                         </ListItemButton>
                     </ListItem>
                 ))

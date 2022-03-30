@@ -8,10 +8,10 @@ import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import WAvatar from '../assets/WAvatar.jpeg'
 import MAvatar from '../assets/MAvatar.jpeg'
-import { IConnection } from '../types'
+import { IMiniUser } from '../types'
 
 interface IProps {
-    requests: IConnection[]
+    requests: IMiniUser[]
 }
 
 export default function MemberRequests({ requests }: IProps) {
