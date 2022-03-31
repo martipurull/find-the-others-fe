@@ -38,7 +38,7 @@ interface IMiniUser {
     firstName: string
     lastName: string
     avatar: string
-    connections: string[]
+    connections?: string[]
 }
 
 interface IUser {
@@ -189,18 +189,19 @@ interface IApplication {
 }
 
 interface IBand {
+    _id: string
     name: string
     bandAdmins: IUser[]
-    members: IUser[]
-    invitationsSent: IUser[]
-    readyTracks: ITrack[]
-    releasedTracks: ITrack[]
-    projects: IProject[]
+    members: IMiniUser[]
+    invitationsSent?: IMiniUser[]
+    readyTracks?: ITrack[]
+    releasedTracks?: ITrack[]
+    projects?: IMiniProject[]
     blurb: string
     bio: string
     avatar: string
     filename: string
-    followedBy: IUser[]
+    followedBy?: string[]
     noOfFollowers: number
 }
 

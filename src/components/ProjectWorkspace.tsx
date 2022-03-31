@@ -8,12 +8,14 @@ import MusicPlayer from './MusicPlayer'
 import Button from '@mui/material/Button'
 import CreateTaskModal from './CreateTaskModal'
 import AddTrackToDate from './AddTrackToDate'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Modal from '@mui/material/Modal'
 import Backdrop from '@mui/material/Backdrop'
 import TaskList from './TaskList'
 import { ITask } from './TaskList'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
+import { IProject } from '../types'
+import useAxios from '../hooks/useAxios'
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -33,18 +35,22 @@ const fakeTasks = [
     { id: '4d', status: 'todo', title: 'Record live drums once basic instrumentation is done', description: 'Book studio time, have two people at least to set up mics, etc.' }
 ]
 
-export default function ProjectWorkspace() {
+interface IProps {
+    project: IProject
+}
+
+export default function ProjectWorkspace({ project }: IProps) {
+    const { axiosRequest } = useAxios()
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
 
-    const [toDoTasks, setToDoTasks] = useState<ITask[]>(fakeTasks.filter(task => task.status === 'todo'))
-    const [doingTasks, setDoingTasks] = useState<ITask[]>(fakeTasks.filter(task => task.status === 'doing'))
-    const [doneTasks, setDoneTasks] = useState<ITask[]>(fakeTasks.filter(task => task.status === 'done'))
-
+    const [toDoTasks, setToDoTasks] = useState<ITask[]>([])
+    const [doingTasks, setDoingTasks] = useState<ITask[]>([])
+    const [doneTasks, setDoneTasks] = useState<ITask[]>([])
 
     //add to onDragEnd: fetch to change status of task based on which TaskList it sits
-    const onDragEnd = (result: DropResult) => {
+    const onDragEnd = async (result: DropResult) => {
         const { source, destination } = result
         if (!destination) return;
         if (destination.droppableId === source.droppableId && destination.index === source.index) return;
@@ -69,10 +75,24 @@ export default function ProjectWorkspace() {
         } else {
             done.splice(destination.index, 0, add)
         }
+        const tasksAfterDrag: ITask[] = [...todos, ...doing, ...done]
+        await axiosRequest(`/projects/${project._id}/drag-card`, 'PUT', { tasks: tasksAfterDrag })
         setToDoTasks(todos)
         setDoingTasks(doing)
         setDoneTasks(done)
     }
+
+    const fetchProjectTasks = async () => {
+        const response = await axiosRequest(`/projects/${project}/tasks`, 'GET')
+        const projectTasks: ITask[] = response.data
+        setToDoTasks(projectTasks ? projectTasks.filter(task => task.status === 'todo') : [])
+        setDoingTasks(projectTasks ? projectTasks.filter(task => task.status === 'doing') : [])
+        setDoneTasks(projectTasks ? projectTasks.filter(task => task.status === 'done') : [])
+    }
+
+    useEffect(() => {
+        fetchProjectTasks()
+    }, [])
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>

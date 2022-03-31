@@ -6,8 +6,14 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import EditProject from './EditProject'
 import ApplicationsReceived from './ApplicationsReceived'
+import { IProject } from '../types'
 
-export default function ProjectSummary() {
+interface IProps {
+    project: IProject
+}
+
+export default function ProjectSummary({ project }: IProps) {
+
     return (
 
         <Paper elevation={6} square={true}>
@@ -16,7 +22,7 @@ export default function ProjectSummary() {
                     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                         <Box>
                             <Typography variant='h6' pl={1}>About this project</Typography>
-                            <Typography pr={5} pt={1} pl={1} variant='body2'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti cumque temporibus vero ea quae sapiente quisquam voluptas? Cumque recusandae sit a quod, nobis illo? Ducimus neque nemo repellendus expedita fuga.</Typography>
+                            <Typography pr={5} pt={1} pl={1} variant='body2'>{project.description}</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', ml: 'auto', mb: 1 }}>
                             <ApplicationsReceived />
@@ -26,7 +32,7 @@ export default function ProjectSummary() {
                 </Grid>
                 <Grid item xs={4}>
                     <Typography variant='h6' pl={4} >Members and roles</Typography>
-                    <MemberList />
+                    <MemberList connections={project.members} />
                 </Grid>
             </Grid>
         </Paper>

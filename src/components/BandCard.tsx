@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography'
 import { useNavigate } from 'react-router-dom'
 import bandImg from '../assets/bandImg.jpeg'
 import bandLogo from '../assets/bandLogo.png'
+import { IBand } from '../types'
 
 const exampleBand = {
     bandName: 'The Bloody Foreigners',
@@ -16,15 +17,19 @@ const exampleBand = {
     activeProjects: 2
 }
 
-export default function BandCard() {
+interface IProps {
+    band: IBand
+}
+
+export default function BandCard({ band }: IProps) {
     const navigate = useNavigate()
     return (
-        <Card sx={{ maxWidth: 350 }} onClick={() => navigate('/bands/1')}>
+        <Card sx={{ maxWidth: 350 }} onClick={() => navigate(`/bands/${band._id}`)}>
             <CardActionArea sx={{ backgroundColor: '#233243', border: '1px solid #f5faff' }}>
-                <CardMedia component='img' height='200' image={bandImg} alt='Music Project' />
+                <CardMedia component='img' height='200' image={band.avatar} alt='Music Project' />
                 <CardContent>
                     <Typography variant='h5' component='div' >
-                        {exampleBand.bandName}
+                        {band.name}
                     </Typography>
                 </CardContent>
             </CardActionArea>

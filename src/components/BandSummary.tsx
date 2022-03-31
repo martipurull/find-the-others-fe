@@ -7,10 +7,24 @@ import Button from '@mui/material/Button'
 import { useState } from 'react'
 import TracksToPublish from './TracksToPublish'
 import EditBand from './EditBand'
+import { IBand, IInitialState } from '../types'
+import { useSelector } from 'react-redux'
+import useAxios from '../hooks/useAxios'
 
-export default function BandSummary() {
-    const [isUserFollower, setIsUserFollower] = useState(false)
-    const isBandAdmin = true
+interface IProps {
+    band: IBand
+}
+
+export default function BandSummary({ band }: IProps) {
+    const { axiosRequest } = useAxios()
+    const currentUser = useSelector((state: IInitialState) => state.user.currentUser)
+    const isBandAdmin = band.bandAdmins.includes(currentUser!)
+    const [triggerFollow, setTriggerFollow] = useState(false)
+
+    const handleFollowAndUnfollow = async () => {
+        await axiosRequest(`/bands/${band._id}/follow`, 'POST')
+        setTriggerFollow(!triggerFollow)
+    }
 
     return (
         <Paper elevation={6} square>
@@ -19,19 +33,19 @@ export default function BandSummary() {
                     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                             <Box sx={{ width: '60%', display: 'flex', justifyContent: 'flex-end' }}>
-                                <Typography variant='h3' pl={1} textAlign='center'>BAND NAME</Typography>
+                                <Typography variant='h3' pl={1} textAlign='center'>{band.name.toUpperCase()}</Typography>
                             </Box>
                             <Box sx={{ width: '40%', display: 'flex', justifyContent: 'flex-start' }}>
                                 {
-                                    isUserFollower
-                                        ? <Box ><Button sx={{ ml: 5, mt: 1.75 }} color='primary' variant='outlined' size='small' onClick={() => setIsUserFollower(!isUserFollower)} >FOLLOWING</Button></Box>
-                                        : <Box ><Button sx={{ ml: 5, mt: 1.75 }} color='success' variant='outlined' size='small' onClick={() => setIsUserFollower(!isUserFollower)} >FOLLOW</Button></Box>
+                                    currentUser?.followedBands.includes(band._id)
+                                        ? <Box ><Button sx={{ ml: 5, mt: 1.75 }} color='primary' variant='outlined' size='small' onClick={handleFollowAndUnfollow} >FOLLOWING</Button></Box>
+                                        : <Box ><Button sx={{ ml: 5, mt: 1.75 }} color='success' variant='outlined' size='small' onClick={handleFollowAndUnfollow} >FOLLOW</Button></Box>
                                 }
                             </Box>
                         </Box>
                         <Box>
 
-                            <Typography my={2} mx={4} variant='body2'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti cumque temporibus vero ea quae sapiente quisquam voluptas? Cumque recusandae sit a quod, nobis illo? Ducimus neque nemo repellendus expedita fuga.</Typography>
+                            <Typography my={2} mx={4} variant='body2'>{band.bio}</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', ml: 'auto', mb: 1 }}>
                             {
@@ -46,7 +60,7 @@ export default function BandSummary() {
                 </Grid>
                 <Grid item xs={4}>
                     <Typography variant='h6' pl={4} >Members and roles</Typography>
-                    <MemberList />
+                    <MemberList connections={band.members} />
                 </Grid>
             </Grid>
         </Paper>

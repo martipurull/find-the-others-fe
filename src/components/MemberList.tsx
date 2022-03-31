@@ -4,43 +4,35 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import ListItemText from '@mui/material/ListItemText'
 import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
 import WAvatar from '../assets/WAvatar.jpeg'
 import MAvatar from '../assets/MAvatar.jpeg'
 import Button from '@mui/material/Button'
+import { IMiniUser, IInitialState } from '../types'
+import { useSelector } from 'react-redux'
 
-export default function MemberList() {
-    const isConnection = true
-    const isConnectionSent = true
-    const isConnectionReceived = false
+interface IProps {
+    connections: IMiniUser[]
+}
+
+export default function MemberList({ connections }: IProps) {
+    const currentUser = useSelector((state: IInitialState) => state.user.currentUser)
+
     return (
         <List dense sx={{ width: '100%' }}>
-            {/* MAP THROUGH PROJECT MEMBERS HERE */}
-            <ListItem sx={{ display: 'flex' }}>
-                <ListItemButton>
-                    <ListItemAvatar>
-                        <Avatar src={WAvatar} />
-                    </ListItemAvatar>
-                    <ListItemText primary='Member Name' secondary='Member role' />
-                </ListItemButton>
-                {
-                    !isConnection && <Button sx={{ width: '30%' }} size='small' variant='outlined' color='primary'>Connect</Button>
-
-                }
-                {
-                    isConnectionSent && <Button sx={{ width: '30%' }} size='small' variant='outlined' color='warning'>Cancel</Button>
-                }
-                {
-                    isConnectionReceived && <Button sx={{ width: '30%' }} size='small' variant='outlined' color='success'>Accept</Button>
-                }
-            </ListItem>
-            <ListItem>
-                <ListItemButton>
-                    <ListItemAvatar>
-                        <Avatar src={MAvatar} />
-                    </ListItemAvatar>
-                    <ListItemText primary='Member Name' secondary='Member role' />
-                </ListItemButton>
-            </ListItem>
+            {connections.map(connection => (
+                <ListItem sx={{ display: 'flex' }}>
+                    <ListItemButton>
+                        <ListItemAvatar>
+                            <Avatar src={connection.avatar} />
+                        </ListItemAvatar>
+                        <ListItemText primary={`${connection.firstName} ${connection.lastName}`} secondary={connection.connections?.length} />
+                    </ListItemButton>
+                    {currentUser?.connectionsReceived.find(({ _id }) => _id === connection._id) && <Button sx={{ width: '30%' }} size='small' variant='outlined' color='primary'>Connect</Button>}
+                    {currentUser?.connectionsSent.find(({ _id }) => _id === connection._id) && <Button sx={{ width: '30%' }} size='small' variant='outlined' color='warning'>Cancel</Button>}
+                    {currentUser?.connections.find(({ _id }) => _id === connection._id) && <Button sx={{ width: '30%' }} size='small' variant='outlined' color='success'>Accept</Button>}
+                </ListItem>
+            ))}
         </List>
     )
 }
