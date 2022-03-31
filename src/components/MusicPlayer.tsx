@@ -13,7 +13,6 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeDownIcon from '@mui/icons-material/VolumeDown'
 import { useState } from 'react'
 import { IMiniBand } from '../types'
-import mp3Duration from 'mp3-duration'
 import * as mm from 'music-metadata'
 
 const Widget = styled('div')(({ theme }) => ({
