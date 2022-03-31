@@ -54,17 +54,18 @@ interface IUser {
     googleId: string
     avatar: string
     filename: string
-    memberOf: [{ name: string, avatar: string, followedBy: string[], _id: string }]
+    memberOf: IMiniBand[]
     bandOffers: string[]
     projects: IMiniProject[]
-    connections: IConnection[]
-    connectionsSent: IConnection[]
-    connectionsReceived: IConnection[]
+    connections: IMiniUser[]
+    connectionsSent: IMiniUser[]
+    connectionsReceived: IMiniUser[]
     applications: IAppliedGig[]
     followedBands: string[]
     createdAt: date
     updatedAt: date
 }
+
 
 interface IPost {
     sender: {
@@ -101,23 +102,32 @@ export interface IComment {
 interface IProject {
     _id: string
     title: string
-    leader: string
-    members: IUser[]
+    projectAdmins: string[]
+    members: IMiniUser[]
     description: string
+    projectImage?: string
+    filename?: string
     dueDate: date
-    trackToDate: {
+    trackToDate?: {
         audiofile: string
         filename: string
     }
-    trackCover: {
+    trackCover?: {
         image: string
         filename: string
     }
-    filename: string
-    bands: IBand[]
-    projectPosts: IPost[]
-    tasks: ITask[]
+    bands: IMiniBand[]
+    projectPosts?: IPost[]
+    tasks?: ITask[]
     isActive: boolean
+}
+
+interface IProjectDetails {
+    title: string
+    members: IMiniUser[]
+    description: string
+    dueDate: date
+    bands: IMiniBand[]
 }
 
 interface IMiniProject {
@@ -191,12 +201,14 @@ interface IBand {
     avatar: string
     filename: string
     followedBy: IUser[]
+    noOfFollowers: number
 }
 
 interface IMiniBand {
     name: string
     avatar: string
     followedBy: string[]
+    noOfFollowers: number
     _id: string
 }
 

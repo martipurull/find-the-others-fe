@@ -16,13 +16,13 @@ export default function MemberConnections({ connections }: IProps) {
     return (
         <List dense sx={{ width: '100%' }}>
             {
-                connections.map(connection => (
+                connections?.map(connection => (
                     <ListItem key={connection._id}>
                         <ListItemButton>
                             <ListItemAvatar>
                                 <Avatar src={connection.avatar} />
                             </ListItemAvatar>
-                            <ListItemText primary={`${connection.firstName} ${connection.lastName}`} secondary={`Connections: ${connection.connections.length}`} />
+                            <ListItemText primary={`${connection.firstName} ${connection.lastName}`} secondary={`Connections: ${connection?.connections?.length}`} />
                         </ListItemButton>
                     </ListItem>
                 ))}

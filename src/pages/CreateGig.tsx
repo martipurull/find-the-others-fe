@@ -17,17 +17,6 @@ import { notifyError, notifySuccess } from '../hooks/useNotify'
 import { useNavigate } from 'react-router-dom'
 import UserGigs from '../components/UserGigs'
 
-
-
-const gigs = [
-    { gigName: 'A gig', instrumentRequired: 'drums', expectedHours: 4 },
-    { gigName: 'Another gig', instrumentRequired: 'bass', expectedHours: 2 },
-    { gigName: 'Yet another gig', instrumentRequired: 'rhythm guitar', expectedHours: 1 },
-    { gigName: 'Choir for rock song', instrumentRequired: 'singer', expectedHours: 2 }
-]
-
-
-
 export default function CreateGig() {
     const { axiosRequest } = useAxios()
     const navigate = useNavigate()

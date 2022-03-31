@@ -34,7 +34,7 @@ export default function ApplicationsSent({ applications }: IProps) {
     return (
         <List dense sx={{ width: '100%' }}>
             {
-                applications.map(application => (
+                applications?.map(application => (
                     <ListItem key={application._id}>
                         <Grid container>
                             <ListItemButton onClick={handleOpen}>

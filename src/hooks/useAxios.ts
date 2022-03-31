@@ -15,12 +15,13 @@ function useAxios() {
 
     const axiosRequest = async (url: string, method: Method, data = {}) => {
         try {
-            return await instance({ baseURL, url, method, data, withCredentials: true })
+            return await axios({ baseURL, url, method, data, withCredentials: true })
         } catch (error: any) {
             console.log({ log: 'useAxios CATCH', error })
             return error.toJSON()
         }
     }
+
     axios.interceptors.response.use(response => response, async error => {
         const failedRequest = error.config
         if (failedRequest.url === 'users/login') return Promise.reject(failedRequest)
@@ -29,7 +30,7 @@ function useAxios() {
             await axiosRequest('/user/access/refresh-token', 'POST')
             const retryRequest = axios(failedRequest)
             return retryRequest
-        } else if (error.response.status === 400 && failedRequest.url === 'user/access/refresh-token') {
+        } else if (error.response.status === 401 && failedRequest.url === 'user/access/refresh-token') {
             console.log({ log: 'useAxios ELSE IF', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
             dispatch(userLogoutAction())
             navigate('/login')
@@ -37,6 +38,7 @@ function useAxios() {
         } else {
             console.log({ log: 'useAxios ELSE', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
             dispatch(userLogoutAction())
+            navigate('/login')
             return Promise.reject(error)
         }
     })

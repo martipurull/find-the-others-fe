@@ -111,7 +111,8 @@ export default function MusicianProfile() {
         }))
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault()
         setUserError(false)
         setFormFieldError({ firstName: false, lastName: false, username: false, email: false })
 
@@ -130,13 +131,23 @@ export default function MusicianProfile() {
         dataToAxios.append('musicianOrFan', editDetails.musicianOrFan)
         avatarFile && dataToAxios.append('userAvatar', avatarFile)
 
-        const response = await axiosRequest('/user/me', 'PUT', dataToAxios)
+        // const response = await axiosRequest('/user/me', 'PUT', dataToAxios)
+        console.log('before request')
+        const response = await fetch('http://localhost:3001/user/me', {
+            method: 'PUT',
+            body: JSON.stringify(dataToAxios),
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
         console.log(response);
         if (response.status === 400) setBadRequestError(true)
         if (response.status === 200) {
             console.log('profile update success');
             notifySuccess('Profile successfully updated!')
-            dispatch(addUserInfoAction(response.data))
+            let data = await response.json()
+            dispatch(addUserInfoAction(data))
         } else {
             console.log('profile update fail');
         }

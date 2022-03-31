@@ -18,14 +18,14 @@ export default function MemberRequests({ requests }: IProps) {
     return (
         <List dense sx={{ width: '100%' }}>
             {
-                requests.map(request => (
+                requests?.map(request => (
                     <ListItem key={request._id}>
                         <Box sx={{ width: '65%' }}>
                             <ListItemButton>
                                 <ListItemAvatar>
                                     <Avatar src={request.avatar} />
                                 </ListItemAvatar>
-                                <ListItemText primary={`${request.firstName} ${request.lastName}`} secondary={`Connections: ${request.connections.length}`} />
+                                <ListItemText primary={`${request.firstName} ${request.lastName}`} secondary={`Connections: ${request?.connections?.length}`} />
                             </ListItemButton>
                         </Box>
                         <Button size='small' variant='outlined' color='success'>Accept Request</Button>

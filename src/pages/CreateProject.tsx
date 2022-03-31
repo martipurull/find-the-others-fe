@@ -19,6 +19,8 @@ import Stack from '@mui/material/Stack'
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto'
 import IconButton from '@mui/material/IconButton'
 import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp'
+import { IProjectDetails, IInitialState, IMiniUser, IMiniBand } from '../types'
+import { useSelector } from 'react-redux'
 
 const connections = [
     'Oliver Hansen',
@@ -42,11 +44,22 @@ function addSelectedStyle(name: string, collaborators: string[], theme: Theme) {
 
 export default function CreateProject() {
     const theme = useTheme()
-    const [collaborators, setCollaborators] = useState<string[]>([])
+    const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
+    const [collaborators, setCollaborators] = useState<IMiniUser[]>(loggedUser!.connections)
+    const [collaboratorName, setCollaboratorName] = useState<string[]>([])
+    const [userBands, setUserBands] = useState<IMiniBand[]>(loggedUser!.memberOf)
+    const [userBandName, setUserBandName] = useState<string[]>([])
     const [dateValue, setDateValue] = useState<Date | null>(new Date())
-    const [selectedBand, setSelectedBand] = useState<string>('')
     const [projectImgFile, setProjectImgFile] = useState<File>()
     const [imgPreview, setImgPreview] = useState<string>('')
+
+    const [projectDetails, setProjectDetails] = useState<IProjectDetails>({
+        title: '',
+        members: [],
+        bands: [],
+        description: '',
+        dueDate: dateValue
+    })
 
     const handleProjectImgUpload = (e: ChangeEvent<HTMLInputElement>) => {
         setProjectImgFile(e.target.files![0])
@@ -60,9 +73,14 @@ export default function CreateProject() {
         setImgPreview('')
     }
 
-    const handleChange = (event: SelectChangeEvent<typeof collaborators>) => {
+    const handleChangeBands = (e: SelectChangeEvent<typeof userBandName>) => {
+        const { target: { value } } = e
+        setUserBandName(typeof value === 'string' ? value.split(',') : value)
+    }
+
+    const handleChangeCollaborators = (event: SelectChangeEvent<typeof collaboratorName>) => {
         const { target: { value } } = event
-        setCollaborators(typeof value === 'string' ? value.split(',') : value)
+        setCollaboratorName(typeof value === 'string' ? value.split(',') : value)
     }
 
     return (
@@ -81,11 +99,11 @@ export default function CreateProject() {
                                 <TextField required label='Project Title' variant='standard' />
                             </Grid>
                             <Grid item xs={12} md={3}>
-                                <FormControl required variant='standard' sx={{ minWidth: 200 }}>
-                                    <InputLabel id='band-select'>Band</InputLabel>
-                                    <Select labelId='band-select' id='band-select' value={selectedBand} onChange={(e) => setSelectedBand(e.target.value)}>
-                                        {bandsUserIsMemberOf.map((band, i) => (
-                                            <MenuItem key={i} value={band}>{band}</MenuItem>
+                                <FormControl sx={{ m: 1, width: 250 }}>
+                                    <InputLabel id='multiple-bands-select'>Project Bands</InputLabel>
+                                    <Select labelId='multiple-bands-select' id='multiple-bands-input' multiple value={userBandName} onChange={handleChangeBands} input={<OutlinedInput label='Project bands' />}>
+                                        {loggedUser?.memberOf.map((band) => (
+                                            <MenuItem key={band._id} value={band.name} style={addSelectedStyle(band.name, userBandName, theme)}>{band.name}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -126,9 +144,9 @@ export default function CreateProject() {
                             <Grid item xs={12} md={6}>
                                 <FormControl sx={{ m: 1, width: 250 }}>
                                     <InputLabel id='multiple-collaborators-select'>Project Collaborators</InputLabel>
-                                    <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaborators} onChange={handleChange} input={<OutlinedInput label='Project Collaborators' />}>
+                                    <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaboratorName} onChange={handleChangeCollaborators} input={<OutlinedInput label='Project Collaborators' />}>
                                         {connections.map((connection, i) => (
-                                            <MenuItem key={i} value={connection} style={addSelectedStyle(connection, collaborators, theme)}>{connection}</MenuItem>
+                                            <MenuItem key={i} value={connection} style={addSelectedStyle(connection, collaboratorName, theme)}>{connection}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>

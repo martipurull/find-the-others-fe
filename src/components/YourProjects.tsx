@@ -15,7 +15,7 @@ export default function YourProjects({ projects }: IProps) {
     return (
         <List dense sx={{ width: '100%' }}>
             {
-                projects.map(project => (
+                projects?.map(project => (
                     <ListItem key={project._id}>
                         <ListItemButton>
                             <ListItemAvatar>
