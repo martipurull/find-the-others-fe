@@ -120,6 +120,7 @@ interface IProject {
     projectPosts?: IPost[]
     tasks?: ITask[]
     isActive: boolean
+    taskIds: string[]
 }
 
 interface IProjectDetails {
@@ -139,6 +140,7 @@ interface IMiniProject {
 }
 
 interface ITask {
+    _id: string
     status: string
     musicians: IUser[]
     title: string

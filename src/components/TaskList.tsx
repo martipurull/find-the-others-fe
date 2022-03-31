@@ -3,15 +3,9 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import React, { JSXElementConstructor } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
+import { ITask } from '../types'
 import CreateTaskModal from './CreateTaskModal'
 import TaskCard from './TaskCard'
-
-export interface ITask {
-    id: string
-    status: string
-    title: string
-    description: string
-}
 
 interface IProps {
     droppableId: string
@@ -33,7 +27,7 @@ export default function TaskList({ droppableId, listTitle, icon, tasks, setterFu
                         </Box>
                         {
                             tasks.map((task, i) => (
-                                <TaskCard key={task.id} id={task.id} index={i} status={task.status} title={task.title} description={task.description} />
+                                <TaskCard key={task._id} id={task._id} index={i} status={task.status} title={task.title} description={task.description} />
                             ))
                         }
                         {provided.placeholder}

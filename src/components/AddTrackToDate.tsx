@@ -46,7 +46,7 @@ export default function AddTrackToDate() {
                         <Button sx={{ my: 1, display: 'flex', justifyContent: 'space-around' }} size='small' variant='outlined' color='success'>Add Cover <ImageOutlinedIcon /></Button>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-                        <Button color='success' variant='outlined' onClick={handleClose}>Add Track</Button>
+                        <Button color='success' variant='outlined' onClick={handleClose}>Add Track / Artwork</Button>
                         <Button color='warning' variant='outlined' type='submit' onClick={handleClose}>Cancel</Button>
                     </Box>
                 </Box>

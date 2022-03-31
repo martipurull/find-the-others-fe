@@ -12,10 +12,12 @@ import { useEffect, useState } from 'react'
 import Modal from '@mui/material/Modal'
 import Backdrop from '@mui/material/Backdrop'
 import TaskList from './TaskList'
-import { ITask } from './TaskList'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
-import { IProject } from '../types'
+import { IProject, ITask } from '../types'
 import useAxios from '../hooks/useAxios'
+import { notifyError } from '../hooks/useNotify'
+import albumCover from '../assets/albumCover.jpeg'
+
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -49,7 +51,6 @@ export default function ProjectWorkspace({ project }: IProps) {
     const [doingTasks, setDoingTasks] = useState<ITask[]>([])
     const [doneTasks, setDoneTasks] = useState<ITask[]>([])
 
-    //add to onDragEnd: fetch to change status of task based on which TaskList it sits
     const onDragEnd = async (result: DropResult) => {
         const { source, destination } = result
         if (!destination) return;
@@ -76,14 +77,18 @@ export default function ProjectWorkspace({ project }: IProps) {
             done.splice(destination.index, 0, add)
         }
         const tasksAfterDrag: ITask[] = [...todos, ...doing, ...done]
-        await axiosRequest(`/projects/${project._id}/drag-card`, 'PUT', { tasks: tasksAfterDrag })
-        setToDoTasks(todos)
-        setDoingTasks(doing)
-        setDoneTasks(done)
+        const taskIds = tasksAfterDrag.map(({ _id }) => _id)
+        const response = await axiosRequest(`/projects/${project._id}/drag-card`, 'PUT', { taskIds })
+        if (response.status === 403) notifyError('Only project members can move cards.')
+        if (response.status === 200) {
+            fetchProjectTasks()
+        } else {
+            notifyError('Something went wrong :(')
+        }
     }
 
     const fetchProjectTasks = async () => {
-        const response = await axiosRequest(`/projects/${project}/tasks`, 'GET')
+        const response = await axiosRequest(`/projects/${project._id}/tasks`, 'GET')
         const projectTasks: ITask[] = response.data
         setToDoTasks(projectTasks ? projectTasks.filter(task => task.status === 'todo') : [])
         setDoingTasks(projectTasks ? projectTasks.filter(task => task.status === 'doing') : [])
@@ -114,7 +119,7 @@ export default function ProjectWorkspace({ project }: IProps) {
                         <Typography variant='h5' pt={1.25}>Track So Far</Typography> <BarChartOutlinedIcon fontSize='large' sx={{ ml: 1, my: 1.25 }} />
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ml: -2 }}>
-                        <MusicPlayer />
+                        {project.trackToDate && <MusicPlayer trackToDate={project.trackToDate.audiofile} trackCover={project.trackCover ? project.trackCover.image : albumCover} projectBands={project.bands} trackName={project.title} />}
                         <AddTrackToDate />
                     </Box>
                 </Grid>
