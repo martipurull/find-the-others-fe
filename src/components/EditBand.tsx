@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button'
-import { useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import OutlinedInput from '@mui/material/OutlinedInput'
@@ -7,32 +7,26 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
-import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { Theme, useTheme } from '@mui/material/styles'
 import Modal from '@mui/material/Modal'
 import Backdrop from '@mui/material/Backdrop'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-
-const connections = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
-
-const bandsUserIsMemberOf = ['Tender Tantrums', 'The Bloody Foreigners']
+import { notifyError } from '../hooks/useNotify'
+import useAxios from '../hooks/useAxios'
+import { useNavigate } from 'react-router-dom'
+import { IBand, IBandDetails, IInitialState } from '../types'
+import InsertPhotoIcon from '@mui/icons-material/InsertPhoto'
+import IconButton from '@mui/material/IconButton'
+import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp'
+import { useSelector } from 'react-redux'
 
 function addSelectedStyle(name: string, collaborators: string[], theme: Theme) {
     return { fontWeight: collaborators.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightBold }
+}
+
+interface IProps {
+    band: IBand
 }
 
 const modalStyle = {
@@ -46,18 +40,79 @@ const modalStyle = {
     p: 4,
 }
 
-export default function EditBand() {
+export default function EditBand({ band }: IProps) {
+    const { axiosRequest } = useAxios()
+    const navigate = useNavigate()
+    const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
     const theme = useTheme()
-    const [collaborators, setCollaborators] = useState<string[]>([])
-    const [dateValue, setDateValue] = useState<Date | null>(new Date())
-    const [selectedBand, setSelectedBand] = useState<string>('')
+    const [bandAdminName, setBandAdminName] = useState<string[]>([])
+    const [bandMemberName, setBandMemberName] = useState<string[]>([])
+    const [avatarFile, setAvatarFile] = useState<File>()
+    const [avatarPreview, setAvatarPreview] = useState<string>('')
 
-    const handleChange = (event: SelectChangeEvent<typeof collaborators>) => {
+    const bandAdminNames = band.bandAdmins.map(admin => `${admin.firstName} ${admin.lastName}`)
+    const bandMembersNames = band.members.map(member => `${member.firstName} ${member.lastName}`)
+
+    const [bandDetails, setBandDetails] = useState<IBandDetails>({
+        name: band.name || '',
+        bandAdmins: bandAdminNames || bandAdminName,
+        members: bandMembersNames || bandMemberName,
+        bio: band.bio || '',
+        blurb: band.blurb || ''
+    })
+
+    const handleInput = (field: string, value: string) => {
+        setBandDetails(details => ({
+            ...details,
+            [field]: value
+        }))
+    }
+
+    const handleAvatarUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        setAvatarFile(e.target.files![0])
+        const imgUrl = URL.createObjectURL(e.target.files![0])
+        setAvatarPreview(imgUrl)
+    }
+
+    const handleRemoveAvatarImg = () => {
+        setAvatarFile(undefined)
+        URL.revokeObjectURL(avatarPreview)
+        setAvatarPreview('')
+    }
+
+    const handleChangeBandMembers = (event: SelectChangeEvent<typeof bandMemberName>) => {
         const { target: { value } } = event
-        setCollaborators(typeof value === 'string' ? value.split(',') : value)
+        setBandMemberName(typeof value === 'string' ? value.split(',') : value)
+    }
+
+    const handleChangeBandAdmins = (event: SelectChangeEvent<typeof bandAdminName>) => {
+        const { target: { value } } = event
+        setBandAdminName(typeof value === 'string' ? value.split(',') : value)
+    }
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault()
+        const dataToAxios = new FormData()
+        dataToAxios.append('name', bandDetails.name)
+        dataToAxios.append('blurb', bandDetails.blurb)
+        dataToAxios.append('bio', bandDetails.bio)
+        for (let i = 0; i < bandDetails.bandAdmins.length; i++) {
+            dataToAxios.append('bandAdmins[]', bandDetails.bandAdmins[i])
+        }
+        for (let i = 0; i < bandDetails.members.length; i++) {
+            dataToAxios.append('members[]', bandDetails.members[i])
+        }
+        avatarFile && dataToAxios.append('bandAvatar', avatarFile)
+
+        const response = await axiosRequest(`/bands/${band._id}`, 'PUT', dataToAxios)
+        if (response.status === 201) {
+            navigate('/')
+        } else {
+            notifyError('Something went wrong, please try again.')
+        }
     }
 
     return (
@@ -74,34 +129,67 @@ export default function EditBand() {
             >
                 <Box component='form' noValidate autoComplete='off' sx={modalStyle}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
-                        <TextField sx={{ my: 1 }} required label='Project Leader' inputProps={{ readOnly: true }} variant='standard' defaultValue='LoggedIn User' />
-                        <TextField sx={{ my: 1 }} required label='Project Title' variant='standard' />
-                        <FormControl required variant='standard' sx={{ my: 2, minWidth: 200 }}>
-                            <InputLabel id='band-select'>Band</InputLabel>
-                            <Select labelId='band-select' id='band-select' value={selectedBand} onChange={(e) => setSelectedBand(e.target.value)}>
-                                {bandsUserIsMemberOf.map((band, i) => (
-                                    <MenuItem key={i} value={band}>{band}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <Box sx={{ display: 'flex', direction: 'column', my: 1 }}>
-                            <Stack spacing={10}>
-                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                    <DatePicker views={['day', 'month', 'year']} label='Project Due Date' value={dateValue} onChange={(newValue) => setDateValue(newValue)} renderInput={(params) => <TextField {...params} helperText={null} />} />
-                                </LocalizationProvider>
-                            </Stack>
+                        <TextField sx={{ my: 1 }} required label='Band Name' variant='standard' value={bandDetails.name} onChange={e => handleInput('name', e.target.value)} />
+                        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                            {
+                                !avatarFile &&
+                                <Button variant='contained' sx={{ p: 1.25 }} component='label'>
+                                    Add Project Photo
+                                            <input type="file" hidden onChange={e => handleAvatarUpload(e)} />
+                                </Button>
+                            }
+                            {
+                                avatarFile
+                                    ?
+                                    <Box sx={{ position: 'relative' }}>
+                                        <IconButton sx={{ position: 'absolute', left: '85%', top: '-3%' }} onClick={handleRemoveAvatarImg} ><HighlightOffSharpIcon /></IconButton>
+                                        <Box component='img' src={avatarPreview} sx={{ ml: 2, maxWidth: '125px', objectFit: 'cover', borderRadius: '5px' }} />
+                                    </Box>
+                                    :
+                                    <Box><InsertPhotoIcon sx={{ fontSize: 150 }} /></Box>
+                            }
                         </Box>
-                        <TextField sx={{ my: 1 }} id="new-project-description" label="Project Description" multiline rows={6} placeholder='Write down the main ideas for the project: make it exciting for your collaborators!' />
-                        <FormControl sx={{ my: 1, width: 250 }}>
-                            <InputLabel id='multiple-collaborators-select'>Project Collaborators</InputLabel>
-                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaborators} onChange={handleChange} input={<OutlinedInput label='Project Collaborators' />}>
-                                {connections.map((connection, i) => (
-                                    <MenuItem key={i} value={connection} style={addSelectedStyle(connection, collaborators, theme)}>{connection}</MenuItem>
+                        <FormControl sx={{ m: 1, minWidth: 200 }}>
+                            <InputLabel id='multiple-collaborators-select'>Band Admins</InputLabel>
+                            <Select labelId='multiple-collaborators-select' id='multiple-bandAdmins-input' multiple value={bandAdminName} onChange={handleChangeBandAdmins} input={<OutlinedInput label='Project Collaborators' />}>
+                                {loggedUser?.connections.map((connection) => (
+                                    <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandAdminName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                ))}
+                            </Select>
+                            <Typography variant='caption'>by creating a band, you will be one of its admins</Typography>
+                        </FormControl>
+                        <FormControl sx={{ m: 1, minWidth: 200 }}>
+                            <InputLabel id='multiple-collaborators-select'>Band Members</InputLabel>
+                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={bandMemberName} onChange={handleChangeBandMembers} input={<OutlinedInput label='Project Collaborators' />}>
+                                {loggedUser?.connections.map((connection) => (
+                                    <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandMemberName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
+                        <TextField fullWidth id="new-band-blurb" label="Band Latest" multiline rows={6} placeholder='We are currently working on this... become a supporter to listen to our work in progress!' value={bandDetails.blurb} onChange={e => handleInput('blurb', e.target.value)} />
+                        <TextField fullWidth id="new-band-bio" label="Band Bio" multiline rows={6} placeholder='Write a brief and exciting bio for your band.' value={bandDetails.bio} onChange={e => handleInput('bio', e.target.value)} />
+                        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                            {
+                                !avatarFile &&
+                                <Button variant='contained' sx={{ p: 1.25 }} component='label'>
+                                    Add Band Logo
+                                            <input type="file" hidden onChange={e => handleAvatarUpload(e)} />
+                                </Button>
+                            }
+                            {
+                                avatarFile
+                                    ?
+                                    <Box sx={{ position: 'relative' }}>
+                                        <IconButton sx={{ position: 'absolute', left: '85%', top: '-3%' }} onClick={handleRemoveAvatarImg} ><HighlightOffSharpIcon /></IconButton>
+                                        <Box component='img' src={avatarPreview} sx={{ ml: 2, maxWidth: '250px', objectFit: 'cover', borderRadius: '5px' }} />
+                                    </Box>
+                                    :
+                                    <Box><InsertPhotoIcon sx={{ fontSize: 150 }} /></Box>
+                            }
+                        </Box>
                         <Box sx={{ mt: 2 }}>
-                            <Button variant='contained' color='success' fullWidth>Edit Project</Button>
+                            <Button variant='contained' color='success' fullWidth type='submit' onClick={handleSubmit}>Edit Band</Button>
+                            <Button variant='contained' color='warning' fullWidth onClick={handleClose}>Cancel</Button>
                         </Box>
                     </Box>
                 </Box>

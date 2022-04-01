@@ -86,7 +86,7 @@ export default function CreateBand() {
         }
         avatarFile && dataToAxios.append('bandAvatar', avatarFile)
 
-        const response = await axiosRequest('projects', 'POST', dataToAxios)
+        const response = await axiosRequest('bands', 'POST', dataToAxios)
         if (response.status === 201) {
             navigate('/')
         } else {
@@ -118,7 +118,7 @@ export default function CreateBand() {
                                             ?
                                             <Box sx={{ position: 'relative' }}>
                                                 <IconButton sx={{ position: 'absolute', left: '85%', top: '-3%' }} onClick={handleRemoveAvatarImg} ><HighlightOffSharpIcon /></IconButton>
-                                                <Box component='img' src={avatarPreview} sx={{ ml: 2, maxWidth: '250px', objectFit: 'cover', borderRadius: '5px' }} />
+                                                <Box component='img' src={avatarPreview} sx={{ ml: 2, maxWidth: '125px', objectFit: 'cover', borderRadius: '5px' }} />
                                             </Box>
                                             :
                                             <Box><InsertPhotoIcon sx={{ fontSize: 150 }} /></Box>

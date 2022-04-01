@@ -52,7 +52,7 @@ export default function BandSummary({ band }: IProps) {
                                 isBandAdmin &&
                                 <>
                                     <TracksToPublish />
-                                    <EditBand />
+                                    <EditBand band={band} />
                                 </>
                             }
                         </Box>

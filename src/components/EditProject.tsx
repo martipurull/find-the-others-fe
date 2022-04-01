@@ -59,13 +59,16 @@ export default function EditProject({ project }: IProps) {
     const [projectImgFile, setProjectImgFile] = useState<File>()
     const [imgPreview, setImgPreview] = useState<string>('')
 
+    const projectMemberNames = project.members.map(member => `${member.firstName} ${member.lastName}`)
+    const projectBandNames = project.bands.map(band => band.name)
+
     const [projectDetails, setProjectDetails] = useState<IProjectDetails>({
-        title: '',
-        projectAdmins: adminName,
-        members: collaboratorName,
-        bands: userBandName,
-        description: '',
-        dueDate: dateValue
+        title: project.title || '',
+        projectAdmins: project.projectAdmins || adminName,
+        members: projectMemberNames || collaboratorName,
+        bands: projectBandNames || userBandName,
+        description: project.description || '',
+        dueDate: project.dueDate || dateValue
     })
 
     const handleInput = (field: string, value: string) => {
@@ -163,7 +166,7 @@ export default function EditProject({ project }: IProps) {
                             <InputLabel id='multiple-collaborators-select'>Project Collaborators</InputLabel>
                             <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaboratorName} onChange={handleChangeCollaborators} input={<OutlinedInput label='Project Collaborators' />}>
                                 {loggedUser?.connections.map((connection) => (
-                                    <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, adminName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                    <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, collaboratorName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
@@ -198,7 +201,7 @@ export default function EditProject({ project }: IProps) {
                         <TextField sx={{ my: 1 }} id="new-project-description" label="Project Description" multiline rows={6} placeholder='Write down the main ideas for the project: make it exciting for your collaborators!' />
                         <Box sx={{ mt: 2 }}>
                             <Button variant='contained' color='success' fullWidth type='submit' onClick={handleSubmit}>Edit Project</Button>
-                            <Button variant='contained' color='warning' fullWidth>Cancel</Button>
+                            <Button variant='contained' color='warning' fullWidth onClick={handleClose}>Cancel</Button>
                         </Box>
                     </Box>
                 </Box>
