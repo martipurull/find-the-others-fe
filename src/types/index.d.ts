@@ -216,12 +216,11 @@ interface IMiniBand {
 }
 
 interface ITrack {
-    track: {
-        audiofile: string
-        filename: string
-    }
-    cover: {
-        image: string
-        filename: string
-    }
+    audiofile: string
+    filename: string
+}
+
+interface ICover {
+    image: string
+    filename: string
 }
