@@ -13,7 +13,6 @@ import ListItemText from '@mui/material/ListItemText'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
-import { useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
 import { IInitialState, IUser } from '../types'
 import { useDebounce } from 'use-debounce'
@@ -82,8 +81,14 @@ export default function Connect() {
                                                 <Button sx={{ mx: 1 }} size='small' variant='outlined' color='success' onClick={() => handleConnect(user._id, 'accept')}>Accept</Button>
                                                 <Button sx={{ mx: 1 }} size='small' variant='outlined' color='error' onClick={() => handleConnect(user._id, 'decline')}>Decline</Button>
                                             </Box>}
-                                        {currentUser?.connectionsSent.find(({ _id }) => _id === user._id) && <Box><Button size='small' variant='outlined' color='warning' onClick={() => handleConnect(user._id, 'cancel')}>Cancel</Button></Box>}
-                                        {currentUser?.connections.find(({ _id }) => _id === user._id) && <Box><Button size='small' variant='outlined' color='primary' disabled>You're connected!</Button></Box>}
+                                        {
+                                            currentUser?.connectionsSent.find(({ _id }) => _id === user._id) &&
+                                            <Box><Button size='small' variant='outlined' color='warning' onClick={() => handleConnect(user._id, 'cancel')}>Cancel</Button></Box>
+                                        }
+                                        {
+                                            currentUser?.connections.find(({ _id }) => _id === user._id) &&
+                                            <Box><Button size='small' variant='outlined' color='primary' disabled>You're connected!</Button></Box>
+                                        }
                                         {
                                             !currentUser?.connectionsReceived.find(({ _id }) => _id === user._id) && !currentUser?.connectionsSent.find(({ _id }) => _id === user._id) && !currentUser?.connections.find(({ _id }) => _id === user._id) &&
                                             <Box><Button size='small' variant='outlined' color='success' onClick={() => handleConnect(user._id, 'sendRequest')}>Connect</Button></Box>

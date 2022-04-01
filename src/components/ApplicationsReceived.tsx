@@ -59,7 +59,7 @@ export default function ApplicationsReceived({ projectId }: IProps) {
     }
 
     const handleRejectApplication = async (gigId: string, applicantId: string) => {
-        const response = await axiosRequest(`/gigs/${gigId}/leave-project`, 'POST', { applicantId })
+        const response = await axiosRequest(`/gigs/${gigId}/applications/decline`, 'POST', { applicantId })
         if (response.status === 400 || response.status === 404 || response.status === 401) notifyError('Something went wrong.')
         handleCloseRejectApplication()
     }
