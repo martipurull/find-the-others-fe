@@ -119,6 +119,7 @@ export default function EditProject({ project }: IProps) {
         projectImgFile && dataToAxios.append('projectImage', projectImgFile)
 
         const response = await axiosRequest('projects', 'POST', dataToAxios)
+        if (response.status === 403) notifyError('Only a project leader can edit a project.')
         if (response.status === 201) {
             navigate('/')
         } else {

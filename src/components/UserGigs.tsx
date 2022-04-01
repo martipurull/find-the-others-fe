@@ -38,7 +38,7 @@ export default function UserGigs({ gigs }: IProps) {
                                 </Avatar>
                             </ListItemAvatar>
                             <ListItemText primary={`WANTED: ${gig.instrument} for ${gig.title.toLowerCase()}.`} secondary={`Expected duration: ${gig.hours}${gig.hours > 1 ? ` hours` : ` hour`}`} />
-                            <EditGig />
+                            <EditGig gig={gig} />
                             <Button sx={{ mx: 1 }} variant='outlined' size='small' color='error' endIcon={<DeleteOutlineOutlinedIcon />} onClick={handleOpen}>DELETE GIG</Button>
                             <Modal
                                 aria-labelledby="transition-modal-title"

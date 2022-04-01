@@ -61,6 +61,7 @@ export default function CreateGig() {
     }
 
     const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault()
         const response = await axiosRequest('/gigs', 'POST', gigDetails)
         if (response.status === 400) notifyError('Gig could not be posted.')
         if (response.status === 201) {
@@ -86,7 +87,7 @@ export default function CreateGig() {
                     <Box component='form' noValidate autoComplete='off'>
                         <Grid container spacing={6} >
                             <Grid item xs={12} md={3}>
-                                <TextField required label='Gig Title' variant='standard' placeholder='Rhythm guitar' onChange={e => handleInput('title', e.target.value)} />
+                                <TextField required label='Gig Title' variant='standard' placeholder='Drums for dance project' value={gigDetails.title} onChange={e => handleInput('title', e.target.value)} />
                             </Grid>
                             <Grid item xs={12} md={3}>
                                 <FormControl required variant='standard' sx={{ m: 1, minWidth: 200 }}>
@@ -107,31 +108,26 @@ export default function CreateGig() {
                                         ))}
                                     </Select>
                                 </FormControl>
-                                {selectedInstrument === 'other' && <TextField required label='Please specify' variant='standard' placeholder='xylophone' onChange={e => handleInput('otherInstrument', e.target.value)} />}
+                                {selectedInstrument === 'other' && <TextField required label='Please specify' variant='standard' placeholder='xylophone' value={gigDetails.otherInstrument} onChange={e => handleInput('otherInstrument', e.target.value)} />}
                             </Grid>
                             <Grid item xs={12} md={3}>
-                                <TextField required label='Instrument specifications' variant='standard' placeholder='Electric guitar' onChange={e => handleInput('specifics', e.target.value)} />
+                                <TextField required label='Instrument specifications' variant='standard' placeholder='Electric guitar' value={gigDetails.specifics} onChange={e => handleInput('specifics', e.target.value)} />
                             </Grid>
                             <Grid item xs={12} md={3}>
-                                <TextField required label='Project Genre' variant='standard' placeholder='Alternative, rock, pop...' onChange={e => handleInput('genre', e.target.value)} />
+                                <TextField required label='Project Genre' variant='standard' placeholder='Alternative, rock, pop...' value={gigDetails.genre} onChange={e => handleInput('genre', e.target.value)} />
                             </Grid>
                             <Grid item xs={12} md={5}>
-                                <TextField sx={{ width: '100%' }} required label='Gig Description' variant='standard' multiline rows={3} placeholder='Briefly describe what the gig is about: i.e. rhythm guitar for a fast-paced rock song.' onChange={e => handleInput('description', e.target.value)} />
+                                <TextField sx={{ width: '100%' }} required label='Gig Description' variant='standard' multiline rows={3} placeholder='Briefly describe what the gig is about: i.e. rhythm guitar for a fast-paced rock song.' value={gigDetails.description} onChange={e => handleInput('description', e.target.value)} />
                             </Grid>
                             <Grid item xs={12} md={2} sx={{ alignSelf: 'flex-end', display: 'flex', justifyContent: 'center' }}>
                                 <FormControlLabel sx={{ ml: 'auto' }} control={<Switch sx={{ mr: 1 }} checked={gigDetails.isGigAvailable} onChange={handleIsAvailable} color='success' />} label='Make gig available?' />
                             </Grid>
                             <Grid item xs={12} md={2} sx={{ alignSelf: 'flex-end', display: 'flex', justifyContent: 'center' }}>
-                                <Button variant='contained' color='success'>Create New Gig</Button>
+                                <Button variant='contained' color='success' type='submit' onClick={handleSubmit}>Create New Gig</Button>
                             </Grid>
                         </Grid>
                     </Box>
                     <UserGigs gigs={userGigs} />
-
-
-
-
-
                 </Grid>
             </Grid>
         </Container>

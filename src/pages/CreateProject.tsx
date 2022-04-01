@@ -28,21 +28,6 @@ import useAxios from '../hooks/useAxios'
 import { useNavigate } from 'react-router-dom'
 import { notifyError } from '../hooks/useNotify'
 
-const connections = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
-
-const bandsUserIsMemberOf = ['Tender Tantrums', 'The Bloody Foreigners']
-
 function addSelectedStyle(name: string, collaborators: string[], theme: Theme) {
     return { fontWeight: collaborators.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightBold }
 }
