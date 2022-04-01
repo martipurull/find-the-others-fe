@@ -79,9 +79,9 @@ export default function EditGig({ gig }: IProps) {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        const response = await axiosRequest('/gigs', 'POST', gigDetails)
+        const response = await axiosRequest(`/gigs/${gig._id}`, 'POST', gigDetails)
         if (response.status === 400) notifyError('Gig could not be posted.')
-        if (response.status === 201) {
+        if (response.status === 200) {
             navigate('/gigs')
             notifySuccess('Gig posted successfully!')
         }

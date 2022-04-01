@@ -153,6 +153,7 @@ interface ITask {
 }
 
 interface IGig {
+    _id?: string
     title: string
     project?: IMiniProject
     bands?: IMiniBand[]
