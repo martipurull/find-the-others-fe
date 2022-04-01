@@ -224,3 +224,14 @@ interface ICover {
     image: string
     filename: string
 }
+
+interface ITrackToSend {
+    track: {
+        audiofile: string
+        filename: string
+    }
+    cover: {
+        image: string
+        filename: string
+    }
+}
