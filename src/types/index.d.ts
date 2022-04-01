@@ -125,7 +125,9 @@ interface IProject {
 
 interface IProjectDetails {
     title: string
-    members: IMiniUser[]
+    projectAdmins: string[]
+    members: string[]
+    bands: string[]
     description: string
     dueDate: date
     bands: IMiniBand[]

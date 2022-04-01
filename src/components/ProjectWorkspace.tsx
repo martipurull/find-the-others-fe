@@ -108,7 +108,7 @@ export default function ProjectWorkspace({ project }: IProps) {
         const response = await axiosRequest(`/projects/${project._id}/complete-project`, 'POST')
         if (response.status === 403) notifyError('Only a project leader can complete a project.')
         if (response.status === 400 || response.status === 404 || response.status === 401) notifyError('Something went wrong.')
-        if (response.status === 200 && project.trackToDate && project.trackCover) {
+        if (response.status === 200 && project.trackToDate?.audiofile && project.trackCover?.image) {
             const sendTrackToBands = await axiosRequest(`/projects/${project._id}/send-track-to-band`, 'POST')
             if (sendTrackToBands.status === 403) notifyError('Only a project leader can complete a project.')
         }

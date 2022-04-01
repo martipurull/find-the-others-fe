@@ -26,7 +26,7 @@ export default function ProjectSummary({ project }: IProps) {
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', ml: 'auto', mb: 1 }}>
                             <ApplicationsReceived />
-                            <EditProject />
+                            <EditProject project={project} />
                         </Box>
                     </Box>
                 </Grid>
