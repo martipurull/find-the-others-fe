@@ -17,6 +17,7 @@ import { IProject, ITask } from '../types'
 import useAxios from '../hooks/useAxios'
 import { notifyError } from '../hooks/useNotify'
 import albumCover from '../assets/albumCover.jpeg'
+import { useNavigate } from 'react-router-dom'
 
 
 const modalStyle = {
@@ -42,10 +43,14 @@ interface IProps {
 }
 
 export default function ProjectWorkspace({ project }: IProps) {
+    const navigate = useNavigate()
     const { axiosRequest } = useAxios()
-    const [open, setOpen] = useState(false)
-    const handleOpen = () => setOpen(true)
-    const handleClose = () => setOpen(false)
+    const [openCompleteProject, setOpenCompleteProject] = useState(false)
+    const handleOpenCompleteProject = () => setOpenCompleteProject(true)
+    const handleCloseCompleteProject = () => setOpenCompleteProject(false)
+    const [openLeaveProject, setOpenLeaveProject] = useState(false)
+    const handleOpenLeaveProject = () => setOpenLeaveProject(true)
+    const handleCloseLeaveProject = () => setOpenLeaveProject(false)
 
     const [toDoTasks, setToDoTasks] = useState<ITask[]>([])
     const [doingTasks, setDoingTasks] = useState<ITask[]>([])
@@ -99,6 +104,23 @@ export default function ProjectWorkspace({ project }: IProps) {
         fetchProjectTasks()
     }, [])
 
+    const handleCompleteProject = async () => {
+        const response = await axiosRequest(`/projects/${project._id}/complete-project`, 'POST')
+        if (response.status === 403) notifyError('Only a project leader can complete a project.')
+        if (response.status === 400 || response.status === 404 || response.status === 401) notifyError('Something went wrong.')
+        if (response.status === 200 && project.trackToDate && project.trackCover) {
+            const sendTrackToBands = await axiosRequest(`/projects/${project._id}/send-track-to-band`, 'POST')
+            if (sendTrackToBands.status === 403) notifyError('Only a project leader can complete a project.')
+        }
+        navigate('/')
+    }
+
+    const handleLeaveProject = async () => {
+        const response = await axiosRequest(`/projects/${project._id}/leave-project`, 'DELETE')
+        if (response.status === 400 || response.status === 404 || response.status === 401) notifyError('Something went wrong.')
+        navigate('/')
+    }
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Grid container spacing={2}>
@@ -125,14 +147,33 @@ export default function ProjectWorkspace({ project }: IProps) {
                 </Grid>
                 <Grid item xs={12} sm={6} md={3} mt={3}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', }}>
-                        <Button variant='outlined' size='large' color='error'>LEAVE PROJECT</Button>
-                        <Button variant='contained' size='large' color='success' onClick={handleOpen}>COMPLETE PROJECT</Button>
-
+                        <Button variant='outlined' size='large' color='error' onClick={handleOpenLeaveProject}>LEAVE PROJECT</Button>
                         <Modal
                             aria-labelledby="transition-modal-title"
                             aria-describedby="transition-modal-description"
-                            open={open}
-                            onClose={handleClose}
+                            open={openLeaveProject}
+                            onClose={handleCloseLeaveProject}
+                            closeAfterTransition
+                            BackdropComponent={Backdrop}
+                            BackdropProps={{ timeout: 500 }}
+                        >
+                            <Box sx={modalStyle}>
+                                <Typography sx={{ my: 1 }} id="transition-modal-title" variant="h4" component="h3">Leave Project</Typography>
+                                <Typography sx={{ my: 1 }} variant='h6' component='h4'>Are you sure you want to leave this project?</Typography>
+                                <Typography sx={{ my: 1 }} variant='body1' component='p'>Once you do, you won't be able to contribute or see its progress.</Typography>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                                    <Button color='success' variant='contained' onClick={handleLeaveProject}>Leave Project</Button>
+                                    <Button color='warning' variant='outlined' type='submit' onClick={handleCloseLeaveProject}>Cancel</Button>
+                                </Box>
+                            </Box>
+                        </Modal>
+
+                        <Button variant='contained' size='large' color='success' onClick={handleOpenCompleteProject}>COMPLETE PROJECT</Button>
+                        <Modal
+                            aria-labelledby="transition-modal-title"
+                            aria-describedby="transition-modal-description"
+                            open={openCompleteProject}
+                            onClose={handleCloseCompleteProject}
                             closeAfterTransition
                             BackdropComponent={Backdrop}
                             BackdropProps={{ timeout: 500 }}
@@ -143,8 +184,8 @@ export default function ProjectWorkspace({ project }: IProps) {
                                 <Typography sx={{ my: 1 }} variant='body1' component='p'>Once you do, it will no longer be active and the current "Track So Far" will be sent to the project's bands.</Typography>
                                 <Typography sx={{ my: 1 }} variant='body2' component='p'>The song won't be automatically published, but it will be available for the band admins to release.</Typography>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-                                    <Button color='success' variant='contained' onClick={handleClose}>Complete Project</Button>
-                                    <Button color='warning' variant='outlined' type='submit' onClick={handleClose}>Cancel</Button>
+                                    <Button color='success' variant='contained' onClick={handleCompleteProject}>Complete Project</Button>
+                                    <Button color='warning' variant='outlined' type='submit' onClick={handleCloseCompleteProject}>Cancel</Button>
                                 </Box>
                             </Box>
                         </Modal>

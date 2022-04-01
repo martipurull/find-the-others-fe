@@ -131,7 +131,7 @@ export default function AddTrackToDate() {
                         <Modal
                             aria-labelledby="transition-modal-title"
                             aria-describedby="transition-modal-description"
-                            open={openRemoveTrack}
+                            open={openRemoveArtwork}
                             onClose={handleCloseRemoveArtwork}
                             closeAfterTransition
                             BackdropComponent={Backdrop}
