@@ -25,7 +25,7 @@ export default function ProjectSummary({ project }: IProps) {
                             <Typography pr={5} pt={1} pl={1} variant='body2'>{project.description}</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', ml: 'auto', mb: 1 }}>
-                            <ApplicationsReceived />
+                            <ApplicationsReceived projectId={project._id} />
                             <EditProject project={project} />
                         </Box>
                     </Box>

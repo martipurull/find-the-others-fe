@@ -165,6 +165,7 @@ interface IGig {
     specifics?: string
     applications?: IApplication[]
     isGigAvailable: boolean
+    noOfApplications: number
 }
 
 interface IAppliedGig {
@@ -185,7 +186,8 @@ interface INote {
 }
 
 interface IApplication {
-    applicantId: IMiniUser
+    _id: string
+    applicant: IMiniUser
     submission: {
         audioFile: string
         filename: string
