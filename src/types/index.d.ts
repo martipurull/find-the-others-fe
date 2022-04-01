@@ -210,6 +210,14 @@ interface IBand {
     noOfFollowers: number
 }
 
+interface IBandDetails {
+    name: string
+    bandAdmins: string[]
+    members: string[]
+    blurb: string
+    bio: string
+}
+
 interface IMiniBand {
     name: string
     avatar: string

@@ -6,79 +6,153 @@ import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import { useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 import { Theme, useTheme } from '@mui/material/styles'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
-
-const connections = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
+import Avatar from '@mui/material/Avatar'
+import useAxios from '../hooks/useAxios'
+import { useNavigate } from 'react-router-dom'
+import { IBandDetails, IInitialState } from '../types'
+import { useSelector } from 'react-redux'
+import { notifyError } from '../hooks/useNotify'
+import InsertPhotoIcon from '@mui/icons-material/InsertPhoto'
+import IconButton from '@mui/material/IconButton'
+import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp'
 
 function addSelectedStyle(name: string, bandMembers: string[], theme: Theme) {
     return { fontWeight: bandMembers.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightBold }
 }
 
 export default function CreateBand() {
+    const { axiosRequest } = useAxios()
+    const navigate = useNavigate()
+    const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
     const theme = useTheme()
-    const [bandLeader, setBandLeader] = useState<string>('')
-    const [bandMembers, setBandMembers] = useState<string[]>([])
+    const [bandAdminName, setBandAdminName] = useState<string[]>([])
+    const [bandMemberName, setBandMemberName] = useState<string[]>([])
+    const [avatarFile, setAvatarFile] = useState<File>()
+    const [avatarPreview, setAvatarPreview] = useState<string>('')
 
-    const handleChange = (event: SelectChangeEvent<typeof bandMembers>) => {
+    const [bandDetails, setBandDetails] = useState<IBandDetails>({
+        name: '',
+        bandAdmins: bandAdminName,
+        members: bandMemberName,
+        bio: '',
+        blurb: ''
+    })
+
+    const handleInput = (field: string, value: string) => {
+        setBandDetails(details => ({
+            ...details,
+            [field]: value
+        }))
+    }
+
+    const handleAvatarUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        setAvatarFile(e.target.files![0])
+        const imgUrl = URL.createObjectURL(e.target.files![0])
+        setAvatarPreview(imgUrl)
+    }
+
+    const handleRemoveAvatarImg = () => {
+        setAvatarFile(undefined)
+        URL.revokeObjectURL(avatarPreview)
+        setAvatarPreview('')
+    }
+
+    const handleChangeBandMembers = (event: SelectChangeEvent<typeof bandMemberName>) => {
         const { target: { value } } = event
-        setBandMembers(typeof value === 'string' ? value.split(',') : value)
+        setBandMemberName(typeof value === 'string' ? value.split(',') : value)
+    }
+
+    const handleChangeBandAdmins = (event: SelectChangeEvent<typeof bandAdminName>) => {
+        const { target: { value } } = event
+        setBandAdminName(typeof value === 'string' ? value.split(',') : value)
+    }
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault()
+        const dataToAxios = new FormData()
+        dataToAxios.append('name', bandDetails.name)
+        dataToAxios.append('blurb', bandDetails.blurb)
+        dataToAxios.append('bio', bandDetails.bio)
+        for (let i = 0; i < bandDetails.bandAdmins.length; i++) {
+            dataToAxios.append('bandAdmins[]', bandDetails.bandAdmins[i])
+        }
+        for (let i = 0; i < bandDetails.members.length; i++) {
+            dataToAxios.append('members[]', bandDetails.members[i])
+        }
+        avatarFile && dataToAxios.append('bandAvatar', avatarFile)
+
+        const response = await axiosRequest('projects', 'POST', dataToAxios)
+        if (response.status === 201) {
+            navigate('/')
+        } else {
+            notifyError('Something went wrong, please try again.')
+        }
     }
 
     return (
         <Container maxWidth='md' sx={{ minHeight: '75vh', minWidth: '100vw', display: 'flex', justifyContent: 'flex-start' }}>
             <Grid container spacing={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Grid item xs={12} textAlign='center'>
-                    <Typography component='h1' variant='h3'>Start your new band!</Typography>
-                </Grid>
                 <Grid item xs={12} md={8}>
+                    <Typography component='h1' variant='h2' sx={{ mt: 5, mb: 5, textAlign: 'center', fontWeight: 'bold' }}>Start your new band!</Typography>
                     <Box component='form' noValidate autoComplete='off'>
                         <Grid container spacing={8} sx={{ display: 'flex', alignItems: 'space-between' }}>
+                            <Grid item xs={12} md={6}>
+                                <TextField required label='Band Name' variant='standard' value={bandDetails.name} onChange={e => handleInput('name', e.target.value)} />
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                                    {
+                                        !avatarFile &&
+                                        <Button variant='contained' sx={{ p: 1.25 }} component='label'>
+                                            Add Project Photo
+                                            <input type="file" hidden onChange={e => handleAvatarUpload(e)} />
+                                        </Button>
+                                    }
+                                    {
+                                        avatarFile
+                                            ?
+                                            <Box sx={{ position: 'relative' }}>
+                                                <IconButton sx={{ position: 'absolute', left: '85%', top: '-3%' }} onClick={handleRemoveAvatarImg} ><HighlightOffSharpIcon /></IconButton>
+                                                <Box component='img' src={avatarPreview} sx={{ ml: 2, maxWidth: '250px', objectFit: 'cover', borderRadius: '5px' }} />
+                                            </Box>
+                                            :
+                                            <Box><InsertPhotoIcon sx={{ fontSize: 150 }} /></Box>
+                                    }
+                                </Box>
+                            </Grid>
                             <Grid item xs={12} md={4}>
-                                <FormControl sx={{ m: 1, width: 250 }}>
-                                    <InputLabel id='band-leader-select'>Band Leader</InputLabel>
-                                    <Select labelId='band-leader-select' id='band-leader-input' value={bandLeader} onChange={(e) => setBandLeader(e.target.value)}>
-                                        {connections.map((connection, i) => (
-                                            <MenuItem key={i} value={connection}>{connection}</MenuItem>
+                                <FormControl sx={{ m: 1, minWidth: 200 }}>
+                                    <InputLabel id='multiple-bandAdmins-select'>Band Admins</InputLabel>
+                                    <Select labelId='multiple-bandAdmins-select' id='multiple-bandAdmins-input' multiple value={bandAdminName} onChange={handleChangeBandAdmins} input={<OutlinedInput label='Band admins' />}>
+                                        {loggedUser?.connections.map((connection) => (
+                                            <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandAdminName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} md={4}>
-                                <TextField required label='Band Name' variant='standard' />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <FormControl sx={{ m: 1, width: 250 }}>
-                                    <InputLabel id='multiple-band-members-select'>Band Members</InputLabel>
-                                    <Select labelId='multiple-band-members-select' id='multiple-band-members-input' multiple value={bandMembers} onChange={handleChange} input={<OutlinedInput label='Project Band Members' />}>
-                                        {connections.map((connection, i) => (
-                                            <MenuItem key={i} value={connection} style={addSelectedStyle(connection, bandMembers, theme)}>{connection}</MenuItem>
+                                <FormControl sx={{ m: 1, minWidth: 200 }}>
+                                    <InputLabel id='multiple-bandAdmins-select'>Band Members</InputLabel>
+                                    <Select labelId='multiple-bandAdmins-select' id='multiple-bandAdmins-input' multiple value={bandMemberName} onChange={handleChangeBandMembers} input={<OutlinedInput label='Band admins' />}>
+                                        {loggedUser?.connections.map((connection) => (
+                                            <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandMemberName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} md={4}>
-                                <TextField fullWidth id="new-band-blurb" label="Band Status" multiline rows={6} placeholder='We are currently working on this... become a supporter to listen to our work in progress!' />
+                                <TextField fullWidth id="new-band-blurb" label="Band Latest" multiline rows={6} placeholder='We are currently working on this... become a supporter to listen to our work in progress!' value={bandDetails.blurb} onChange={e => handleInput('blurb', e.target.value)} />
                             </Grid>
                             <Grid item xs={12} md={8}>
-                                <TextField fullWidth id="new-band-bio" label="Band Bio" multiline rows={6} placeholder='Write a brief and exciting bio for your band.' />
+                                <TextField fullWidth id="new-band-bio" label="Band Bio" multiline rows={6} placeholder='Write a brief and exciting bio for your band.' value={bandDetails.bio} onChange={e => handleInput('bio', e.target.value)} />
                             </Grid>
                             <Grid item xs={12}>
-                                <Button variant='contained' color='success' fullWidth>Create New Band</Button>
+                                <Button variant='contained' color='success' fullWidth type='submit' onClick={handleSubmit}>Create New Band</Button>
                             </Grid>
                         </Grid>
                     </Box>

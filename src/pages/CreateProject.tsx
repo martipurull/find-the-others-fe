@@ -134,8 +134,8 @@ export default function CreateProject() {
                             </Grid>
                             <Grid item xs={12} md={3}>
                                 <FormControl sx={{ m: 1, minWidth: 200 }}>
-                                    <InputLabel id='multiple-collaborators-select'>Project Admins</InputLabel>
-                                    <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={adminName} onChange={handleChangeAdmins} input={<OutlinedInput label='Project Collaborators' />}>
+                                    <InputLabel id='multiple-projectAdmins-select'>Project Admins</InputLabel>
+                                    <Select labelId='multiple-projectAdmins-select' id='multiple-projectAdmins-input' multiple value={adminName} onChange={handleChangeAdmins} input={<OutlinedInput label='Project Admins' />}>
                                         {loggedUser?.connections.map((connection) => (
                                             <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, adminName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                         ))}
