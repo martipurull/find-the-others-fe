@@ -10,6 +10,8 @@ import Backdrop from '@mui/material/Backdrop'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import { IAppliedGig } from '../types'
+import useAxios from '../hooks/useAxios'
+import { notifyError, notifySuccess } from '../hooks/useNotify'
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -27,9 +29,22 @@ interface IProps {
 }
 
 export default function ApplicationsSent({ applications }: IProps) {
+    const { axiosRequest } = useAxios()
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
+    const [openWithdrawApplication, setOpenWithdrawApplication] = useState(false)
+    const handleOpenWithdrawApplication = () => setOpenWithdrawApplication(true)
+    const handleCloseWithdrawApplication = () => setOpenWithdrawApplication(false)
+
+    const handleWithdrawApplication = async (gigId: string) => {
+        const response = await axiosRequest(`/gigs/${gigId}/applications/withdraw`, 'POST')
+        if (response.status === 200) {
+            notifySuccess('Application withdrawn successfully.')
+        } else {
+            notifyError('Something went wrong.')
+        }
+    }
 
     return (
         <List dense sx={{ width: '100%' }}>
@@ -62,7 +77,25 @@ export default function ApplicationsSent({ applications }: IProps) {
                                 </Box>
                             </Modal>
                             <Grid item xs={12} md={2}>
-                                <Button size='small' variant='outlined' color='error' sx={{ mt: 0.5 }}>Withdraw Application</Button>
+                                <Button size='small' variant='outlined' color='error' sx={{ mt: 0.5 }} onClick={handleOpenWithdrawApplication}>Withdraw Application</Button>
+                                <Modal
+                                    aria-labelledby="transition-modal-title"
+                                    aria-describedby="transition-modal-description"
+                                    open={openWithdrawApplication}
+                                    onClose={handleCloseWithdrawApplication}
+                                    closeAfterTransition
+                                    BackdropComponent={Backdrop}
+                                    BackdropProps={{ timeout: 500 }}
+                                >
+                                    <Box sx={modalStyle}>
+                                        <Typography sx={{ my: 1 }} id="transition-modal-title" variant="h4" component="h3">Eithdraw application?</Typography>
+                                        <Typography sx={{ my: 1 }} variant='h6' component='h4'>Are you sure you want to withdraw your application for project {application.project.title}?</Typography>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                                            <Button color='error' variant='contained' onClick={() => handleWithdrawApplication(application._id)}>Withdraw Application</Button>
+                                            <Button color='warning' variant='outlined' type='submit' onClick={handleCloseWithdrawApplication}>Cancel</Button>
+                                        </Box>
+                                    </Box>
+                                </Modal>
                             </Grid>
                         </Grid>
                     </ListItem>

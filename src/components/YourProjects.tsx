@@ -6,17 +6,19 @@ import ListItemText from '@mui/material/ListItemText'
 import Avatar from '@mui/material/Avatar'
 import projectAvatar from '../assets/projectImg2.svg'
 import { IMiniProject } from '../types'
+import { useNavigate } from 'react-router-dom'
 
 interface IProps {
     projects: IMiniProject[]
 }
 
 export default function YourProjects({ projects }: IProps) {
+    const navigate = useNavigate()
     return (
         <List dense sx={{ width: '100%' }}>
             {
                 projects?.map(project => (
-                    <ListItem key={project._id}>
+                    <ListItem key={project._id} onClick={() => navigate(`/projects/${project._id}`)}>
                         <ListItemButton>
                             <ListItemAvatar>
                                 <Avatar src={project.projectImage ? project.projectImage : projectAvatar} />
