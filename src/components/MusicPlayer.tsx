@@ -1,4 +1,4 @@
-import { styled, useTheme } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Slider from '@mui/material/Slider'
@@ -11,9 +11,10 @@ import FastForwardIcon from '@mui/icons-material/FastForward'
 import FastRewindIcon from '@mui/icons-material/FastRewind'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeDownIcon from '@mui/icons-material/VolumeDown'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IMiniBand } from '../types'
 import * as mm from 'music-metadata'
+import { notifyError } from '../hooks/useNotify'
 
 const Widget = styled('div')(({ theme }) => ({
     padding: 16,
@@ -55,25 +56,29 @@ interface IProps {
 }
 
 export default function MusicPlayer({ trackToDate, trackCover, trackName, projectBands }: IProps) {
-    const theme = useTheme()
-
+    const audio = new Audio(trackToDate)
+    const [playing, setPlaying] = useState(false)
     const getTrackDuration = async (filePath: string) => {
         try {
             const metadata = await mm.parseFile(filePath)
             return metadata.format.duration
         } catch (error) {
             console.log(error)
+            notifyError('Something went wrong when reading the track to date.')
         }
     }
     const trackDuration = getTrackDuration(trackToDate)
-    const [position, setPosition] = useState(55)
-    const [paused, setPaused] = useState(false)
+    const [position, setPosition] = useState<number>(audio.currentTime)
     function formatDuration(seconds: number) {
         const minutes = Math.floor(seconds / 60)
         const secondsLeft = seconds - minutes * 60
         return `${minutes}:${secondsLeft < 9 ? `0${secondsLeft}` : secondsLeft}`
     }
     const mainIconColour = '#f5faff'
+
+    useEffect(() => {
+        playing ? audio.play() : audio.pause()
+    }, [playing])
 
     return (
         <Box sx={{ width: '100%', overflow: 'hidden' }}>
@@ -92,7 +97,7 @@ export default function MusicPlayer({ trackToDate, trackCover, trackName, projec
                         <Slider
                             aria-label="time-indicator"
                             size="small"
-                            value={position}
+                            value={audio.currentTime}
                             min={0}
                             step={1}
                             max={trackDuration}
@@ -128,9 +133,9 @@ export default function MusicPlayer({ trackToDate, trackCover, trackName, projec
                             <IconButton aria-label='previous song'>
                                 <FastRewindIcon fontSize='large' htmlColor={mainIconColour} />
                             </IconButton>
-                            <IconButton aria-label={paused ? 'play' : 'pause'} onClick={() => setPaused(!paused)}>
+                            <IconButton aria-label={playing ? 'play' : 'pause'} onClick={() => setPlaying(!playing)}>
                                 {
-                                    paused
+                                    playing
                                         ? (<PlayArrow sx={{ fontSize: '3rem' }} htmlColor={mainIconColour} />)
                                         : (<PauseIcon sx={{ fontSize: '3rem' }} htmlColor={mainIconColour} />)
                                 }

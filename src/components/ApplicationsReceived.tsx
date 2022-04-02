@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import Avatar from '@mui/material/Avatar'
-import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined'
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import ApprovalOutlinedIcon from '@mui/icons-material/ApprovalOutlined'
@@ -15,7 +14,7 @@ import Badge from '@mui/material/Badge';
 import { IGig } from '../types'
 import useAxios from '../hooks/useAxios'
 import { notifyError } from '../hooks/useNotify'
-import { useNavigate } from 'react-router-dom'
+import MusicMiniPlayer from './MusicMiniPlayer'
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -90,8 +89,8 @@ export default function ApplicationsReceived({ projectId }: IProps) {
                                         <Avatar sx={{ mx: 1 }} src={application.applicant.avatar} />
                                         <Typography sx={{ mx: 1 }} id="transition-modal-title" variant="h6" component="p">{application.applicant.firstName} {application.applicant.lastName}</Typography>
                                         <Typography sx={{ mx: 1 }} id="transition-modal-title" variant="subtitle1" component="p">{gig.instrument}: {gig.specifics}</Typography>
-                                        {/* PLAY MUSIC FUNCTIONALITY!!!! */}
-                                        <Button sx={{ mx: 1 }} variant='outlined' size='small' endIcon={<PlayCircleFilledWhiteOutlinedIcon />}>Play Submitted Track</Button>
+
+                                        <MusicMiniPlayer audioFile={application.submission.audioFile} />
 
                                         <Button sx={{ mx: 1 }} variant='contained' size='small' endIcon={<CheckCircleOutlineOutlinedIcon />} color='success' onClick={handleOpenGiveGig}>Give Gig</Button>
                                         <Modal
