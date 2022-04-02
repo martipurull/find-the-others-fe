@@ -52,21 +52,21 @@ export default function EditProject({ project }: IProps) {
     const handleClose = () => setOpen(false)
     const theme = useTheme()
     const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
-    const [collaboratorName, setCollaboratorName] = useState<string[]>([])
-    const [userBandName, setUserBandName] = useState<string[]>([])
-    const [adminName, setAdminName] = useState<string[]>([])
+    const [collaboratorId, setCollaboratorId] = useState<string[]>([])
+    const [userBandId, setUserBandId] = useState<string[]>([])
+    const [adminId, setAdminId] = useState<string[]>([])
     const [dateValue, setDateValue] = useState<Date | null>(new Date())
     const [projectImgFile, setProjectImgFile] = useState<File>()
     const [imgPreview, setImgPreview] = useState<string>('')
 
-    const projectMemberNames = project.members.map(member => `${member.firstName} ${member.lastName}`)
-    const projectBandNames = project.bands.map(band => band.name)
+    const projectMemberIds = project.members.map(member => member._id)
+    const projectBandIds = project.bands.map(band => band._id)
 
     const [projectDetails, setProjectDetails] = useState<IProjectDetails>({
         title: project.title || '',
-        projectAdmins: project.projectAdmins || adminName,
-        members: projectMemberNames || collaboratorName,
-        bands: projectBandNames || userBandName,
+        projectAdminIds: project.projectAdmins || adminId,
+        memberIds: projectMemberIds || collaboratorId,
+        bandIds: projectBandIds || userBandId,
         description: project.description || '',
         dueDate: project.dueDate || dateValue
     })
@@ -90,19 +90,19 @@ export default function EditProject({ project }: IProps) {
         setImgPreview('')
     }
 
-    const handleChangeBands = (e: SelectChangeEvent<typeof userBandName>) => {
+    const handleChangeBands = (e: SelectChangeEvent<typeof userBandId>) => {
         const { target: { value } } = e
-        setUserBandName(typeof value === 'string' ? value.split(',') : value)
+        setUserBandId(typeof value === 'string' ? value.split(',') : value)
     }
 
-    const handleChangeCollaborators = (event: SelectChangeEvent<typeof collaboratorName>) => {
+    const handleChangeCollaborators = (event: SelectChangeEvent<typeof collaboratorId>) => {
         const { target: { value } } = event
-        setCollaboratorName(typeof value === 'string' ? value.split(',') : value)
+        setCollaboratorId(typeof value === 'string' ? value.split(',') : value)
     }
 
-    const handleChangeAdmins = (event: SelectChangeEvent<typeof adminName>) => {
+    const handleChangeAdmins = (event: SelectChangeEvent<typeof adminId>) => {
         const { target: { value } } = event
-        setAdminName(typeof value === 'string' ? value.split(',') : value)
+        setAdminId(typeof value === 'string' ? value.split(',') : value)
     }
 
     const handleSubmit = async (e: FormEvent) => {
@@ -110,20 +110,20 @@ export default function EditProject({ project }: IProps) {
         const dataToAxios = new FormData()
         dataToAxios.append('title', projectDetails.title)
         dataToAxios.append('description', projectDetails.description)
-        for (let i = 0; i < projectDetails.projectAdmins.length; i++) {
-            dataToAxios.append('projectAdmins[]', projectDetails.projectAdmins[i])
+        for (let i = 0; i < projectDetails.projectAdminIds.length; i++) {
+            dataToAxios.append('projectAdmins[]', projectDetails.projectAdminIds[i])
         }
-        for (let i = 0; i < projectDetails.members.length; i++) {
-            dataToAxios.append('members[]', projectDetails.members[i])
+        for (let i = 0; i < projectDetails.memberIds.length; i++) {
+            dataToAxios.append('memberIds[]', projectDetails.memberIds[i])
         }
-        for (let i = 0; i < projectDetails.projectAdmins.length; i++) {
-            dataToAxios.append('projectAdmins[]', projectDetails.bands[i])
+        for (let i = 0; i < projectDetails.bandIds.length; i++) {
+            dataToAxios.append('bandIds[]', projectDetails.bandIds[i])
         }
         projectImgFile && dataToAxios.append('projectImage', projectImgFile)
 
         const response = await axiosRequest('projects', 'POST', dataToAxios)
         if (response.status === 403) notifyError('Only a project leader can edit a project.')
-        if (response.status === 201) {
+        if (response.status === 200) {
             navigate('/')
         } else {
             notifyError('Something went wrong, please try again.')
@@ -147,26 +147,26 @@ export default function EditProject({ project }: IProps) {
                         <TextField sx={{ my: 1 }} required label='Project Title' variant='standard' value={projectDetails.title} onChange={e => handleInput('title', e.target.value)} />
                         <FormControl sx={{ m: 1, minWidth: 200 }}>
                             <InputLabel id='multiple-bands-select'>Project Bands</InputLabel>
-                            <Select labelId='multiple-bands-select' id='multiple-bands-input' multiple value={userBandName} onChange={handleChangeBands} input={<OutlinedInput label='Project bands' />}>
+                            <Select labelId='multiple-bands-select' id='multiple-bands-input' multiple value={userBandId} onChange={handleChangeBands} input={<OutlinedInput label='Project bands' />}>
                                 {loggedUser?.memberOf.map((band) => (
-                                    <MenuItem key={band._id} value={band.name} style={addSelectedStyle(band.name, userBandName, theme)}>{band.name}</MenuItem>
+                                    <MenuItem key={band._id} value={band._id} style={addSelectedStyle(band.name, userBandId, theme)}>{band.name}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
                         <FormControl sx={{ m: 1, minWidth: 200 }}>
-                            <InputLabel id='multiple-collaborators-select'>Project Admins</InputLabel>
-                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={adminName} onChange={handleChangeAdmins} input={<OutlinedInput label='Project Collaborators' />}>
+                            <InputLabel id='multiple-admins-select'>Project Admins</InputLabel>
+                            <Select labelId='multiple-admins-select' id='multiple-admins-input' multiple value={adminId} onChange={handleChangeAdmins} input={<OutlinedInput label='Project Admins' />}>
                                 {loggedUser?.connections.map((connection) => (
-                                    <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, adminName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                    <MenuItem key={connection._id} value={connection._id} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, adminId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                 ))}
                             </Select>
                             <Typography variant='caption'>by creating the project, you will be one of its admins</Typography>
                         </FormControl>
                         <FormControl sx={{ m: 1, minWidth: 200 }}>
                             <InputLabel id='multiple-collaborators-select'>Project Collaborators</InputLabel>
-                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaboratorName} onChange={handleChangeCollaborators} input={<OutlinedInput label='Project Collaborators' />}>
+                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaboratorId} onChange={handleChangeCollaborators} input={<OutlinedInput label='Project Collaborators' />}>
                                 {loggedUser?.connections.map((connection) => (
-                                    <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, collaboratorName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                    <MenuItem key={connection._id} value={connection._id} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, collaboratorId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>

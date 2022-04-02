@@ -48,18 +48,18 @@ export default function EditBand({ band }: IProps) {
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
     const theme = useTheme()
-    const [bandAdminName, setBandAdminName] = useState<string[]>([])
-    const [bandMemberName, setBandMemberName] = useState<string[]>([])
+    const [bandAdminId, setBandAdminId] = useState<string[]>([])
+    const [bandMemberId, setBandMemberId] = useState<string[]>([])
     const [avatarFile, setAvatarFile] = useState<File>()
     const [avatarPreview, setAvatarPreview] = useState<string>('')
 
-    const bandAdminNames = band.bandAdmins.map(admin => `${admin.firstName} ${admin.lastName}`)
-    const bandMembersNames = band.members.map(member => `${member.firstName} ${member.lastName}`)
+    const bandAdminIds = band.bandAdmins.map(admin => admin._id)
+    const bandMemberIds = band.members.map(member => member._id)
 
     const [bandDetails, setBandDetails] = useState<IBandDetails>({
         name: band.name || '',
-        bandAdmins: bandAdminNames || bandAdminName,
-        members: bandMembersNames || bandMemberName,
+        bandAdminIds: bandAdminIds || bandAdminId,
+        memberIds: bandMemberIds || bandMemberId,
         bio: band.bio || '',
         blurb: band.blurb || ''
     })
@@ -83,14 +83,14 @@ export default function EditBand({ band }: IProps) {
         setAvatarPreview('')
     }
 
-    const handleChangeBandMembers = (event: SelectChangeEvent<typeof bandMemberName>) => {
+    const handleChangeBandMembers = (event: SelectChangeEvent<typeof bandMemberId>) => {
         const { target: { value } } = event
-        setBandMemberName(typeof value === 'string' ? value.split(',') : value)
+        setBandMemberId(typeof value === 'string' ? value.split(',') : value)
     }
 
-    const handleChangeBandAdmins = (event: SelectChangeEvent<typeof bandAdminName>) => {
+    const handleChangeBandAdmins = (event: SelectChangeEvent<typeof bandAdminId>) => {
         const { target: { value } } = event
-        setBandAdminName(typeof value === 'string' ? value.split(',') : value)
+        setBandAdminId(typeof value === 'string' ? value.split(',') : value)
     }
 
     const handleSubmit = async (e: FormEvent) => {
@@ -99,16 +99,16 @@ export default function EditBand({ band }: IProps) {
         dataToAxios.append('name', bandDetails.name)
         dataToAxios.append('blurb', bandDetails.blurb)
         dataToAxios.append('bio', bandDetails.bio)
-        for (let i = 0; i < bandDetails.bandAdmins.length; i++) {
-            dataToAxios.append('bandAdmins[]', bandDetails.bandAdmins[i])
+        for (let i = 0; i < bandDetails.bandAdminIds.length; i++) {
+            dataToAxios.append('bandAdmins[]', bandDetails.bandAdminIds[i])
         }
-        for (let i = 0; i < bandDetails.members.length; i++) {
-            dataToAxios.append('members[]', bandDetails.members[i])
+        for (let i = 0; i < bandDetails.memberIds.length; i++) {
+            dataToAxios.append('members[]', bandDetails.memberIds[i])
         }
         avatarFile && dataToAxios.append('bandAvatar', avatarFile)
 
         const response = await axiosRequest(`/bands/${band._id}`, 'PUT', dataToAxios)
-        if (response.status === 201) {
+        if (response.status === 200) {
             navigate('/')
         } else {
             notifyError('Something went wrong, please try again.')
@@ -151,18 +151,18 @@ export default function EditBand({ band }: IProps) {
                         </Box>
                         <FormControl sx={{ m: 1, minWidth: 200 }}>
                             <InputLabel id='multiple-collaborators-select'>Band Admins</InputLabel>
-                            <Select labelId='multiple-collaborators-select' id='multiple-bandAdmins-input' multiple value={bandAdminName} onChange={handleChangeBandAdmins} input={<OutlinedInput label='Project Collaborators' />}>
+                            <Select labelId='multiple-collaborators-select' id='multiple-bandAdmins-input' multiple value={bandAdminId} onChange={handleChangeBandAdmins} input={<OutlinedInput label='Project Collaborators' />}>
                                 {loggedUser?.connections.map((connection) => (
-                                    <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandAdminName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                    <MenuItem key={connection._id} value={connection._id} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandAdminId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                 ))}
                             </Select>
                             <Typography variant='caption'>by creating a band, you will be one of its admins</Typography>
                         </FormControl>
                         <FormControl sx={{ m: 1, minWidth: 200 }}>
                             <InputLabel id='multiple-collaborators-select'>Band Members</InputLabel>
-                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={bandMemberName} onChange={handleChangeBandMembers} input={<OutlinedInput label='Project Collaborators' />}>
+                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={bandMemberId} onChange={handleChangeBandMembers} input={<OutlinedInput label='Project Collaborators' />}>
                                 {loggedUser?.connections.map((connection) => (
-                                    <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandMemberName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                    <MenuItem key={connection._id} value={connection._id} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandMemberId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>

@@ -12,7 +12,7 @@ import Modal from '@mui/material/Modal'
 import Backdrop from '@mui/material/Backdrop'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import useAxios from '../hooks/useAxios'
-import { IGig, IInitialState } from '../types'
+import { IGig, IGigDetails, IInitialState } from '../types'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { notifyError, notifySuccess } from '../hooks/useNotify'
@@ -29,10 +29,11 @@ const modalStyle = {
 }
 
 interface IProps {
-    gig: IGig
+    gig: IGigDetails
+    gigId: string
 }
 
-export default function EditGig({ gig }: IProps) {
+export default function EditGig({ gig, gigId }: IProps) {
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
@@ -48,15 +49,16 @@ export default function EditGig({ gig }: IProps) {
     }
 
     const selectedProject = findSelectedProject()
+    const selectedProjectBandIds = selectedProject?.bands.map(({ _id }) => _id)
 
     useEffect(() => {
         findSelectedProject()
     }, [selectedProjectTitle])
 
-    const [gigDetails, setGigDetails] = useState<IGig>({
+    const [gigDetails, setGigDetails] = useState<IGigDetails>({
         title: gig.title || '',
-        project: gig.project || selectedProject,
-        bands: gig.bands || selectedProject?.bands,
+        projectId: gig?.projectId || selectedProject?._id,
+        bandIds: gig?.bandIds || selectedProjectBandIds,
         description: gig.description || '',
         genre: gig.genre || '',
         hours: gig.hours || 1,
@@ -79,7 +81,7 @@ export default function EditGig({ gig }: IProps) {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        const response = await axiosRequest(`/gigs/${gig._id}`, 'POST', gigDetails)
+        const response = await axiosRequest(`/gigs/${gigId}`, 'PUT', gigDetails)
         if (response.status === 400) notifyError('Gig could not be posted.')
         if (response.status === 200) {
             navigate('/gigs')
@@ -107,7 +109,7 @@ export default function EditGig({ gig }: IProps) {
                             <InputLabel id='project-select'>Gig Project</InputLabel>
                             <Select labelId='project-select' id='project-select' value={selectedProjectTitle} onChange={(e) => setSelectedProjectTitle(e.target.value)}>
                                 {userProjects.map((project) => (
-                                    <MenuItem key={project._id} value={project.title}>{project.title}</MenuItem>
+                                    <MenuItem key={project._id} value={project._id}>{project.title}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
@@ -126,7 +128,8 @@ export default function EditGig({ gig }: IProps) {
                         <FormControlLabel sx={{ ml: 'auto' }} control={<Switch sx={{ mr: 1 }} checked={gigDetails.isGigAvailable} onChange={handleIsAvailable} color='success' />} label='Make gig available?' />
 
                         <Button sx={{ mt: 2 }} variant='contained' color='success' type='submit' onClick={handleSubmit}>Edit Gig</Button>
-                    </Box> for rock project
+                        <Button color='warning' variant='outlined' onClick={handleClose}>Cancel</Button>
+                    </Box>
                 </Box>
             </Modal>
         </Box>

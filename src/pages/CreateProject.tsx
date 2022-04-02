@@ -38,18 +38,18 @@ export default function CreateProject() {
     const navigate = useNavigate()
     const theme = useTheme()
     const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
-    const [collaboratorName, setCollaboratorName] = useState<string[]>([])
-    const [userBandName, setUserBandName] = useState<string[]>([])
-    const [adminName, setAdminName] = useState<string[]>([])
+    const [collaboratorId, setCollaboratorId] = useState<string[]>([])
+    const [userBandId, setUserBandId] = useState<string[]>([])
+    const [adminId, setAdminId] = useState<string[]>([])
     const [dateValue, setDateValue] = useState<Date | null>(new Date())
     const [projectImgFile, setProjectImgFile] = useState<File>()
     const [imgPreview, setImgPreview] = useState<string>('')
 
     const [projectDetails, setProjectDetails] = useState<IProjectDetails>({
         title: '',
-        projectAdmins: adminName,
-        members: collaboratorName,
-        bands: userBandName,
+        projectAdminIds: adminId,
+        memberIds: collaboratorId,
+        bandIds: userBandId,
         description: '',
         dueDate: dateValue
     })
@@ -73,19 +73,19 @@ export default function CreateProject() {
         setImgPreview('')
     }
 
-    const handleChangeBands = (e: SelectChangeEvent<typeof userBandName>) => {
+    const handleChangeBands = (e: SelectChangeEvent<typeof userBandId>) => {
         const { target: { value } } = e
-        setUserBandName(typeof value === 'string' ? value.split(',') : value)
+        setUserBandId(typeof value === 'string' ? value.split(',') : value)
     }
 
-    const handleChangeCollaborators = (event: SelectChangeEvent<typeof collaboratorName>) => {
+    const handleChangeCollaborators = (event: SelectChangeEvent<typeof collaboratorId>) => {
         const { target: { value } } = event
-        setCollaboratorName(typeof value === 'string' ? value.split(',') : value)
+        setCollaboratorId(typeof value === 'string' ? value.split(',') : value)
     }
 
-    const handleChangeAdmins = (event: SelectChangeEvent<typeof adminName>) => {
+    const handleChangeAdmins = (event: SelectChangeEvent<typeof adminId>) => {
         const { target: { value } } = event
-        setAdminName(typeof value === 'string' ? value.split(',') : value)
+        setAdminId(typeof value === 'string' ? value.split(',') : value)
     }
 
     const handleSubmit = async (e: FormEvent) => {
@@ -93,18 +93,18 @@ export default function CreateProject() {
         const dataToAxios = new FormData()
         dataToAxios.append('title', projectDetails.title)
         dataToAxios.append('description', projectDetails.description)
-        for (let i = 0; i < projectDetails.projectAdmins.length; i++) {
-            dataToAxios.append('projectAdmins[]', projectDetails.projectAdmins[i])
+        for (let i = 0; i < projectDetails.projectAdminIds.length; i++) {
+            dataToAxios.append('projectAdminIds[]', projectDetails.projectAdminIds[i])
         }
-        for (let i = 0; i < projectDetails.members.length; i++) {
-            dataToAxios.append('members[]', projectDetails.members[i])
+        for (let i = 0; i < projectDetails.memberIds.length; i++) {
+            dataToAxios.append('memberIds[]', projectDetails.memberIds[i])
         }
-        for (let i = 0; i < projectDetails.projectAdmins.length; i++) {
-            dataToAxios.append('projectAdmins[]', projectDetails.bands[i])
+        for (let i = 0; i < projectDetails.bandIds.length; i++) {
+            dataToAxios.append('bandIds[]', projectDetails.bandIds[i])
         }
         projectImgFile && dataToAxios.append('projectImage', projectImgFile)
 
-        const response = await axiosRequest('projects', 'POST', dataToAxios)
+        const response = await axiosRequest('/projects', 'POST', dataToAxios)
         if (response.status === 201) {
             navigate('/')
         } else {
@@ -125,9 +125,9 @@ export default function CreateProject() {
                             <Grid item xs={12} md={3}>
                                 <FormControl sx={{ m: 1, minWidth: 200 }}>
                                     <InputLabel id='multiple-bands-select'>Project Bands</InputLabel>
-                                    <Select labelId='multiple-bands-select' id='multiple-bands-input' multiple value={userBandName} onChange={handleChangeBands} input={<OutlinedInput label='Project bands' />}>
+                                    <Select labelId='multiple-bands-select' id='multiple-bands-input' multiple value={userBandId} onChange={handleChangeBands} input={<OutlinedInput label='Project bands' />}>
                                         {loggedUser?.memberOf.map((band) => (
-                                            <MenuItem key={band._id} value={band.name} style={addSelectedStyle(band.name, userBandName, theme)}>{band.name}</MenuItem>
+                                            <MenuItem key={band._id} value={band._id} style={addSelectedStyle(band.name, userBandId, theme)}>{band.name}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -135,9 +135,9 @@ export default function CreateProject() {
                             <Grid item xs={12} md={3}>
                                 <FormControl sx={{ m: 1, minWidth: 200 }}>
                                     <InputLabel id='multiple-projectAdmins-select'>Project Admins</InputLabel>
-                                    <Select labelId='multiple-projectAdmins-select' id='multiple-projectAdmins-input' multiple value={adminName} onChange={handleChangeAdmins} input={<OutlinedInput label='Project Admins' />}>
+                                    <Select labelId='multiple-projectAdmins-select' id='multiple-projectAdmins-input' multiple value={adminId} onChange={handleChangeAdmins} input={<OutlinedInput label='Project Admins' />}>
                                         {loggedUser?.connections.map((connection) => (
-                                            <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, adminName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                            <MenuItem key={connection._id} value={`${connection._id} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, adminId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                         ))}
                                     </Select>
                                     <Typography variant='caption'>by creating the project, you will be one of its admins</Typography>
@@ -146,9 +146,9 @@ export default function CreateProject() {
                             <Grid item xs={12} md={3}>
                                 <FormControl sx={{ m: 1, minWidth: 200 }}>
                                     <InputLabel id='multiple-collaborators-select'>Project Collaborators</InputLabel>
-                                    <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaboratorName} onChange={handleChangeCollaborators} input={<OutlinedInput label='Project Collaborators' />}>
+                                    <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaboratorId} onChange={handleChangeCollaborators} input={<OutlinedInput label='Project Collaborators' />}>
                                         {loggedUser?.connections.map((connection) => (
-                                            <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, adminName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                            <MenuItem key={connection._id} value={`${connection._id} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, collaboratorId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -164,13 +164,13 @@ export default function CreateProject() {
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-                                    {
+                                    {/* {
                                         !projectImgFile &&
                                         <Button variant='contained' sx={{ p: 1.25 }} component='label'>
                                             Add Project Photo
                                             <input type="file" hidden onChange={e => handleProjectImgUpload(e)} />
                                         </Button>
-                                    }
+                                    } */}
                                     {
                                         projectImgFile
                                             ?
@@ -179,7 +179,12 @@ export default function CreateProject() {
                                                 <Box component='img' src={imgPreview} sx={{ ml: 2, maxWidth: '250px', objectFit: 'cover', borderRadius: '5px' }} />
                                             </Box>
                                             :
-                                            <Box><InsertPhotoIcon sx={{ fontSize: 150 }} /></Box>
+                                            <Box>
+                                                <Button variant='contained' sx={{ p: 1.25 }} component='label' endIcon={<InsertPhotoIcon sx={{ fontSize: 150 }} />}>
+                                                    Add Project Photo
+                                                    <input type="file" hidden onChange={e => handleProjectImgUpload(e)} />
+                                                </Button>
+                                            </Box>
                                     }
                                 </Box>
                             </Grid>

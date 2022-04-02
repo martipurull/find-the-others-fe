@@ -10,7 +10,7 @@ import Box from '@mui/material/Box'
 import MenuItem from '@mui/material/MenuItem'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { IGig, IInitialState, IMiniProject } from '../types'
+import { IGig, IGigDetails, IInitialState, IMiniProject } from '../types'
 import { FormControlLabel, Switch } from '@mui/material'
 import useAxios from '../hooks/useAxios'
 import { notifyError, notifySuccess } from '../hooks/useNotify'
@@ -31,15 +31,16 @@ export default function CreateGig() {
     }
 
     const selectedProject = findSelectedProject()
+    const selectedProjectBandIds = selectedProject?.bands.map(({ _id }) => _id)
 
     useEffect(() => {
         findSelectedProject()
     }, [selectedProjectTitle])
 
-    const [gigDetails, setGigDetails] = useState<IGig>({
+    const [gigDetails, setGigDetails] = useState<IGigDetails>({
         title: '',
-        project: selectedProject,
-        bands: selectedProject?.bands,
+        projectId: selectedProject?._id,
+        bandIds: selectedProjectBandIds,
         description: '',
         genre: '',
         hours: 1,

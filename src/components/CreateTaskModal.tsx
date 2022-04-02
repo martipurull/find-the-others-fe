@@ -12,7 +12,7 @@ import NotesIcon from '@mui/icons-material/Notes'
 import Paper from '@mui/material/Paper'
 import Input from '@mui/material/Input'
 import Button from '@mui/material/Button'
-import { useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -20,8 +20,11 @@ import WAvatar from '../assets/WAvatar.jpeg'
 import IconButton from '@mui/material/IconButton'
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
 import useAxios from '../hooks/useAxios'
-import { useNavigate, useParams } from 'react-router-dom'
-import { notifyError } from '../hooks/useNotify'
+import { notifyError, notifySuccess } from '../hooks/useNotify'
+import { IInitialState, ITaskDetails } from '../types'
+import { useSelector } from 'react-redux'
+import MusicMiniPlayer from './MusicMiniPlayer'
+import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp'
 
 const ariaLabel = { 'aria-label': 'description' }
 const modalStyle = {
@@ -35,38 +38,72 @@ const modalStyle = {
     p: 4,
 }
 
-const projectMembers = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-]
-
 function addSelectedStyle(name: string, collaborators: string[], theme: Theme) {
     return { fontWeight: collaborators.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightBold }
 }
 
 export default function CreateTaskModal() {
     const { axiosRequest } = useAxios()
-    const navigate = useNavigate()
-    const { projectId } = useParams()
+    const currentProject = useSelector((state: IInitialState) => state.userProjects.currentProject)
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
     const theme = useTheme()
+    const [musicianId, setMusicianId] = useState<string[]>([])
+    const [selectedStatus, setSelectedStatus] = useState('todo')
+    const statuses = ['todo', 'doing', 'done']
+    const [taskAudioFile, setTaskAudioFile] = useState<File>()
+    const [audioPreview, setAudioPreview] = useState<string>('')
+
     const [isAddingNotes, setIsAddingNotes] = useState(false)
 
-    const [collaboratorName, setCollaboratorName] = useState<string[]>([])
+    const [taskDetails, setTaskDetails] = useState<ITaskDetails>({
+        title: '',
+        description: '',
+        musicians: musicianId,
+        status: selectedStatus
+    })
 
-    const handleChange = (event: SelectChangeEvent<typeof collaboratorName>) => {
+    const handleInput = (field: string, value: string) => {
+        setTaskDetails(details => ({
+            ...details,
+            [field]: value
+        }))
+    }
+
+    const handleTaskAudioUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        setTaskAudioFile(e.target.files![0])
+        const imgUrl = URL.createObjectURL(e.target.files![0])
+        setAudioPreview(imgUrl)
+    }
+
+    const handleRemoveTaskAudio = () => {
+        setTaskAudioFile(undefined)
+        URL.revokeObjectURL(audioPreview)
+        setAudioPreview('')
+    }
+
+    const handleChangeMembers = (event: SelectChangeEvent<typeof musicianId>) => {
         const { target: { value } } = event
-        setCollaboratorName(typeof value === 'string' ? value.split(',') : value)
+        setMusicianId(typeof value === 'string' ? value.split(',') : value)
+    }
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault()
+        const dataToAxios = new FormData()
+        dataToAxios.append('title', taskDetails.title)
+        taskDetails.description && dataToAxios.append('description', taskDetails.description)
+        for (let i = 0; i < taskDetails.musicians.length; i++) {
+            dataToAxios.append('musicians[]', taskDetails.musicians[i])
+        }
+        taskAudioFile && dataToAxios.append('audioFile', taskAudioFile)
+
+        const response = await axiosRequest(`/projects/${currentProject?._id}/tasks`, 'POST', dataToAxios)
+        if (response.status === 201) {
+            notifySuccess('Task created!')
+        } else {
+            notifyError('Something went wrong, please try again.')
+        }
     }
 
     return (
@@ -85,17 +122,36 @@ export default function CreateTaskModal() {
                 <Box sx={modalStyle}>
                     <Typography id="transition-modal-title" variant="h6" component="h2">Task Details</Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
-                        <TextField sx={{ my: 1 }} label='Title' variant='standard' placeholder="Enter task title" />
-                        <TextField sx={{ my: 1 }} label='Description' variant='standard' multiline rows={4} placeholder="describe the task" />
+                        <TextField sx={{ my: 1 }} label='Title' variant='standard' placeholder='Enter task title' value={taskDetails.title} onChange={e => handleInput('title', e.target.value)} />
+                        <TextField sx={{ my: 1 }} label='Description' variant='standard' multiline rows={4} placeholder='briefly describe the task' value={taskDetails.description} onChange={e => handleInput('description', e.target.value)} />
                         <FormControl sx={{ my: 1 }}>
-                            <InputLabel id='multiple-collaborators-select'>Tasked Musician</InputLabel>
-                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaboratorName} onChange={handleChange} input={<OutlinedInput label='Tasked Musician' />}>
-                                {projectMembers.map((member, i) => (
-                                    <MenuItem key={i} value={member} style={addSelectedStyle(member, collaboratorName, theme)}>{member}</MenuItem>
+                            <InputLabel id='multiple-members-select'>Tasked Musicians</InputLabel>
+                            <Select labelId='multiple-members-select' id='multiple-members-input' multiple value={musicianId} onChange={handleChangeMembers} input={<OutlinedInput label='Tasked Musicians' />}>
+                                {currentProject?.members.map((member) => (
+                                    <MenuItem key={member._id} value={member._id} style={addSelectedStyle(`${member.firstName} ${member.lastName}`, musicianId, theme)}>{`${member.firstName} ${member.lastName}`}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
-                        <Button sx={{ my: 1, display: 'flex', justifyContent: 'space-around' }} size='medium' variant='outlined' color='success'>Add Audio <AudiotrackIcon /></Button>
+                        <FormControl required variant='standard' sx={{ m: 1, minWidth: 200 }}>
+                            <InputLabel id='status-select'>Gig Instrument</InputLabel>
+                            <Select labelId='status-select' id='status-select' value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
+                                {statuses.map((status, i) => (
+                                    <MenuItem key={i} value={status}>{status}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        {
+                            taskAudioFile ?
+                                <Box>
+                                    <MusicMiniPlayer audioFile={audioPreview} />
+                                    <Button size='small' variant='contained' color='error' onClick={handleRemoveTaskAudio} endIcon={HighlightOffSharpIcon}>Remove Task Audio</Button>
+                                </Box>
+                                :
+                                <Button sx={{ my: 1, display: 'flex', justifyContent: 'space-around' }} size='medium' variant='outlined' color='success' endIcon={<AudiotrackIcon />}>
+                                    Add Audio
+                                    <input type="file" onChange={e => handleTaskAudioUpload(e)} />
+                                </Button>
+                        }
                         <Button sx={{ my: 1, display: 'flex', justifyContent: 'space-around' }} size='medium' variant='outlined' color='primary' onClick={() => setIsAddingNotes(!isAddingNotes)}>Add note <NotesIcon /></Button>
                         {
                             isAddingNotes &&
@@ -106,8 +162,8 @@ export default function CreateTaskModal() {
                         }
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-                        <Button color='success' variant='outlined' onClick={handleClose}>Create Task</Button>
-                        <Button color='warning' variant='outlined' type='submit' onClick={handleClose}>Cancel</Button>
+                        <Button color='success' variant='outlined' type='submit' onClick={handleSubmit}>Create Task</Button>
+                        <Button color='warning' variant='outlined' onClick={handleClose}>Cancel</Button>
                     </Box>
                 </Box>
             </Modal>

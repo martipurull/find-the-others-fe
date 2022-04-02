@@ -126,12 +126,11 @@ interface IProject {
 
 interface IProjectDetails {
     title: string
-    projectAdmins: string[]
-    members: string[]
-    bands: string[]
+    projectAdminIds: string[]
+    memberIds: string[]
+    bandIds: string[]
     description: string
-    dueDate: date
-    bands: IMiniBand[]
+    dueDate?: date
 }
 
 interface IMiniProject {
@@ -145,7 +144,7 @@ interface IMiniProject {
 interface ITask {
     _id: string
     status: string
-    musicians: IUser[]
+    musicians: IMiniUser[]
     title: string
     description?: string
     audioFile?: string
@@ -154,11 +153,14 @@ interface ITask {
 }
 
 interface ITaskDetails {
-
+    title: string
+    musicians: string[]
+    description?: string
+    status: string
 }
 
 interface IGig {
-    _id?: string
+    _id: string
     title: string
     project?: IMiniProject
     bands?: IMiniBand[]
@@ -171,6 +173,19 @@ interface IGig {
     applications?: IApplication[]
     isGigAvailable: boolean
     noOfApplications: number
+}
+
+interface IGigDetails {
+    title: string
+    projectId?: string
+    bandIds?: string[]
+    description: string
+    genre: string
+    hours: number
+    instrument: string
+    otherInstrument?: string
+    specifics?: string
+    isGigAvailable: boolean
 }
 
 interface IAppliedGig {
@@ -186,7 +201,8 @@ interface IAppliedGig {
 }
 
 interface INote {
-    sender: IUser
+    _id: string
+    sender: IMiniUser
     text: string
 }
 
@@ -219,8 +235,8 @@ interface IBand {
 
 interface IBandDetails {
     name: string
-    bandAdmins: string[]
-    members: string[]
+    bandAdminIds: string[]
+    memberIds: string[]
     blurb: string
     bio: string
 }

@@ -30,15 +30,15 @@ export default function CreateBand() {
     const navigate = useNavigate()
     const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
     const theme = useTheme()
-    const [bandAdminName, setBandAdminName] = useState<string[]>([])
-    const [bandMemberName, setBandMemberName] = useState<string[]>([])
+    const [bandAdminId, setBandAdminId] = useState<string[]>([])
+    const [bandMemberId, setBandMemberId] = useState<string[]>([])
     const [avatarFile, setAvatarFile] = useState<File>()
     const [avatarPreview, setAvatarPreview] = useState<string>('')
 
     const [bandDetails, setBandDetails] = useState<IBandDetails>({
         name: '',
-        bandAdmins: bandAdminName,
-        members: bandMemberName,
+        bandAdminIds: bandAdminId,
+        memberIds: bandMemberId,
         bio: '',
         blurb: ''
     })
@@ -62,14 +62,14 @@ export default function CreateBand() {
         setAvatarPreview('')
     }
 
-    const handleChangeBandMembers = (event: SelectChangeEvent<typeof bandMemberName>) => {
+    const handleChangeBandMembers = (event: SelectChangeEvent<typeof bandMemberId>) => {
         const { target: { value } } = event
-        setBandMemberName(typeof value === 'string' ? value.split(',') : value)
+        setBandMemberId(typeof value === 'string' ? value.split(',') : value)
     }
 
-    const handleChangeBandAdmins = (event: SelectChangeEvent<typeof bandAdminName>) => {
+    const handleChangeBandAdmins = (event: SelectChangeEvent<typeof bandAdminId>) => {
         const { target: { value } } = event
-        setBandAdminName(typeof value === 'string' ? value.split(',') : value)
+        setBandAdminId(typeof value === 'string' ? value.split(',') : value)
     }
 
     const handleSubmit = async (e: FormEvent) => {
@@ -78,11 +78,11 @@ export default function CreateBand() {
         dataToAxios.append('name', bandDetails.name)
         dataToAxios.append('blurb', bandDetails.blurb)
         dataToAxios.append('bio', bandDetails.bio)
-        for (let i = 0; i < bandDetails.bandAdmins.length; i++) {
-            dataToAxios.append('bandAdmins[]', bandDetails.bandAdmins[i])
+        for (let i = 0; i < bandDetails.bandAdminIds.length; i++) {
+            dataToAxios.append('bandAdminIds[]', bandDetails.bandAdminIds[i])
         }
-        for (let i = 0; i < bandDetails.members.length; i++) {
-            dataToAxios.append('members[]', bandDetails.members[i])
+        for (let i = 0; i < bandDetails.memberIds.length; i++) {
+            dataToAxios.append('memberIds[]', bandDetails.memberIds[i])
         }
         avatarFile && dataToAxios.append('bandAvatar', avatarFile)
 
@@ -128,9 +128,9 @@ export default function CreateBand() {
                             <Grid item xs={12} md={4}>
                                 <FormControl sx={{ m: 1, minWidth: 200 }}>
                                     <InputLabel id='multiple-bandAdmins-select'>Band Admins</InputLabel>
-                                    <Select labelId='multiple-bandAdmins-select' id='multiple-bandAdmins-input' multiple value={bandAdminName} onChange={handleChangeBandAdmins} input={<OutlinedInput label='Band admins' />}>
+                                    <Select labelId='multiple-bandAdmins-select' id='multiple-bandAdmins-input' multiple value={bandAdminId} onChange={handleChangeBandAdmins} input={<OutlinedInput label='Band admins' />}>
                                         {loggedUser?.connections.map((connection) => (
-                                            <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandAdminName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                            <MenuItem key={connection._id} value={connection._id} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandAdminId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -138,9 +138,9 @@ export default function CreateBand() {
                             <Grid item xs={12} md={4}>
                                 <FormControl sx={{ m: 1, minWidth: 200 }}>
                                     <InputLabel id='multiple-bandAdmins-select'>Band Members</InputLabel>
-                                    <Select labelId='multiple-bandAdmins-select' id='multiple-bandAdmins-input' multiple value={bandMemberName} onChange={handleChangeBandMembers} input={<OutlinedInput label='Band admins' />}>
+                                    <Select labelId='multiple-bandAdmins-select' id='multiple-bandAdmins-input' multiple value={bandMemberId} onChange={handleChangeBandMembers} input={<OutlinedInput label='Band admins' />}>
                                         {loggedUser?.connections.map((connection) => (
-                                            <MenuItem key={connection._id} value={`${connection.firstName} ${connection.lastName}`} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandMemberName, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                            <MenuItem key={connection._id} value={connection._id} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandMemberId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
