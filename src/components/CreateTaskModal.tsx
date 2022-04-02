@@ -19,6 +19,9 @@ import Box from '@mui/material/Box'
 import WAvatar from '../assets/WAvatar.jpeg'
 import IconButton from '@mui/material/IconButton'
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
+import useAxios from '../hooks/useAxios'
+import { useNavigate, useParams } from 'react-router-dom'
+import { notifyError } from '../hooks/useNotify'
 
 const ariaLabel = { 'aria-label': 'description' }
 const modalStyle = {
@@ -50,16 +53,20 @@ function addSelectedStyle(name: string, collaborators: string[], theme: Theme) {
 }
 
 export default function CreateTaskModal() {
+    const { axiosRequest } = useAxios()
+    const navigate = useNavigate()
+    const { projectId } = useParams()
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
     const theme = useTheme()
     const [isAddingNotes, setIsAddingNotes] = useState(false)
-    const [collaborators, setCollaborators] = useState<string[]>([])
 
-    const handleChange = (event: SelectChangeEvent<typeof collaborators>) => {
+    const [collaboratorName, setCollaboratorName] = useState<string[]>([])
+
+    const handleChange = (event: SelectChangeEvent<typeof collaboratorName>) => {
         const { target: { value } } = event
-        setCollaborators(typeof value === 'string' ? value.split(',') : value)
+        setCollaboratorName(typeof value === 'string' ? value.split(',') : value)
     }
 
     return (
@@ -82,9 +89,9 @@ export default function CreateTaskModal() {
                         <TextField sx={{ my: 1 }} label='Description' variant='standard' multiline rows={4} placeholder="describe the task" />
                         <FormControl sx={{ my: 1 }}>
                             <InputLabel id='multiple-collaborators-select'>Tasked Musician</InputLabel>
-                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaborators} onChange={handleChange} input={<OutlinedInput label='Tasked Musician' />}>
+                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={collaboratorName} onChange={handleChange} input={<OutlinedInput label='Tasked Musician' />}>
                                 {projectMembers.map((member, i) => (
-                                    <MenuItem key={i} value={member} style={addSelectedStyle(member, collaborators, theme)}>{member}</MenuItem>
+                                    <MenuItem key={i} value={member} style={addSelectedStyle(member, collaboratorName, theme)}>{member}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>

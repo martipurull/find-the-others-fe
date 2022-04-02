@@ -10,6 +10,7 @@ interface IReduxStoreUser {
 
 interface IReduxStoreProjects {
     projects: IProject[]
+    currentProject: IProject | null
 }
 
 interface IUserCredentials {
@@ -146,10 +147,14 @@ interface ITask {
     status: string
     musicians: IUser[]
     title: string
-    description: string
-    audioFile: string
-    filename: string
+    description?: string
+    audioFile?: string
+    filename?: string
     notes?: INote[]
+}
+
+interface ITaskDetails {
+
 }
 
 interface IGig {

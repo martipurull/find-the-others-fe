@@ -9,18 +9,16 @@ import EditTaskModal from './EditTaskModal'
 import MAvatar from '../assets/MAvatar.jpeg'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { Draggable } from 'react-beautiful-dnd'
+import { ITask } from '../types'
 
-interface ITask {
-    id: string
-    status: string
-    title: string
-    description: string
+interface IProps {
+    task: ITask,
     index: number
 }
 
-export default function TaskCard({ title, description, status, id, index }: ITask) {
+export default function TaskCard({ task, index }: IProps) {
     return (
-        <Draggable draggableId={id} index={index}>
+        <Draggable draggableId={task._id} index={index}>
             {(provided, snapshot) => (
                 <Card
                     sx={{ minWidth: 200, maxWidth: 300, my: 2, ml: -1, boxShadow: `${snapshot.isDragging && '0 0 20px rgba(229,242,255,0.25)'}` }}
@@ -30,10 +28,10 @@ export default function TaskCard({ title, description, status, id, index }: ITas
                 >
                     <CardContent>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant='h6'>{title}</Typography>
+                            <Typography variant='h6'>{task.title}</Typography>
                             <Avatar src={MAvatar} />
                         </Box>
-                        <Typography variant='body2'>{description}</Typography>
+                        <Typography variant='body2'>{task.description}</Typography>
                     </CardContent>
                     <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <EditTaskModal />

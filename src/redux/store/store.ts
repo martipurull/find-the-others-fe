@@ -16,8 +16,9 @@ export const initialState: IInitialState = {
         currentUser: null
     },
     userProjects: {
-        projects: []
-    }
+        projects: [],
+        currentProject: null
+    },
 }
 
 const mainReducer = combineReducers({

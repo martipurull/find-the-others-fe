@@ -27,7 +27,7 @@ export default function TaskList({ droppableId, listTitle, icon, tasks, setterFu
                         </Box>
                         {
                             tasks.map((task, i) => (
-                                <TaskCard key={task._id} id={task._id} index={i} status={task.status} title={task.title} description={task.description} />
+                                <TaskCard key={task._id} index={i} task={task} />
                             ))
                         }
                         {provided.placeholder}

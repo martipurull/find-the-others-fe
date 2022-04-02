@@ -10,7 +10,8 @@ export const ACTIONS = {
     ADD_USER_INFO_TO_CURRENT_USER: 'ADD_USER_INFO_TO_CURRENT_USER',
     USER_LOGOUT: 'USER_LOGOUT',
     CLEAR_USER_INFO_FROM_CURRENT_USER: 'CLEAR_USER_INFO_FROM_CURRENT_USER',
-    ADD_USER_PROJECTS: 'ADD_USER_PROJECTS'
+    ADD_USER_PROJECTS: 'ADD_USER_PROJECTS',
+    ADD_CURRENT_PROJECT_INFO: 'ADD_CURRENT_PROJECT_INFO'
 }
 
 export const userLoginAction = () => ({
@@ -41,4 +42,9 @@ export const clearUserInfoAction = () => ({
 export const addUserProjectsAction = (projects: IProject[]) => ({
     type: ACTIONS.ADD_USER_PROJECTS,
     payload: projects
+})
+
+export const addCurrentProjectInfoAction = (project: IProject) => ({
+    type: ACTIONS.ADD_CURRENT_PROJECT_INFO,
+    payload: project
 })

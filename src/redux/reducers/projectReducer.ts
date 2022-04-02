@@ -8,6 +8,10 @@ const projectReducer = (state = initialState.userProjects, action: AnyAction) =>
             ...state,
             projects: action.payload
         }
+        case ACTIONS.ADD_CURRENT_PROJECT_INFO: return {
+            ...state,
+            currentProject: action.payload
+        }
         default: return state
     }
 }
