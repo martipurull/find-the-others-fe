@@ -27,7 +27,7 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Radio from '@mui/material/Radio'
 import Alert from '@mui/material/Alert'
 import { notifyError, notifySuccess } from '../hooks/useNotify'
-import { addUserInfoAction, fetchUserAndAddInfoAction } from '../redux/actions/actions'
+import { addUserInfoAction } from '../redux/actions/actions'
 import { ToastContainer } from 'react-toastify'
 
 const modalStyle = {
@@ -131,25 +131,22 @@ export default function MusicianProfile() {
         dataToAxios.append('musicianOrFan', editDetails.musicianOrFan)
         avatarFile && dataToAxios.append('userAvatar', avatarFile)
 
-        // const response = await axiosRequest('/user/me', 'PUT', dataToAxios)
-        console.log('before request')
-        const response = await fetch('http://localhost:3001/user/me', {
-            method: 'PUT',
-            body: JSON.stringify(dataToAxios),
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        console.log(response);
+        const response = await axiosRequest('/user/me', 'PUT', dataToAxios)
+        // const response = await fetch('http://localhost:3001/user/me', {
+        //     method: 'PUT',
+        //     body: JSON.stringify(dataToAxios),
+        //     credentials: 'include',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     }
+        // })
         if (response.status === 400) setBadRequestError(true)
         if (response.status === 200) {
-            console.log('profile update success');
             notifySuccess('Profile successfully updated!')
-            let data = await response.json()
-            dispatch(addUserInfoAction(data))
+            // let data = await response.json()
+            dispatch(addUserInfoAction(response.data))
         } else {
-            console.log('profile update fail');
+            notifyError('Something went wrong :(')
         }
 
     }
