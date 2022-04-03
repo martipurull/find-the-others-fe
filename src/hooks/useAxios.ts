@@ -25,22 +25,19 @@ function useAxios() {
     axios.interceptors.response.use(response => response, async error => {
         const failedRequest = error.config
         if (failedRequest.url === 'users/login') return Promise.reject(failedRequest)
-        if (error.response.status === 401 && failedRequest.url !== '/user/access/refresh-token') {
+        if (error.response.status === 401 && failedRequest.url !== `/user/access/refresh-token`) {
             console.log({ log: 'useAxios IF', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
-            await axios.post(`${baseURL}/user/access/refresh-token`)
+            await axiosRequest(`/user/access/refresh-token`, 'POST')
             const retryRequest = axios(failedRequest)
             return retryRequest
-        } else if (error.response.status === 401 && failedRequest.url === 'user/access/refresh-token') {
+        } else if (error.response.status === 401 && failedRequest.url === `/user/access/refresh-token`) {
             console.log({ log: 'useAxios ELSE IF', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
             dispatch(userLogoutAction())
-            dispatch(clearUserInfoAction())
+            // dispatch(clearUserInfoAction())
             navigate('/login')
             return Promise.reject(error)
         } else {
             console.log({ log: 'useAxios ELSE', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
-            dispatch(userLogoutAction())
-            dispatch(clearUserInfoAction())
-            navigate('/login')
             return Promise.reject(error)
         }
     })

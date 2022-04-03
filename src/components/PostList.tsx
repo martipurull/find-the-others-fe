@@ -24,10 +24,14 @@ interface IProps {
 export default function PostList({ posts, setterFunction, userLikes, setUserLikes }: IProps) {
     const { axiosRequest } = useAxios()
     const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
-    const [openComment, setOpenComment] = useState<string>('')
+    const [openComment, setOpenComment] = useState(false)
+    const [commentPostId, setCommentPostId] = useState<string>('')
     const [commentText, setCommentText] = useState<string>('')
 
-
+    const handleOpenComment = (postId: string) => {
+        setOpenComment(!openComment)
+        setCommentPostId(postId)
+    }
 
     const handleLikePost = async (postId: string) => {
         await axiosRequest('/posts/likePost', 'POST', { postId })
@@ -48,6 +52,8 @@ export default function PostList({ posts, setterFunction, userLikes, setUserLike
             if (response.status === 200) {
                 notifySuccess('Comment posted')
                 setCommentText('')
+                const response = await axiosRequest('/posts', 'GET')
+                setterFunction(response.data)
             }
         }
     }
@@ -69,10 +75,10 @@ export default function PostList({ posts, setterFunction, userLikes, setUserLike
                         {post.image && <Box component='img' sx={{ maxHeight: 150, maxWidth: 150, alignSelf: 'center' }} alt='Post image' src={post.image} />}
                         <ListItem sx={{ display: 'flex', justifyContent: 'space-around', mt: 3, bgcolor: 'rgba(0,0,0,1)' }}>
                             <ListItemIcon><ListItemButton onClick={() => handleLikePost(post._id)}>{post.likes.find(_id => _id === loggedUser?._id) ? <ThumbUpIcon sx={{ fontSize: '1.7rem' }} /> : <ThumbUpOutlinedIcon sx={{ fontSize: '1.7rem' }} />}</ListItemButton></ListItemIcon>
-                            <ListItemIcon><ListItemButton onClick={() => setOpenComment(post._id)}><CommentIcon sx={{ fontSize: '1.7rem' }} /></ListItemButton></ListItemIcon>
+                            <ListItemIcon><ListItemButton onClick={() => handleOpenComment(post._id)}><CommentIcon sx={{ fontSize: '1.7rem' }} /></ListItemButton></ListItemIcon>
                         </ListItem>
                         {
-                            openComment === post._id &&
+                            openComment && commentPostId === post._id &&
                             <Box sx={{ width: '100%' }}>
                                 <ListItem sx={{ display: 'flex', justifyContent: 'space-around', pt: 0.3, bgcolor: 'rgba(0,0,0,1)' }}>
                                     <Avatar alt='Your avatar' src={loggedUser?.avatar} sx={{ mt: 1, mr: 1, ml: -1 }} />
