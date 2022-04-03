@@ -14,20 +14,14 @@ import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
+import Pagination from '@mui/material/Pagination'
 import { useNavigate } from 'react-router'
 import GigApplication from '../components/GigApplication'
 import { useDebounce } from 'use-debounce'
 import useAxios from '../hooks/useAxios'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { IGig, IInitialState } from '../types'
 import { useSelector } from 'react-redux'
-
-const gigs = [
-    { _id: 1, gigName: 'A gig', instrumentRequired: 'drums', expectedHours: 4, userHasApplied: false },
-    { _id: 2, gigName: 'Another gig', instrumentRequired: 'bass', expectedHours: 2, userHasApplied: true },
-    { _id: 3, gigName: 'Yet another gig', instrumentRequired: 'rhythm guitar', expectedHours: 1, userHasApplied: false },
-    { _id: 4, gigName: 'Choir for rock song', instrumentRequired: 'singer', expectedHours: 2, userHasApplied: false }
-]
 
 
 export default function Gigs() {
@@ -35,9 +29,13 @@ export default function Gigs() {
     const { axiosRequest } = useAxios()
     const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
     const [allGigs, setAllGigs] = useState<IGig[]>([])
+    const [gigsToDisplay, setGigsToDisplay] = useState<IGig[]>([])
     const [searchTerm, setSearchTerm] = useState('')
     const [debouncedSearchTerm] = useDebounce(searchTerm, 500)
-    const [filteredGigs, setFilteredGigs] = useState<IGig[]>([])
+    // const [filteredGigs, setFilteredGigs] = useState<IGig[]>([])
+    const [totalDocs, setTotalDocs] = useState(0)
+    const [docsPerPage, setDocsPerPage] = useState(10)
+    const [currentPage, setCurrentPage] = useState(1)
 
     const hasUserApplied = (gigId: string) => {
         if (!loggedUser) return false
@@ -45,28 +43,38 @@ export default function Gigs() {
         return userApplicationIds.includes(gigId)
     }
 
-    const filterGigs = () => {
-        const gigIncludesInstrument = allGigs.filter(({ instrument }) => instrument.includes(debouncedSearchTerm))
-        const gigIncludesOtherInstrument = allGigs.filter(({ otherInstrument }) => otherInstrument?.includes(debouncedSearchTerm))
-        const gigIncludesSpecifics = allGigs.filter(({ specifics }) => specifics?.includes(debouncedSearchTerm))
-        const gigIncludesBand = allGigs.filter(({ bands }) => bands?.map(({ name }) => name.includes(debouncedSearchTerm)))
-        const gigIncludesDescription = allGigs.filter(({ description }) => description.includes(debouncedSearchTerm))
-        const combinedArray = [...gigIncludesInstrument, ...gigIncludesOtherInstrument, ...gigIncludesSpecifics, ...gigIncludesBand, ...gigIncludesDescription]
-        setFilteredGigs(combinedArray)
+    const handleChangePage = (e: ChangeEvent<unknown>, page: number) => {
+        setCurrentPage(page)
     }
 
-    const fetchAllGigs = async () => {
-        const response = await axiosRequest('/gigs', 'GET')
-        setAllGigs(response.data)
+    // const filterGigs = () => {
+    //     const gigIncludesInstrument = allGigs.filter(({ instrument }) => instrument.includes(debouncedSearchTerm))
+    //     const gigIncludesOtherInstrument = allGigs.filter(({ otherInstrument }) => otherInstrument?.includes(debouncedSearchTerm))
+    //     const gigIncludesSpecifics = allGigs.filter(({ specifics }) => specifics?.includes(debouncedSearchTerm))
+    //     const gigIncludesBand = allGigs.filter(({ bands }) => bands?.map(({ name }) => name.includes(debouncedSearchTerm)))
+    //     const gigIncludesDescription = allGigs.filter(({ description }) => description.includes(debouncedSearchTerm))
+    //     const combinedArray = [...gigIncludesInstrument, ...gigIncludesOtherInstrument, ...gigIncludesSpecifics, ...gigIncludesBand, ...gigIncludesDescription]
+    //     setFilteredGigs(combinedArray)
+    // }
+
+    // const fetchAllGigs = async () => {
+    //     const response = await axiosRequest(`/gigs/`, 'GET')
+    //     setAllGigs(response.data.gigs)
+    //     setTotalDocs(response.data.noOfGigsInDb)
+    // }
+    // useEffect(() => {
+    //     filterGigs()
+    // }, [debouncedSearchTerm])
+
+    const fetchPageGigs = async () => {
+        const response = await axiosRequest(`/gigs?limit=${docsPerPage}&skip=${currentPage}&search=${debouncedSearchTerm}`, 'GET')
+        setTotalDocs(response.data.noOfGigsInDb)
+        setGigsToDisplay(response.data.gigs)
     }
 
     useEffect(() => {
-        filterGigs()
-    }, [debouncedSearchTerm])
-
-    useEffect(() => {
-        fetchAllGigs()
-    }, [])
+        fetchPageGigs()
+    }, [docsPerPage, currentPage, debouncedSearchTerm])
 
     return (
         <Container maxWidth="xl" sx={{ minHeight: '75vh', minWidth: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -83,24 +91,8 @@ export default function Gigs() {
                         </Grid>
                         <Grid item xs={9}>
                             <List sx={{ width: '100%' }}>
-                                {!debouncedSearchTerm
-                                    ?
-                                    filteredGigs.map(gig => (
-                                        <Box key={gig._id} sx={{ borderBottom: '1px solid #f5faff', mb: 2, bgcolor: 'rgba(0,0,0,0.6)' }}>
-                                            <ListItem>
-                                                {/* FIND BETTER ICONS FOR INSTRUMENTS AND CREATE FUNCTION TO CHOOSE THE RIGHT ONE */}
-                                                <ListItemAvatar>
-                                                    <Avatar>
-                                                        <MusicNoteOutlinedIcon />
-                                                    </Avatar>
-                                                </ListItemAvatar>
-                                                <ListItemText primary={`WANTED: ${gig.instrument} for ${gig.title.toLowerCase()}.`} secondary={`Expected duration: ${gig.hours}${gig.hours > 1 ? ` hours` : ` hour`}`} />
-                                                <GigApplication hasApplied={hasUserApplied(gig._id)} />
-                                            </ListItem>
-                                        </Box>
-                                    ))
-                                    :
-                                    allGigs.map(gig => (
+                                {
+                                    gigsToDisplay.map(gig => (
                                         <Box key={gig._id} sx={{ borderBottom: '1px solid #f5faff', mb: 2, bgcolor: 'rgba(0,0,0,0.6)' }}>
                                             <ListItem>
                                                 {/* FIND BETTER ICONS FOR INSTRUMENTS AND CREATE FUNCTION TO CHOOSE THE RIGHT ONE */}
@@ -115,6 +107,7 @@ export default function Gigs() {
                                         </Box>
                                     ))
                                 }
+                                <Pagination page={currentPage} count={totalDocs / docsPerPage} onChange={handleChangePage} shape="rounded" boundaryCount={10} />
                             </List>
                             <Typography component='h3' variant='h6' sx={{ mt: 3 }}>Looking for musicians for your own project?</Typography>
                             <Button color='primary' size='large' variant='contained' sx={{ mt: 3, mb: 3 }} onClick={() => navigate('/new-gig')}>OFFER A GIG</Button>
