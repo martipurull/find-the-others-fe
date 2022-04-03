@@ -67,7 +67,7 @@ export default function Gigs() {
     // }, [debouncedSearchTerm])
 
     const fetchPageGigs = async () => {
-        const response = await axiosRequest(`/gigs?limit=${docsPerPage}&skip=${currentPage}&search=${debouncedSearchTerm}`, 'GET')
+        const response = await axiosRequest(`/gigs?limit=${docsPerPage}&page=${currentPage}&search=${debouncedSearchTerm}`, 'GET')
         setTotalDocs(response.data.noOfGigsInDb)
         setGigsToDisplay(response.data.gigs)
     }
