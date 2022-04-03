@@ -13,8 +13,8 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeDownIcon from '@mui/icons-material/VolumeDown'
 import { useEffect, useState } from 'react'
 import { IMiniBand } from '../types'
-import * as mm from 'music-metadata'
 import { notifyError } from '../hooks/useNotify'
+import * as musicMetadata from 'music-metadata-browser'
 
 const Widget = styled('div')(({ theme }) => ({
     padding: 16,
@@ -60,7 +60,7 @@ export default function MusicPlayer({ trackToDate, trackCover, trackName, projec
     const [playing, setPlaying] = useState(false)
     const getTrackDuration = async (filePath: string) => {
         try {
-            const metadata = await mm.parseFile(filePath)
+            const metadata = await musicMetadata.fetchFromUrl(filePath)
             return metadata.format.duration
         } catch (error) {
             console.log(error)

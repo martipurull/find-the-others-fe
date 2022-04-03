@@ -1,7 +1,7 @@
 import axios, { AxiosError, Method } from 'axios'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { userLogoutAction } from '../redux/actions/actions'
+import { clearUserInfoAction, userLogoutAction } from '../redux/actions/actions'
 
 const isAxiosError = (e: Error): e is AxiosError => e.hasOwnProperty('isAxiosError')
 
@@ -27,17 +27,19 @@ function useAxios() {
         if (failedRequest.url === 'users/login') return Promise.reject(failedRequest)
         if (error.response.status === 401 && failedRequest.url !== '/user/access/refresh-token') {
             console.log({ log: 'useAxios IF', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
-            await axiosRequest('/user/access/refresh-token', 'POST')
+            await axios.post(`${baseURL}/user/access/refresh-token`)
             const retryRequest = axios(failedRequest)
             return retryRequest
         } else if (error.response.status === 401 && failedRequest.url === 'user/access/refresh-token') {
             console.log({ log: 'useAxios ELSE IF', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
             dispatch(userLogoutAction())
+            dispatch(clearUserInfoAction())
             navigate('/login')
             return Promise.reject(error)
         } else {
             console.log({ log: 'useAxios ELSE', errorResponseStatus: error.response.status, failedRequestURL: failedRequest.url })
             dispatch(userLogoutAction())
+            dispatch(clearUserInfoAction())
             navigate('/login')
             return Promise.reject(error)
         }

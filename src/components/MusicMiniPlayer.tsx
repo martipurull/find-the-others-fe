@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { notifyError } from "../hooks/useNotify"
-import * as mm from 'music-metadata'
+import * as musicMetadata from 'music-metadata-browser'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
@@ -26,7 +26,7 @@ export default function MusicMiniPlayer({ audioFile }: IProps) {
     const [playing, setPlaying] = useState(false)
     const getTrackDuration = async (filePath: string) => {
         try {
-            const metadata = await mm.parseFile(filePath)
+            const metadata = await musicMetadata.fetchFromUrl(filePath)
             return metadata.format.duration
         } catch (error) {
             console.log(error)
