@@ -56,44 +56,47 @@ interface IProps {
 }
 
 export default function MusicPlayer({ trackToDate, trackCover, trackName, projectBands }: IProps) {
-    console.log(trackToDate);
-
-    const audio = new Audio(trackToDate)
+    const [audio, setAudio] = useState(new Audio(trackToDate))
     const [playing, setPlaying] = useState(false)
-    const getTrackDuration = async (filePath: string) => {
-        try {
-            const metadata = await musicMetadata.fetchFromUrl(filePath)
-            console.log(metadata);
-            return metadata.format.duration
-        } catch (error) {
-            console.log(error)
-            notifyError('Something went wrong when reading the track to date.')
-        }
-    }
-    const trackDuration = getTrackDuration(trackToDate)
+
     const [position, setPosition] = useState<number>(audio.currentTime)
+    const [duration, setDuration] = useState<number>(audio.duration)
+
     function formatDuration(seconds: number) {
         const minutes = Math.floor(seconds / 60)
-        const secondsLeft = seconds - minutes * 60
+        const secondsLeft = Math.floor(seconds - minutes * 60)
         return `${minutes}:${secondsLeft < 9 ? `0${secondsLeft}` : secondsLeft}`
     }
+
+
     const mainIconColour = '#f5faff'
 
     useEffect(() => {
         playing ? audio.play() : audio.pause()
     }, [playing])
 
+    useEffect(() => {
+        audio.onloadeddata = () => {
+            setAudio(new Audio(trackToDate))
+            setPosition(audio.currentTime)
+            setDuration(audio.duration)
+        }
+    }, [trackToDate])
+
     return (
         <Box sx={{ width: '100%', overflow: 'hidden' }}>
             {
-                typeof trackDuration === 'number' ?
+                trackToDate ?
                     <Widget>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <CoverImage>
                                 <img src={trackCover} alt="album cover" />
                             </CoverImage>
                             <Box sx={{ ml: 1.5, minWidth: 0 }}>
-                                <Typography variant='caption' color='text.secondary' fontWeight={500}>{projectBands.length > 1 ? projectBands.map(band => `${band.name} / `) : projectBands[0].name}</Typography>
+                                {
+                                    projectBands.length >= 1 &&
+                                    <Typography variant='caption' color='text.secondary' fontWeight={500}>{projectBands.length > 1 ? projectBands.map(band => `${band.name} / `) : projectBands[0].name}</Typography>
+                                }
                                 <Typography noWrap><b>{trackName}</b></Typography>
                             </Box>
                         </Box>
@@ -103,7 +106,7 @@ export default function MusicPlayer({ trackToDate, trackCover, trackName, projec
                             value={audio.currentTime}
                             min={0}
                             step={1}
-                            max={trackDuration}
+                            max={audio.duration}
                             onChange={(_, value) => setPosition(value as number)}
                             sx={{
                                 color: mainIconColour,
@@ -130,19 +133,23 @@ export default function MusicPlayer({ trackToDate, trackCover, trackName, projec
                         />
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: -1 }}>
                             <TinyText>{formatDuration(position)}</TinyText>
-                            <TinyText>{formatDuration(trackDuration - position)}</TinyText>
+                            <TinyText>{formatDuration((duration - position))}</TinyText>
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: -1 }}>
                             <IconButton aria-label='previous song'>
                                 <FastRewindIcon fontSize='large' htmlColor={mainIconColour} />
                             </IconButton>
-                            <IconButton aria-label={playing ? 'play' : 'pause'} onClick={() => setPlaying(!playing)}>
-                                {
-                                    playing
-                                        ? (<PlayArrow sx={{ fontSize: '3rem' }} htmlColor={mainIconColour} />)
-                                        : (<PauseIcon sx={{ fontSize: '3rem' }} htmlColor={mainIconColour} />)
-                                }
-                            </IconButton>
+                            {
+                                playing
+                                    ?
+                                    <IconButton aria-label={'pause'} onClick={() => setPlaying(!playing)}>
+                                        <PauseIcon sx={{ fontSize: '3rem' }} htmlColor={mainIconColour} />
+                                    </IconButton>
+                                    :
+                                    <IconButton aria-label={'play'} onClick={() => setPlaying(!playing)}>
+                                        <PlayArrow sx={{ fontSize: '3rem' }} htmlColor={mainIconColour} />
+                                    </IconButton>
+                            }
                             <IconButton aria-label='next song'>
                                 <FastForwardIcon fontSize='large' htmlColor={mainIconColour} />
                             </IconButton>
@@ -160,10 +167,10 @@ export default function MusicPlayer({ trackToDate, trackCover, trackName, projec
                             />
                             <VolumeUpIcon htmlColor={mainIconColour} />
                         </Stack>
-                    </Widget> :
-                    <Button size="large" color='error' variant='outlined' disabled>Something went wrong with the submitted track file</Button>
+                    </Widget>
+                    :
+                    <Button size="large" color='error' variant='outlined' disabled>No Track To Date Yet</Button>
             }
-
         </Box>
     )
 }

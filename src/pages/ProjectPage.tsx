@@ -12,16 +12,19 @@ import { useDispatch, useSelector } from 'react-redux'
 export default function ProjectPage() {
     const { axiosRequest } = useAxios()
     const dispatch = useDispatch()
-    const [currentProject, setCurrentProject] = useState<IProject>()
+    // const [currentProject, setCurrentProject] = useState<IProject>()
+    const currentProject = useSelector((state: IInitialState) => state.userProjects.currentProject)
     const { projectId } = useParams()
 
     const fetchCurrentProject = async () => {
         const response = await axiosRequest(`/projects/${projectId}`, 'GET')
-        setCurrentProject(response.data)
+        // setCurrentProject(response.data)
         dispatch(addCurrentProjectInfoAction(response.data))
     }
 
     useEffect(() => {
+
+
         fetchCurrentProject()
     }, [])
 

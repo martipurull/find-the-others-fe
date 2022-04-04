@@ -31,12 +31,6 @@ const modalStyle = {
     p: 4,
 }
 
-const fakeTasks = [
-    { id: '1a', status: 'done', title: 'Drums for the base track', description: 'Planning on programming the drums at the desired temp: 127bpm. Will be done tomorrow.' },
-    { id: '2b', status: 'doing', title: 'Acoustic guitars', description: 'Fast chords, avoid funking, crisp recording.' },
-    { id: '3c', status: 'doing', title: 'Bass', description: 'Double bass to go with the fast drums, make sure the mic picks up the lows.' },
-    { id: '4d', status: 'todo', title: 'Record live drums once basic instrumentation is done', description: 'Book studio time, have two people at least to set up mics, etc.' }
-]
 
 interface IProps {
     project: IProject
@@ -107,6 +101,8 @@ export default function ProjectWorkspace({ project }: IProps) {
     }
 
     useEffect(() => {
+        console.log(project);
+
         fetchProjectTasks()
     }, [])
 
@@ -146,9 +142,9 @@ export default function ProjectWorkspace({ project }: IProps) {
                     <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                         <Typography variant='h5' pt={1.25}>Track So Far</Typography> <BarChartOutlinedIcon fontSize='large' sx={{ ml: 1, my: 1.25 }} />
                     </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ml: -2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         {project.trackToDate && <MusicPlayer trackToDate={project.trackToDate.audiofile} trackCover={project.trackCover ? project.trackCover.image : albumCover} projectBands={project.bands} trackName={project.title} />}
-                        <AddTrackToDate trackName={project.title} />
+                        <Box sx={{ ml: -7 }}><AddTrackToDate trackName={project.title} /></Box>
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={6} md={3} mt={3}>
@@ -198,6 +194,6 @@ export default function ProjectWorkspace({ project }: IProps) {
                     </Box>
                 </Grid>
             </Grid>
-        </DragDropContext>
+        </DragDropContext >
     )
 }

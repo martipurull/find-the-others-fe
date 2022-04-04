@@ -33,11 +33,13 @@ export default function GigApplication({ hasApplied }: IProps) {
 
     return (
         <Box>
-            {
-                hasApplied
-                    ? <Button variant='outlined' size='small' color='warning' onClick={handleOpen2}>WITHDRAW APPLICATION</Button>
-                    : <Button variant='outlined' size='small' color='success' onClick={handleOpen}>APPLY FOR GIG</Button>
-            }
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                {
+                    hasApplied
+                        ? <Button variant='outlined' size='small' color='warning' onClick={handleOpen2}>CANCEL</Button>
+                        : <Button variant='outlined' size='small' color='success' onClick={handleOpen}>APPLY</Button>
+                }
+            </Box>
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"

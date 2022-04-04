@@ -59,8 +59,12 @@ export default function MemberList({ connections }: IProps) {
                         <Box><Button size='small' variant='outlined' color='primary' disabled>You're connected!</Button></Box>
                     }
                     {
-                        !currentUser?.connectionsReceived.find(({ _id }) => _id === connection._id) && !currentUser?.connectionsSent.find(({ _id }) => _id === connection._id) && !currentUser?.connections.find(({ _id }) => _id === connection._id) &&
+                        !currentUser?.connectionsReceived.find(({ _id }) => _id === connection._id) && !currentUser?.connectionsSent.find(({ _id }) => _id === connection._id) && !currentUser?.connections.find(({ _id }) => _id === connection._id) && currentUser?._id !== connection._id &&
                         <Box><Button size='small' variant='outlined' color='success' onClick={() => handleConnect(connection._id, 'sendRequest')}>Connect</Button></Box>
+                    }
+                    {
+                        currentUser?._id === connection._id &&
+                        <Box></Box>
                     }
                 </ListItem>
             ))}

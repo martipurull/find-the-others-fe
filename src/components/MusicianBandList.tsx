@@ -1,38 +1,38 @@
 import { Box, Container, Grid, Typography } from '@mui/material'
-import ProjectItem from './ProjectItem'
 import useAxios from '../hooks/useAxios'
 import { useDispatch } from 'react-redux'
 import { addUserProjectsAction } from '../redux/actions/actions'
 import { useEffect, useState } from 'react'
-import { IProject } from '../types'
+import { IBand } from '../types'
+import BandItem from './BandItem'
 
-export default function MusicianProjectList() {
+export default function MusicianBandList() {
     const dispatch = useDispatch()
     const { axiosRequest } = useAxios()
-    const [projectList, setProjectList] = useState<IProject[]>([])
+    const [bandList, setBandList] = useState<IBand[]>([])
 
-    const fetchUserProjects = async () => {
-        const response = await axiosRequest('/projects', 'GET')
-        setProjectList(response.data)
+    const fetchUserBands = async () => {
+        const response = await axiosRequest('/bands/my-bands', 'GET')
+        setBandList(response.data)
         dispatch(addUserProjectsAction(response.data))
     }
 
     useEffect(() => {
-        fetchUserProjects()
+        fetchUserBands()
     }, [])
 
     return (
         <Container maxWidth='xl' sx={{ marginTop: '5rem' }}>
             <Grid container sx={{ display: 'flex', justifyContent: 'space-around' }}>
                 {
-                    projectList.length !== 0
-                        ? projectList.map((project => (
-                            <Grid key={project._id} item xs={12} md={4} sx={{ p: 1 }}>
-                                <ProjectItem projectDetails={project} />
+                    bandList.length !== 0
+                        ? bandList.map((band => (
+                            <Grid key={band._id} item xs={12} md={4} sx={{ p: 1 }}>
+                                <BandItem bandDetails={band} />
                             </Grid>
                         )))
                         : <Box sx={{ backgroundColor: '#233243', border: '1px solid #f5faff', p: 5, borderRadius: 5 }}>
-                            <Typography variant='h4'>Press CREATE NEW PROJECT to start your new collaboration</Typography>
+                            <Typography variant='h4'>Create a new band to start releasing music from your projects</Typography>
                         </Box>
                 }
             </Grid>

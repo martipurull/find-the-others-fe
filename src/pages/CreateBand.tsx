@@ -81,8 +81,6 @@ export default function CreateBand() {
         dataToAxios.append('bio', bandDetails.bio)
         dataToAxios.append('bandAdminIds', JSON.stringify(bandDetails.bandAdminIds))
         dataToAxios.append('memberIds', JSON.stringify(bandDetails.memberIds))
-        console.log(bandDetails.memberIds);
-
         avatarFile && dataToAxios.append('bandAvatar', avatarFile)
 
         const response = await axiosRequest('bands', 'POST', dataToAxios)
@@ -108,7 +106,7 @@ export default function CreateBand() {
                                     {
                                         !avatarFile &&
                                         <Button variant='contained' sx={{ p: 1.25 }} component='label'>
-                                            Add Project Photo
+                                            Add Band Logo
                                             <input type="file" hidden onChange={e => handleAvatarUpload(e)} />
                                         </Button>
                                     }

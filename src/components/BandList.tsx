@@ -10,7 +10,7 @@ export default function BandList() {
     const [bandsUserFollows, setBandsUserFollows] = useState<IBand[]>()
 
     const fetchBandsUserFollows = async () => {
-        const response = await axiosRequest('/bands/my-bands', 'GET')
+        const response = await axiosRequest('/bands/followed-bands', 'GET')
         setBandsUserFollows(response.data)
     }
 

@@ -15,7 +15,7 @@ export default function ProjectItem({ projectDetails }: IProps) {
     return (
         <Card sx={{ maxWidth: 350 }} onClick={() => navigate(`/projects/${projectDetails._id}`)}>
             <CardActionArea sx={{ backgroundColor: '#233243', border: '1px solid #f5faff', p: 0.15 }}>
-                <CardMedia component='img' src={ProjectImg} alt='Music Project' sx={{ maxHeight: 210, objectFit: 'cover' }} />
+                <CardMedia component='img' src={projectDetails.projectImage ? projectDetails.projectImage : ProjectImg} alt='Music Project' sx={{ maxHeight: 210, objectFit: 'cover' }} />
                 <CardContent>
                     <Typography variant='h6' component='div' >{projectDetails.title}</Typography>
                 </CardContent>

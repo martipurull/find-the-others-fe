@@ -15,6 +15,8 @@ import { notifyError, notifySuccess } from '../hooks/useNotify'
 import TextField from '@mui/material/TextField'
 import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp'
 import MusicMiniPlayer from './MusicMiniPlayer'
+import { useDispatch } from 'react-redux'
+import { addCurrentProjectInfoAction } from '../redux/actions/actions'
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -34,6 +36,7 @@ interface IProps {
 export default function AddTrackToDate({ trackName }: IProps) {
     const { axiosRequest } = useAxios()
     const { projectId } = useParams()
+    const dispatch = useDispatch()
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
@@ -80,19 +83,21 @@ export default function AddTrackToDate({ trackName }: IProps) {
             audioToAxios.append('audioFile', audioFile)
             audioToAxios.append('trackName', trackToDateName)
             const response = await axiosRequest(`/projects/${projectId}/add-trackToDate`, 'POST', audioToAxios)
-            if (response.status === 200) notifySuccess('Track uploaded successfully!')
             if (response.status === 403) notifyError('Only a project leader can upload a project track to date.')
             if (response.status === 400) notifyError('Something went wrong.')
+            if (response.status === 200) notifySuccess('Track uploaded successfully!')
         }
         if (coverFile) {
             const imageToAxios = new FormData()
             imageToAxios.append('coverFile', coverFile)
             imageToAxios.append('trackName', trackToDateName)
             const response = await axiosRequest(`projects/${projectId}/add-trackCover`, 'POST', imageToAxios)
-            if (response.status === 200) notifySuccess('Cover uploaded successfully!')
             if (response.status === 403) notifyError('Only a project leader can upload a track cover.')
             if (response.status === 400) notifyError('Something went wrong.')
+            if (response.status === 200) notifySuccess('Cover uploaded successfully!')
         }
+        const response = await axiosRequest(`/projects/${projectId}`, 'GET')
+        dispatch(addCurrentProjectInfoAction(response.data))
         handleClose()
     }
 
