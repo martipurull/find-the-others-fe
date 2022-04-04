@@ -34,7 +34,9 @@ const modalStyle = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 800,
+    maxHeight: '85%',
+    overflow: 'auto',
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -51,7 +53,7 @@ export default function EditBand({ band }: IProps) {
     const [bandAdminId, setBandAdminId] = useState<string[]>([])
     const [bandMemberId, setBandMemberId] = useState<string[]>([])
     const [avatarFile, setAvatarFile] = useState<File>()
-    const [avatarPreview, setAvatarPreview] = useState<string>('')
+    const [avatarPreview, setAvatarPreview] = useState<string>(band.avatar)
 
     const bandAdminIds = band.bandAdmins.map(admin => admin._id)
     const bandMemberIds = band.members.map(member => member._id)
@@ -130,7 +132,7 @@ export default function EditBand({ band }: IProps) {
                 <Box component='form' noValidate autoComplete='off' sx={modalStyle}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
                         <TextField sx={{ my: 1 }} required label='Band Name' variant='standard' value={bandDetails.name} onChange={e => handleInput('name', e.target.value)} />
-                        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', my: 2 }}>
                             {
                                 !avatarFile &&
                                 <Button variant='contained' sx={{ p: 1.25 }} component='label'>
@@ -139,7 +141,7 @@ export default function EditBand({ band }: IProps) {
                                 </Button>
                             }
                             {
-                                avatarFile
+                                avatarFile || band.avatar
                                     ?
                                     <Box sx={{ position: 'relative' }}>
                                         <IconButton sx={{ position: 'absolute', left: '85%', top: '-3%' }} onClick={handleRemoveAvatarImg} ><HighlightOffSharpIcon /></IconButton>
@@ -149,47 +151,37 @@ export default function EditBand({ band }: IProps) {
                                     <Box><InsertPhotoIcon sx={{ fontSize: 150 }} /></Box>
                             }
                         </Box>
-                        <FormControl sx={{ m: 1, minWidth: 200 }}>
-                            <InputLabel id='multiple-collaborators-select'>Band Admins</InputLabel>
-                            <Select labelId='multiple-collaborators-select' id='multiple-bandAdmins-input' multiple value={bandAdminId} onChange={handleChangeBandAdmins} input={<OutlinedInput label='Project Collaborators' />}>
-                                {loggedUser?.connections.map((connection) => (
-                                    <MenuItem key={connection._id} value={connection._id} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandAdminId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
-                                ))}
-                            </Select>
-                            <Typography variant='caption'>by creating a band, you will be one of its admins</Typography>
-                        </FormControl>
-                        <FormControl sx={{ m: 1, minWidth: 200 }}>
-                            <InputLabel id='multiple-collaborators-select'>Band Members</InputLabel>
-                            <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={bandMemberId} onChange={handleChangeBandMembers} input={<OutlinedInput label='Project Collaborators' />}>
-                                {loggedUser?.connections.map((connection) => (
-                                    <MenuItem key={connection._id} value={connection._id} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandMemberId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <TextField fullWidth id="new-band-blurb" label="Band Latest" multiline rows={6} placeholder='We are currently working on this... become a supporter to listen to our work in progress!' value={bandDetails.blurb} onChange={e => handleInput('blurb', e.target.value)} />
-                        <TextField fullWidth id="new-band-bio" label="Band Bio" multiline rows={6} placeholder='Write a brief and exciting bio for your band.' value={bandDetails.bio} onChange={e => handleInput('bio', e.target.value)} />
-                        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-                            {
-                                !avatarFile &&
-                                <Button variant='contained' sx={{ p: 1.25 }} component='label'>
-                                    Add Band Logo
-                                            <input type="file" hidden onChange={e => handleAvatarUpload(e)} />
-                                </Button>
-                            }
-                            {
-                                avatarFile
-                                    ?
-                                    <Box sx={{ position: 'relative' }}>
-                                        <IconButton sx={{ position: 'absolute', left: '85%', top: '-3%' }} onClick={handleRemoveAvatarImg} ><HighlightOffSharpIcon /></IconButton>
-                                        <Box component='img' src={avatarPreview} sx={{ ml: 2, maxWidth: '250px', objectFit: 'cover', borderRadius: '5px' }} />
-                                    </Box>
-                                    :
-                                    <Box><InsertPhotoIcon sx={{ fontSize: 150 }} /></Box>
-                            }
+                        <Box sx={{ my: 2, display: 'flex', justifyContent: 'space-around' }}>
+                            <Box sx={{ my: 2 }}>
+                                <FormControl sx={{ m: 1, minWidth: 200 }}>
+                                    <InputLabel id='multiple-collaborators-select'>Band Admins</InputLabel>
+                                    <Select labelId='multiple-collaborators-select' id='multiple-bandAdmins-input' multiple value={bandAdminId} onChange={handleChangeBandAdmins} input={<OutlinedInput label='Project Collaborators' />}>
+                                        {loggedUser?.connections.map((connection) => (
+                                            <MenuItem key={connection._id} value={connection._id} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandAdminId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                            <Box sx={{ my: 2 }}>
+                                <FormControl sx={{ m: 1, minWidth: 200 }}>
+                                    <InputLabel id='multiple-collaborators-select'>Band Members</InputLabel>
+                                    <Select labelId='multiple-collaborators-select' id='multiple-collaborators-input' multiple value={bandMemberId} onChange={handleChangeBandMembers} input={<OutlinedInput label='Project Collaborators' />}>
+                                        {loggedUser?.connections.map((connection) => (
+                                            <MenuItem key={connection._id} value={connection._id} style={addSelectedStyle(`${connection.firstName} ${connection.lastName}`, bandMemberId, theme)}>{connection.firstName} {connection.lastName}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
                         </Box>
-                        <Box sx={{ mt: 2 }}>
-                            <Button variant='contained' color='success' fullWidth type='submit' onClick={handleSubmit}>Edit Band</Button>
-                            <Button variant='contained' color='warning' fullWidth onClick={handleClose}>Cancel</Button>
+                        <Box sx={{ my: 2 }}>
+                            <TextField fullWidth id="new-band-blurb" label="Band Latest" multiline rows={6} placeholder='We are currently working on this... become a supporter to listen to our work in progress!' value={bandDetails.blurb} onChange={e => handleInput('blurb', e.target.value)} />
+                        </Box>
+                        <Box sx={{ my: 2 }}>
+                            <TextField fullWidth id="new-band-bio" label="Band Bio" multiline rows={6} placeholder='Write a brief and exciting bio for your band.' value={bandDetails.bio} onChange={e => handleInput('bio', e.target.value)} />
+                        </Box>
+                        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-around' }}>
+                            <Button variant='contained' color='warning' onClick={handleClose}>Cancel</Button>
+                            <Button variant='contained' color='success' type='submit' onClick={handleSubmit}>Edit Band</Button>
                         </Box>
                     </Box>
                 </Box>

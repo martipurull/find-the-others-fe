@@ -95,11 +95,8 @@ export default function EditTaskModal({ task }: IProps) {
         const dataToAxios = new FormData()
         dataToAxios.append('title', taskDetails.title)
         taskDetails.description && dataToAxios.append('description', taskDetails.description)
-        for (let i = 0; i < taskDetails.musicians.length; i++) {
-            dataToAxios.append('musicians[]', taskDetails.musicians[i])
-        }
+        dataToAxios.append('musicians', JSON.stringify(taskDetails.musicians))
         taskAudioFile && dataToAxios.append('audioFile', taskAudioFile)
-
         const response = await axiosRequest(`/projects/${currentProject?._id}/tasks/${task._id}`, 'PUT', dataToAxios)
         if (response.status === 403) notifyError("You cannot edit someone else's task")
         if (response.status === 200) {
@@ -147,12 +144,12 @@ export default function EditTaskModal({ task }: IProps) {
                             taskAudioFile ?
                                 <Box>
                                     <MusicMiniPlayer audioFile={audioPreview} />
-                                    <Button size='small' variant='contained' color='error' onClick={handleRemoveTaskAudio} endIcon={HighlightOffSharpIcon}>Remove Task Audio</Button>
+                                    <Button size='small' variant='contained' color='error' onClick={handleRemoveTaskAudio} endIcon={<HighlightOffSharpIcon />}>Remove Task Audio</Button>
                                 </Box>
                                 :
-                                <Button sx={{ my: 1, display: 'flex', justifyContent: 'space-around' }} size='medium' variant='outlined' color='success' endIcon={<AudiotrackIcon />}>
+                                <Button component='label' sx={{ my: 1, display: 'flex', justifyContent: 'space-around' }} size='medium' variant='outlined' color='success' endIcon={<AudiotrackIcon />}>
                                     Add Audio
-                                    <input type="file" onChange={e => handleTaskAudioUpload(e)} />
+                                    <input hidden type="file" onChange={e => handleTaskAudioUpload(e)} />
                                 </Button>
                         }
                     </Box>

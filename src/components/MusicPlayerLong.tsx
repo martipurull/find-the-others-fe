@@ -13,13 +13,14 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeDownIcon from '@mui/icons-material/VolumeDown'
 import { useEffect, useState } from 'react'
 import { IMiniBand } from '../types'
+import albumCover from '../assets/albumCover.jpeg'
 import { notifyError } from '../hooks/useNotify'
 import * as musicMetadata from 'music-metadata-browser'
 
 const Widget = styled('div')(({ theme }) => ({
     padding: 16,
     borderRadius: 4,
-    width: 343,
+    width: '100%',
     maxWidth: '100%',
     margin: 'auto',
     position: 'relative',
@@ -55,15 +56,12 @@ interface IProps {
     projectBands: IMiniBand[]
 }
 
-export default function MusicPlayer({ trackToDate, trackCover, trackName, projectBands }: IProps) {
-    console.log(trackToDate);
-
+export default function MusicPlayerLong({ trackToDate, trackCover, trackName, projectBands }: IProps) {
     const audio = new Audio(trackToDate)
     const [playing, setPlaying] = useState(false)
     const getTrackDuration = async (filePath: string) => {
         try {
             const metadata = await musicMetadata.fetchFromUrl(filePath)
-            console.log(metadata);
             return metadata.format.duration
         } catch (error) {
             console.log(error)
@@ -90,7 +88,12 @@ export default function MusicPlayer({ trackToDate, trackCover, trackName, projec
                     <Widget>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <CoverImage>
-                                <img src={trackCover} alt="album cover" />
+                                {
+                                    trackCover ?
+                                        <img src={trackCover} alt="album cover" />
+                                        :
+                                        <img src={albumCover} alt="album cover" />
+                                }
                             </CoverImage>
                             <Box sx={{ ml: 1.5, minWidth: 0 }}>
                                 <Typography variant='caption' color='text.secondary' fontWeight={500}>{projectBands.length > 1 ? projectBands.map(band => `${band.name} / `) : projectBands[0].name}</Typography>

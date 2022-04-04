@@ -110,17 +110,10 @@ export default function EditProject({ project }: IProps) {
         const dataToAxios = new FormData()
         dataToAxios.append('title', projectDetails.title)
         dataToAxios.append('description', projectDetails.description)
-        for (let i = 0; i < projectDetails.projectAdminIds.length; i++) {
-            dataToAxios.append('projectAdmins[]', projectDetails.projectAdminIds[i])
-        }
-        for (let i = 0; i < projectDetails.memberIds.length; i++) {
-            dataToAxios.append('memberIds[]', projectDetails.memberIds[i])
-        }
-        for (let i = 0; i < projectDetails.bandIds.length; i++) {
-            dataToAxios.append('bandIds[]', projectDetails.bandIds[i])
-        }
+        dataToAxios.append('projectAdminIds', JSON.stringify(projectDetails.projectAdminIds))
+        dataToAxios.append('memberIds', JSON.stringify(projectDetails.memberIds))
+        dataToAxios.append('bandIds', JSON.stringify(projectDetails.bandIds))
         projectImgFile && dataToAxios.append('projectImage', projectImgFile)
-
         const response = await axiosRequest('projects', 'POST', dataToAxios)
         if (response.status === 403) notifyError('Only a project leader can edit a project.')
         if (response.status === 200) {

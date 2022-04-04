@@ -50,6 +50,7 @@ export default function MusicianPostList() {
                 setNewPostText('')
                 setPostImgFile(undefined)
                 setPostImgPreview('')
+                fetchPosts()
             }
         }
     }

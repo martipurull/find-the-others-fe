@@ -42,7 +42,11 @@ function addSelectedStyle(name: string, collaborators: string[], theme: Theme) {
     return { fontWeight: collaborators.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightBold }
 }
 
-export default function CreateTaskModal() {
+interface IProps {
+    fetcherFunction: () => Promise<void>
+}
+
+export default function CreateTaskModal({ fetcherFunction }: IProps) {
     const { axiosRequest } = useAxios()
     const currentProject = useSelector((state: IInitialState) => state.userProjects.currentProject)
     const [open, setOpen] = useState(false)
@@ -92,15 +96,14 @@ export default function CreateTaskModal() {
         e.preventDefault()
         const dataToAxios = new FormData()
         dataToAxios.append('title', taskDetails.title)
+        dataToAxios.append('musicians', JSON.stringify(taskDetails.musicians))
         taskDetails.description && dataToAxios.append('description', taskDetails.description)
-        for (let i = 0; i < taskDetails.musicians.length; i++) {
-            dataToAxios.append('musicians[]', taskDetails.musicians[i])
-        }
         taskAudioFile && dataToAxios.append('audioFile', taskAudioFile)
 
         const response = await axiosRequest(`/projects/${currentProject?._id}/tasks`, 'POST', dataToAxios)
         if (response.status === 201) {
             notifySuccess('Task created!')
+            handleClose()
         } else {
             notifyError('Something went wrong, please try again.')
         }
@@ -149,7 +152,7 @@ export default function CreateTaskModal() {
                                 :
                                 <Button sx={{ my: 1, display: 'flex', justifyContent: 'space-around' }} size='medium' variant='outlined' color='success' endIcon={<AudiotrackIcon />}>
                                     Add Audio
-                                    <input type="file" onChange={e => handleTaskAudioUpload(e)} />
+                                    <input hidden type="file" onChange={e => handleTaskAudioUpload(e)} />
                                 </Button>
                         }
                         <Button sx={{ my: 1, display: 'flex', justifyContent: 'space-around' }} size='medium' variant='outlined' color='primary' onClick={() => setIsAddingNotes(!isAddingNotes)}>Add note <NotesIcon /></Button>

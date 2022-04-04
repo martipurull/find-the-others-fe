@@ -65,6 +65,7 @@ export default function CreateBand() {
     const handleChangeBandMembers = (event: SelectChangeEvent<typeof bandMemberId>) => {
         const { target: { value } } = event
         setBandMemberId(typeof value === 'string' ? value.split(',') : value)
+        console.log(bandMemberId);
     }
 
     const handleChangeBandAdmins = (event: SelectChangeEvent<typeof bandAdminId>) => {
@@ -78,12 +79,10 @@ export default function CreateBand() {
         dataToAxios.append('name', bandDetails.name)
         dataToAxios.append('blurb', bandDetails.blurb)
         dataToAxios.append('bio', bandDetails.bio)
-        for (let i = 0; i < bandDetails.bandAdminIds.length; i++) {
-            dataToAxios.append('bandAdminIds[]', bandDetails.bandAdminIds[i])
-        }
-        for (let i = 0; i < bandDetails.memberIds.length; i++) {
-            dataToAxios.append('memberIds[]', bandDetails.memberIds[i])
-        }
+        dataToAxios.append('bandAdminIds', JSON.stringify(bandDetails.bandAdminIds))
+        dataToAxios.append('memberIds', JSON.stringify(bandDetails.memberIds))
+        console.log(bandDetails.memberIds);
+
         avatarFile && dataToAxios.append('bandAvatar', avatarFile)
 
         const response = await axiosRequest('bands', 'POST', dataToAxios)

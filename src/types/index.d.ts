@@ -150,6 +150,7 @@ interface ITask {
     audioFile?: string
     filename?: string
     notes?: INote[]
+    status?: string
 }
 
 interface ITaskDetails {
@@ -222,8 +223,8 @@ interface IBand {
     bandAdmins: IUser[]
     members: IMiniUser[]
     invitationsSent?: IMiniUser[]
-    readyTracks?: ITrack[]
-    releasedTracks?: ITrack[]
+    readyTracks?: ITrackToSend[]
+    releasedTracks?: ITrackToSend[]
     projects?: IMiniProject[]
     blurb: string
     bio: string
@@ -244,7 +245,7 @@ interface IBandDetails {
 interface IMiniBand {
     name: string
     avatar: string
-    followedBy: string[]
+    followedBy?: string[]
     noOfFollowers: number
     _id: string
 }
@@ -260,6 +261,8 @@ interface ICover {
 }
 
 interface ITrackToSend {
+    _id?: string
+    trackName: string
     track: {
         audiofile: string
         filename: string

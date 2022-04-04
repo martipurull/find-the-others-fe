@@ -12,11 +12,12 @@ import { useDispatch, useSelector } from 'react-redux'
 export default function ProjectPage() {
     const { axiosRequest } = useAxios()
     const dispatch = useDispatch()
-    const currentProject = useSelector((state: IInitialState) => state.userProjects.currentProject)
+    const [currentProject, setCurrentProject] = useState<IProject>()
     const { projectId } = useParams()
 
     const fetchCurrentProject = async () => {
         const response = await axiosRequest(`/projects/${projectId}`, 'GET')
+        setCurrentProject(response.data)
         dispatch(addCurrentProjectInfoAction(response.data))
     }
 
@@ -26,12 +27,17 @@ export default function ProjectPage() {
 
     return (
         <Container maxWidth='xl'>
-            <Grid container style={{ display: 'flex', justifyContent: 'flex-end' }} spacing={2}>
-                <Grid item xs={12}>
-                    {currentProject && <ProjectSummary project={currentProject} />}
+            {
+                currentProject &&
+                <Grid container spacing={2} sx={{ minHeight: '75vh' }}>
+                    <Grid item xs={12} sx={{}} >
+                        {currentProject && <ProjectSummary project={currentProject} />}
+                    </Grid>
+                    <Grid item xs={12} sx={{}}>
+                        {currentProject && <ProjectWorkspace project={currentProject} />}
+                    </Grid>
                 </Grid>
-                {currentProject && <ProjectWorkspace project={currentProject} />}
-            </Grid>
+            }
         </Container>
     )
 }

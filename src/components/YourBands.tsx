@@ -5,7 +5,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar'
 import ListItemText from '@mui/material/ListItemText'
 import Avatar from '@mui/material/Avatar'
 import { IMiniBand } from '../types'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 interface IProps {
     bands: IMiniBand[]
@@ -23,7 +23,10 @@ export default function YourBands({ bands }: IProps) {
                             <ListItemAvatar>
                                 <Avatar src={band.avatar} />
                             </ListItemAvatar>
-                            <ListItemText primary={band.name} secondary={`Followers: ${band.followedBy.length}`} />
+                            {
+                                band.followedBy && band.followedBy.length >= 1 &&
+                                <ListItemText primary={band.name} secondary={`Followers: ${band.followedBy.length}`} />
+                            }
                         </ListItemButton>
                     </ListItem>
                 ))

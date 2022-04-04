@@ -7,24 +7,30 @@ import Avatar from '@mui/material/Avatar'
 import WAvatar from '../assets/WAvatar.jpeg'
 import MAvatar from '../assets/MAvatar.jpeg'
 import Button from '@mui/material/Button'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { IInitialState, IMiniBand } from '../types'
+import useAxios from '../hooks/useAxios'
+import { fetchUserAndAddInfoAction } from '../redux/actions/actions'
 
 interface IProps {
     bands: IMiniBand[]
 }
 
 export default function BandListMini({ bands }: IProps) {
-    const isConnection = true
-    const isConnectionSent = true
-    const isConnectionReceived = false
+    const { axiosRequest } = useAxios()
+    const dispatch = useDispatch()
     const currentUser = useSelector((state: IInitialState) => state.user.currentUser)
+
+    const handleFollowAndUnfollow = async (bandId: string) => {
+        await axiosRequest(`/bands/${bandId}/follow`, 'POST')
+        dispatch(fetchUserAndAddInfoAction())
+    }
 
     return (
         <List dense sx={{ width: '100%' }}>
             {
                 bands.map(band => (
-                    <ListItem sx={{ display: 'flex' }}>
+                    <ListItem key={band._id} sx={{ display: 'flex' }}>
                         <ListItemButton>
                             <ListItemAvatar>
                                 <Avatar src={band.avatar} />
@@ -33,8 +39,8 @@ export default function BandListMini({ bands }: IProps) {
                         </ListItemButton>
                         {
                             currentUser?.followedBands.includes(band._id)
-                                ? <Button sx={{ width: '30%' }} size='small' variant='outlined' color='error'>Unfollow</Button>
-                                : <Button sx={{ width: '30%' }} size='small' variant='outlined' color='success'>Follow</Button>
+                                ? <Button sx={{ mt: 1.75 }} color='primary' variant='outlined' size='small' onClick={() => handleFollowAndUnfollow(band._id)} >FOLLOWING</Button>
+                                : <Button sx={{ mt: 1.75 }} color='success' variant='outlined' size='small' onClick={() => handleFollowAndUnfollow(band._id)} >FOLLOW</Button>
                         }
                     </ListItem>
                 ))

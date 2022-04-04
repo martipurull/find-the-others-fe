@@ -56,6 +56,15 @@ export default function ProjectWorkspace({ project }: IProps) {
     const [doingTasks, setDoingTasks] = useState<ITask[]>([])
     const [doneTasks, setDoneTasks] = useState<ITask[]>([])
 
+    const handleEditTaskStatus = async (taskId: string, newStatus: string) => {
+        const response = await axiosRequest(`/projects/${project._id}/tasks/${taskId}/drag`, 'PUT', { status: newStatus })
+        if (response.status === 200) {
+            fetchProjectTasks()
+        } else {
+            notifyError('Something went wrong :(')
+        }
+    }
+
     const onDragEnd = async (result: DropResult) => {
         const { source, destination } = result
         if (!destination) return;
@@ -76,19 +85,16 @@ export default function ProjectWorkspace({ project }: IProps) {
         }
         if (destination.droppableId === 'TodoList') {
             todos.splice(destination.index, 0, add)
+            const draggedTask = todos.find(({ _id }) => _id === result.draggableId)
+            draggedTask && handleEditTaskStatus(draggedTask._id, 'todo')
         } else if (destination.droppableId === 'DoingList') {
             doing.splice(destination.index, 0, add)
+            const draggedTask = doing.find(({ _id }) => _id === result.draggableId)
+            draggedTask && handleEditTaskStatus(draggedTask._id, 'doing')
         } else {
             done.splice(destination.index, 0, add)
-        }
-        const tasksAfterDrag: ITask[] = [...todos, ...doing, ...done]
-        const taskIds = tasksAfterDrag.map(({ _id }) => _id)
-        const response = await axiosRequest(`/projects/${project._id}/drag-card`, 'PUT', { taskIds })
-        if (response.status === 403) notifyError('Only project members can move cards.')
-        if (response.status === 200) {
-            fetchProjectTasks()
-        } else {
-            notifyError('Something went wrong :(')
+            const draggedTask = done.find(({ _id }) => _id === result.draggableId)
+            draggedTask && handleEditTaskStatus(draggedTask._id, 'done')
         }
     }
 
@@ -123,9 +129,9 @@ export default function ProjectWorkspace({ project }: IProps) {
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{ height: '80%' }}>
                 <Grid item xs={12} sm={6} md={3}  >
-                    <TaskList droppableId={'TodoList'} listTitle={'To Do'} icon={<CreateTaskModal />} tasks={toDoTasks} setterFunction={setToDoTasks} />
+                    <TaskList droppableId={'TodoList'} listTitle={'To Do'} icon={<CreateTaskModal fetcherFunction={fetchProjectTasks} />} tasks={toDoTasks} setterFunction={setToDoTasks} />
 
                 </Grid>
                 <Grid item xs={12} sm={6} md={3} >
@@ -142,7 +148,7 @@ export default function ProjectWorkspace({ project }: IProps) {
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ml: -2 }}>
                         {project.trackToDate && <MusicPlayer trackToDate={project.trackToDate.audiofile} trackCover={project.trackCover ? project.trackCover.image : albumCover} projectBands={project.bands} trackName={project.title} />}
-                        <AddTrackToDate />
+                        <AddTrackToDate trackName={project.title} />
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={6} md={3} mt={3}>

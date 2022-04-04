@@ -37,7 +37,7 @@ export default function ApplicationsReceived({ projectId }: IProps) {
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
     const [gigsForProject, setGigsForProject] = useState<IGig[]>()
-    const noOfApplications = gigsForProject?.map(gig => gig.noOfApplications).reduce((a, b) => a + b)
+    const [noOfApplications, setNoOfApplications] = useState<number>()
     const [openGiveGig, setOpenGiveGig] = useState(false)
     const handleOpenGiveGig = () => setOpenGiveGig(true)
     const handleCloseGiveGig = () => setOpenGiveGig(false)
@@ -62,6 +62,14 @@ export default function ApplicationsReceived({ projectId }: IProps) {
         if (response.status === 400 || response.status === 404 || response.status === 401) notifyError('Something went wrong.')
         handleCloseRejectApplication()
     }
+
+    const handleGetNoOfApplications = (gigs: IGig[]) => {
+        setNoOfApplications(gigs.map(gig => gig.noOfApplications).reduce((a, b) => a + b))
+    }
+
+    useEffect(() => {
+        gigsForProject && gigsForProject.length >= 1 && handleGetNoOfApplications(gigsForProject)
+    }, [gigsForProject])
 
     useEffect(() => {
         fetchGigsForProject()
