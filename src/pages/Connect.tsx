@@ -55,7 +55,7 @@ export default function Connect() {
         <Container maxWidth="xl" sx={{ minHeight: '75vh', minWidth: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Grid item xs={12} md={6} sx={{ textAlign: 'center' }}>
-                    <Typography component='h1' variant='h3' sx={{ mt: 3 }}>Enter your friend's name or email to connect with them.</Typography>
+                    <Typography component='h1' variant='h3' sx={{ mt: 3, fontWeight: 'bold' }}>Enter your friend's name or email to connect with them.</Typography>
                     <Grid container spacing={3} sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
                         <Grid item xs={10}>
                             <FormControl variant='standard' fullWidth>
@@ -74,7 +74,7 @@ export default function Connect() {
                                                     <Box component='img' src={user.avatar} sx={{ height: '45px', objectFit: 'cover' }} />
                                                 </Avatar>
                                             </ListItemAvatar>
-                                            <ListItemText primary={`${user.firstName} ${user.lastName}`} secondary={`Member of: ${user.memberOf.map(band => ` ${band}`)}`} />
+                                            <ListItemText primary={`${user.firstName} ${user.lastName}`} secondary={user.memberOf.length >= 1 && `Member of: ${user.memberOf.map(band => ` ${band.name}`)}`} />
                                         </ListItem>
                                         {currentUser?.connectionsReceived.find(({ _id }) => _id === user._id) &&
                                             <Box sx={{ display: 'flex' }}>
