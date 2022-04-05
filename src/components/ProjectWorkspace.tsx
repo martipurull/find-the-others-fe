@@ -17,7 +17,8 @@ import { IProject, ITask } from '../types'
 import useAxios from '../hooks/useAxios'
 import { notifyError } from '../hooks/useNotify'
 import albumCover from '../assets/albumCover.jpeg'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
 
 
 const modalStyle = {
@@ -39,6 +40,7 @@ interface IProps {
 export default function ProjectWorkspace({ project }: IProps) {
     const navigate = useNavigate()
     const { axiosRequest } = useAxios()
+    const { projectId } = useParams()
     const [openCompleteProject, setOpenCompleteProject] = useState(false)
     const handleOpenCompleteProject = () => setOpenCompleteProject(true)
     const handleCloseCompleteProject = () => setOpenCompleteProject(false)
@@ -51,7 +53,7 @@ export default function ProjectWorkspace({ project }: IProps) {
     const [doneTasks, setDoneTasks] = useState<ITask[]>([])
 
     const handleEditTaskStatus = async (taskId: string, newStatus: string) => {
-        const response = await axiosRequest(`/projects/${project._id}/tasks/${taskId}/drag`, 'PUT', { status: newStatus })
+        const response = await axiosRequest(`/projects/${projectId}/tasks/${taskId}/drag`, 'PUT', { status: newStatus })
         if (response.status === 200) {
             fetchProjectTasks()
         } else {
@@ -93,7 +95,7 @@ export default function ProjectWorkspace({ project }: IProps) {
     }
 
     const fetchProjectTasks = async () => {
-        const response = await axiosRequest(`/projects/${project._id}/tasks`, 'GET')
+        const response = await axiosRequest(`/projects/${projectId}/tasks`, 'GET')
         const projectTasks: ITask[] = response.data
         setToDoTasks(projectTasks ? projectTasks.filter(task => task.status === 'todo') : [])
         setDoingTasks(projectTasks ? projectTasks.filter(task => task.status === 'doing') : [])
@@ -101,24 +103,22 @@ export default function ProjectWorkspace({ project }: IProps) {
     }
 
     useEffect(() => {
-        console.log(project);
-
         fetchProjectTasks()
     }, [])
 
     const handleCompleteProject = async () => {
-        const response = await axiosRequest(`/projects/${project._id}/complete-project`, 'POST')
+        const response = await axiosRequest(`/projects/${projectId}/complete-project`, 'POST')
         if (response.status === 403) notifyError('Only a project leader can complete a project.')
         if (response.status === 400 || response.status === 404 || response.status === 401) notifyError('Something went wrong.')
         if (response.status === 200 && project.trackToDate?.audiofile && project.trackCover?.image) {
-            const sendTrackToBands = await axiosRequest(`/projects/${project._id}/send-track-to-band`, 'POST')
+            const sendTrackToBands = await axiosRequest(`/projects/${projectId}/send-track-to-band`, 'POST')
             if (sendTrackToBands.status === 403) notifyError('Only a project leader can complete a project.')
         }
         navigate('/')
     }
 
     const handleLeaveProject = async () => {
-        const response = await axiosRequest(`/projects/${project._id}/leave-project`, 'DELETE')
+        const response = await axiosRequest(`/projects/${projectId}/leave-project`, 'DELETE')
         if (response.status === 400 || response.status === 404 || response.status === 401) notifyError('Something went wrong.')
         navigate('/')
     }
@@ -126,6 +126,7 @@ export default function ProjectWorkspace({ project }: IProps) {
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Grid container spacing={2} sx={{ height: '80%' }}>
+                <ToastContainer position="top-right" newestOnTop={false} rtl={false} pauseOnFocusLoss toastStyle={{ backgroundColor: '#233243', border: 'none', color: '#f5faff', fontSize: '12px' }} />
                 <Grid item xs={12} sm={6} md={3}  >
                     <TaskList droppableId={'TodoList'} listTitle={'To Do'} icon={<CreateTaskModal fetcherFunction={fetchProjectTasks} />} tasks={toDoTasks} setterFunction={setToDoTasks} />
 
@@ -143,7 +144,7 @@ export default function ProjectWorkspace({ project }: IProps) {
                         <Typography variant='h5' pt={1.25}>Track So Far</Typography> <BarChartOutlinedIcon fontSize='large' sx={{ ml: 1, my: 1.25 }} />
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        {project.trackToDate && <MusicPlayer trackToDate={project.trackToDate.audiofile} trackCover={project.trackCover ? project.trackCover.image : albumCover} projectBands={project.bands} trackName={project.title} />}
+                        {project.trackToDate && <MusicPlayer trackToDate={project.trackToDate.audiofile} trackCover={project.trackCover?.image ? project.trackCover.image : albumCover} projectBands={project.bands} trackName={project.title} />}
                         <Box sx={{ ml: -7 }}><AddTrackToDate trackName={project.title} /></Box>
                     </Box>
                 </Grid>

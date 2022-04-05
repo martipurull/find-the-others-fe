@@ -34,7 +34,9 @@ const modalStyle = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 800,
+    maxHeight: '85%',
+    overflow: 'auto',
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -114,10 +116,10 @@ export default function EditProject({ project }: IProps) {
         dataToAxios.append('memberIds', JSON.stringify(projectDetails.memberIds))
         dataToAxios.append('bandIds', JSON.stringify(projectDetails.bandIds))
         projectImgFile && dataToAxios.append('projectImage', projectImgFile)
-        const response = await axiosRequest('projects', 'POST', dataToAxios)
+        const response = await axiosRequest('projects', 'PUT', dataToAxios)
         if (response.status === 403) notifyError('Only a project leader can edit a project.')
         if (response.status === 200) {
-            navigate('/')
+            handleClose()
         } else {
             notifyError('Something went wrong, please try again.')
         }

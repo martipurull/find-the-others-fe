@@ -8,10 +8,15 @@ import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Backdrop from '@mui/material/Backdrop'
 import Typography from '@mui/material/Typography'
+import ListItemAvatar from '@mui/material/ListItemAvatar'
+import Avatar from '@mui/material/Avatar'
+import { useSelector } from 'react-redux'
 import { useState } from 'react'
-import { IAppliedGig } from '../types'
+import { IAppliedGig, IInitialState } from '../types'
 import useAxios from '../hooks/useAxios'
 import { notifyError, notifySuccess } from '../hooks/useNotify'
+import GigApplication from './GigApplication'
+import { chooseIcon } from '../hooks/useUtils'
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -31,11 +36,12 @@ interface IProps {
 export default function ApplicationsSent({ applications }: IProps) {
     const { axiosRequest } = useAxios()
     const [open, setOpen] = useState(false)
-    const handleOpen = () => setOpen(true)
-    const handleClose = () => setOpen(false)
+    const handleOpenDetails = () => setOpen(true)
+    const handleCloseDetails = () => setOpen(false)
     const [openWithdrawApplication, setOpenWithdrawApplication] = useState(false)
     const handleOpenWithdrawApplication = () => setOpenWithdrawApplication(true)
     const handleCloseWithdrawApplication = () => setOpenWithdrawApplication(false)
+    const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
 
     const handleWithdrawApplication = async (gigId: string) => {
         const response = await axiosRequest(`/gigs/${gigId}/applications/withdraw`, 'POST')
@@ -46,59 +52,52 @@ export default function ApplicationsSent({ applications }: IProps) {
         }
     }
 
+    const hasUserApplied = (gigId: string) => {
+        if (!loggedUser) return false
+        const userApplicationIds = loggedUser.applications.map(({ _id }) => _id)
+        return userApplicationIds.includes(gigId)
+    }
+
     return (
-        <List dense sx={{ width: '100%' }}>
+        <List sx={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
             {
                 applications?.map(application => (
-                    <ListItem key={application._id}>
-                        <Grid container>
-                            <ListItemButton onClick={handleOpen}>
-                                <Grid item xs={12} md={6}>
-                                    <ListItemText primary={application.title} secondary={`Project: ${application.project.title}`} />
-                                </Grid>
-                                <Grid item xs={12} md={4}>
-                                    <ListItemText primary={`Instrument: ${application.instrument}`} secondary={`Genre: ${application.genre}`} />
-                                </Grid>
-                            </ListItemButton>
-                            <Modal
-                                aria-labelledby="transition-modal-title"
-                                aria-describedby="transition-modal-description"
-                                open={open}
-                                onClose={handleClose}
-                                closeAfterTransition
-                                BackdropComponent={Backdrop}
-                                BackdropProps={{ timeout: 500 }}
-                            >
-                                <Box sx={modalStyle}>
-                                    <Typography id="transition-modal-title" variant="h6" component="h2">
-                                        Gig Description
-                            </Typography>
-                                    <Typography id="transition-modal-description" variant="body1">{application.description}</Typography>
-                                </Box>
-                            </Modal>
-                            <Grid item xs={12} md={2}>
-                                <Button size='small' variant='outlined' color='error' sx={{ mt: 0.5 }} onClick={handleOpenWithdrawApplication}>Withdraw Application</Button>
-                                <Modal
-                                    aria-labelledby="transition-modal-title"
-                                    aria-describedby="transition-modal-description"
-                                    open={openWithdrawApplication}
-                                    onClose={handleCloseWithdrawApplication}
-                                    closeAfterTransition
-                                    BackdropComponent={Backdrop}
-                                    BackdropProps={{ timeout: 500 }}
-                                >
-                                    <Box sx={modalStyle}>
-                                        <Typography sx={{ my: 1 }} id="transition-modal-title" variant="h4" component="h3">Eithdraw application?</Typography>
-                                        <Typography sx={{ my: 1 }} variant='h6' component='h4'>Are you sure you want to withdraw your application for project {application.project.title}?</Typography>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-                                            <Button color='error' variant='contained' onClick={() => handleWithdrawApplication(application._id)}>Withdraw Application</Button>
-                                            <Button color='warning' variant='outlined' type='submit' onClick={handleCloseWithdrawApplication}>Cancel</Button>
-                                        </Box>
-                                    </Box>
-                                </Modal>
-                            </Grid>
-                        </Grid>
-                    </ListItem>
+                    <Box key={application._id}>
+                        <Box sx={{ borderBottom: '1px solid #f5faff', mb: 2, bgcolor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                            <Box>
+                                <ListItem onClick={handleOpenDetails}>
+                                    <ListItemAvatar>
+                                        <Avatar sx={{ width: 50, height: 50, mr: 4 }}>
+                                            <Box component='img' src={chooseIcon(application.instrument)} sx={{ maxWidth: 40, objectFit: 'cover' }} />
+                                        </Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary={`WANTED: ${application.instrument} for ${application.title.toLowerCase()}.`} secondary={`Expected duration: ${application.hours}${application.hours > 1 ? ` hours` : ` hour`}`} />
+                                </ListItem>
+                            </Box>
+                            <Box>
+                                <GigApplication hasApplied={hasUserApplied(application._id)} gigId={application._id} />
+                            </Box>
+                        </Box>
+
+                        <Modal
+                            aria-labelledby="transition-modal-title"
+                            aria-describedby="transition-modal-description"
+                            open={open}
+                            onClose={handleCloseDetails}
+                            closeAfterTransition
+                            BackdropComponent={Backdrop}
+                            BackdropProps={{ timeout: 500 }}
+                        >
+                            <Box sx={modalStyle}>
+                                <Typography id="transition-modal-title" variant="h6" component="h2">
+                                    Gig Description
+                                        </Typography>
+                                <Typography my={2} id="transition-modal-description" variant="body1">{application.description}</Typography>
+                                <Typography my={2} id="transition-modal-description" variant="body2">Genre: {application.genre}</Typography>
+                                <Typography my={2} id="transition-modal-description" variant="body2">Project: {application.project.title}</Typography>
+                            </Box>
+                        </Modal>
+                    </Box>
                 ))
             }
         </List>

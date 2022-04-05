@@ -13,7 +13,7 @@ interface IProps {
 export default function BandItem({ bandDetails }: IProps) {
     const navigate = useNavigate()
     return (
-        <Card sx={{ maxWidth: 350, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} onClick={() => navigate(`/projects/${bandDetails._id}`)}>
+        <Card sx={{ maxWidth: 350, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} onClick={() => navigate(`/bands/${bandDetails._id}`)}>
             <CardActionArea sx={{ backgroundColor: '#233243', border: '1px solid #f5faff', p: 0.15, height: '100%' }}>
                 <CardMedia component='img' src={bandDetails.avatar ? bandDetails.avatar : BandImg} alt='Band' sx={{ minHeight: '60%', objectFit: 'cover' }} />
                 <CardContent sx={{ minHeight: '40%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>

@@ -155,7 +155,6 @@ interface ITask {
 
 interface ITaskDetails {
     title: string
-    musicians: string[]
     description?: string
     status: string
 }
@@ -199,6 +198,7 @@ interface IAppliedGig {
     description: string
     instrument: string
     genre: string
+    hours: number
 }
 
 interface INote {

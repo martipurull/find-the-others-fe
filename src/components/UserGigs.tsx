@@ -25,11 +25,11 @@ export default function UserGigs({ gigs }: IProps) {
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Typography component='h2' variant='h4' sx={{ mt: 15, pt: 4, borderTop: '1px solid #f5faff' }}>Gigs you are currently offering</Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', my: 2 }}>
+            <Typography component='h2' variant='h4' sx={{ mt: 15, pt: 4, fontWeight: 'bold' }}>Gigs you are currently offering</Typography>
             <List sx={{ width: '100%' }}>
                 {gigs && gigs.map(gig => (
-                    <Box sx={{ borderBottom: '1px solid #f5faff', mb: 2, bgcolor: 'rgba(0,0,0,0.6)' }}>
+                    <Box sx={{ borderBottom: '1px solid #f5faff', my: 2, bgcolor: 'rgba(0,0,0,0.6)' }}>
                         <ListItem>
                             {/* FIND BETTER ICONS FOR INSTRUMENTS AND CREATE FUNCTION TO CHOOSE THE RIGHT ONE */}
                             <ListItemAvatar>

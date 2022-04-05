@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
-import Select from '@mui/material/Select'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import MenuItem from '@mui/material/MenuItem'
@@ -24,27 +24,24 @@ export default function CreateGig() {
     const userProjects = useSelector((state: IInitialState) => state.user.currentUser!.projects)
     const [userGigs, setUserGigs] = useState<IGig[]>([])
     const [selectedInstrument, setSelectedInstrument] = useState<string>('')
-    const [selectedProjectTitle, setSelectedProjectTitle] = useState<string>('')
+    const [selectedProjectId, setSelectedProjectId] = useState<string>('')
 
-    const findSelectedProject = () => {
-        return userProjects.find(({ title }) => title === selectedProjectTitle)
-    }
+    // const findSelectedProject = () => {
+    //     return userProjects.find(({ _id }) => _id === selectedProjectId)
+    // }
 
-    const selectedProject = findSelectedProject()
-    const selectedProjectBandIds = selectedProject?.bands.map(({ _id }) => _id)
+    // const selectedProject = findSelectedProject()
+    // const selectedProjectBandIds = selectedProject?.bands.map(({ _id }) => _id)
 
-    useEffect(() => {
-        findSelectedProject()
-    }, [selectedProjectTitle])
+    // useEffect(() => {
+    //     findSelectedProject()
+    // }, [selectedProjectId])
 
-    const [gigDetails, setGigDetails] = useState<IGigDetails>({
+    const [gigDetails, setGigDetails] = useState({
         title: '',
-        projectId: selectedProject?._id,
-        bandIds: selectedProjectBandIds,
         description: '',
         genre: '',
         hours: 1,
-        instrument: selectedInstrument,
         otherInstrument: '',
         specifics: '',
         isGigAvailable: true
@@ -57,17 +54,26 @@ export default function CreateGig() {
         }))
     }
 
+    const handleChangeSelectedInstrument = (e: SelectChangeEvent) => {
+        setSelectedInstrument(e.target.value)
+    }
+
+    const handleChangeSelectedProject = (e: SelectChangeEvent) => {
+        setSelectedProjectId(e.target.value)
+    }
+
     const handleIsAvailable = (e: ChangeEvent<HTMLInputElement>) => {
         setGigDetails({ ...gigDetails, isGigAvailable: e.target.checked })
     }
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        const response = await axiosRequest('/gigs', 'POST', gigDetails)
+        const detailsToAxios: IGigDetails = { ...gigDetails, instrument: selectedInstrument, projectId: selectedProjectId }
+        const response = await axiosRequest('/gigs', 'POST', detailsToAxios)
         if (response.status === 400) notifyError('Gig could not be posted.')
         if (response.status === 201) {
-            navigate('/gigs')
             notifySuccess('Gig posted successfully!')
+            navigate('/gigs')
         }
     }
 
@@ -93,9 +99,9 @@ export default function CreateGig() {
                             <Grid item xs={12} md={3}>
                                 <FormControl required variant='standard' sx={{ m: 1, minWidth: 200 }}>
                                     <InputLabel id='project-select'>Gig Project</InputLabel>
-                                    <Select labelId='project-select' id='project-select' value={selectedProjectTitle} onChange={(e) => setSelectedProjectTitle(e.target.value)}>
+                                    <Select labelId='project-select' id='project-select' value={selectedProjectId} onChange={handleChangeSelectedProject}>
                                         {userProjects.map((project) => (
-                                            <MenuItem key={project._id} value={project.title}>{project.title}</MenuItem>
+                                            <MenuItem key={project._id} value={project._id}>{project.title}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -103,7 +109,7 @@ export default function CreateGig() {
                             <Grid item xs={12} md={3}>
                                 <FormControl required variant='standard' sx={{ m: 1, minWidth: 200 }}>
                                     <InputLabel id='instrument-select'>Gig Instrument</InputLabel>
-                                    <Select labelId='instrument-select' id='instrument-select' value={selectedInstrument} onChange={(e) => setSelectedInstrument(e.target.value)}>
+                                    <Select labelId='instrument-select' id='instrument-select' value={selectedInstrument} onChange={handleChangeSelectedInstrument}>
                                         {instruments.map((instrument, i) => (
                                             <MenuItem key={i} value={instrument}>{instrument}</MenuItem>
                                         ))}

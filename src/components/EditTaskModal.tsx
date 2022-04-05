@@ -62,7 +62,6 @@ export default function EditTaskModal({ task }: IProps) {
     const [taskDetails, setTaskDetails] = useState<ITaskDetails>({
         title: task.title || '',
         description: task.description || '',
-        musicians: musicianIds || musicianId,
         status: task.status || selectedStatus
     })
 
@@ -95,7 +94,7 @@ export default function EditTaskModal({ task }: IProps) {
         const dataToAxios = new FormData()
         dataToAxios.append('title', taskDetails.title)
         taskDetails.description && dataToAxios.append('description', taskDetails.description)
-        dataToAxios.append('musicians', JSON.stringify(taskDetails.musicians))
+        dataToAxios.append('musicians', JSON.stringify(musicianId))
         taskAudioFile && dataToAxios.append('audioFile', taskAudioFile)
         const response = await axiosRequest(`/projects/${currentProject?._id}/tasks/${task._id}`, 'PUT', dataToAxios)
         if (response.status === 403) notifyError("You cannot edit someone else's task")

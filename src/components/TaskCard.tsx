@@ -113,15 +113,18 @@ export default function TaskCard({ task, index }: IProps) {
                 >
                     <CardContent>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant='h6'>{task.title}</Typography>
-                            {/* MAP LIST OF AVATARS */}
-                            <Avatar src={MAvatar} />
+                            <Typography mb={2} variant='h6'>{task.title}</Typography>
+                            {
+                                task.musicians.map(musician => (
+                                    <Avatar src={musician.avatar} />
+                                ))
+                            }
                         </Box>
                         <Typography variant='body2'>{task.description}</Typography>
                         {
                             task.notes &&
                             <Box>
-                                <Typography variant='subtitle1'>Notes</Typography>
+                                <Typography variant='subtitle1' sx={{ mt: 2 }}>Notes</Typography>
                                 <Button sx={{ my: 1, display: 'flex', justifyContent: 'space-around' }} size='medium' variant='outlined' color='primary' endIcon={<NotesIcon />} onClick={() => setIsAddingNotes(!isAddingNotes)}>Add a note</Button>
                                 {
                                     isAddingNotes &&

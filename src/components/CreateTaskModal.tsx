@@ -64,7 +64,6 @@ export default function CreateTaskModal({ fetcherFunction }: IProps) {
     const [taskDetails, setTaskDetails] = useState<ITaskDetails>({
         title: '',
         description: '',
-        musicians: musicianId,
         status: selectedStatus
     })
 
@@ -88,15 +87,17 @@ export default function CreateTaskModal({ fetcherFunction }: IProps) {
     }
 
     const handleChangeMembers = (event: SelectChangeEvent<typeof musicianId>) => {
+
         const { target: { value } } = event
         setMusicianId(typeof value === 'string' ? value.split(',') : value)
+        console.log(musicianId);
     }
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         const dataToAxios = new FormData()
         dataToAxios.append('title', taskDetails.title)
-        dataToAxios.append('musicians', JSON.stringify(taskDetails.musicians))
+        dataToAxios.append('musicians', JSON.stringify(musicianId))
         taskDetails.description && dataToAxios.append('description', taskDetails.description)
         taskAudioFile && dataToAxios.append('audioFile', taskAudioFile)
 
@@ -104,6 +105,7 @@ export default function CreateTaskModal({ fetcherFunction }: IProps) {
         if (response.status === 201) {
             notifySuccess('Task created!')
             handleClose()
+            fetcherFunction()
         } else {
             notifyError('Something went wrong, please try again.')
         }

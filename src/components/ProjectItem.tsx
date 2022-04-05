@@ -5,6 +5,7 @@ import { CardActionArea, Typography } from '@mui/material'
 import ProjectImg from '../assets/projectImg3.jpeg'
 import { useNavigate } from 'react-router-dom'
 import { IProject } from '../types'
+import Badge from '@mui/material/Badge'
 
 interface IProps {
     projectDetails: IProject
@@ -13,13 +14,15 @@ interface IProps {
 export default function ProjectItem({ projectDetails }: IProps) {
     const navigate = useNavigate()
     return (
-        <Card sx={{ maxWidth: 350 }} onClick={() => navigate(`/projects/${projectDetails._id}`)}>
-            <CardActionArea sx={{ backgroundColor: '#233243', border: '1px solid #f5faff', p: 0.15 }}>
-                <CardMedia component='img' src={projectDetails.projectImage ? projectDetails.projectImage : ProjectImg} alt='Music Project' sx={{ maxHeight: 210, objectFit: 'cover' }} />
-                <CardContent>
-                    <Typography variant='h6' component='div' >{projectDetails.title}</Typography>
-                </CardContent>
-            </CardActionArea>
-        </Card>
+        <Badge color='info' invisible={projectDetails.isActive && true} badgeContent='COMPLETED'>
+            <Card sx={{ maxWidth: 350 }} onClick={() => navigate(`/projects/${projectDetails._id}`)}>
+                <CardActionArea sx={{ backgroundColor: '#233243', border: '1px solid #f5faff', p: 0.15 }}>
+                    <CardMedia component='img' src={projectDetails.projectImage ? projectDetails.projectImage : ProjectImg} alt='Music Project' sx={{ maxHeight: 210, objectFit: 'cover' }} />
+                    <CardContent>
+                        <Typography variant='h6' component='div' >{projectDetails.title}</Typography>
+                    </CardContent>
+                </CardActionArea>
+            </Card>
+        </Badge>
     )
 }

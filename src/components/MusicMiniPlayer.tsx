@@ -22,25 +22,25 @@ interface IProps {
 
 
 export default function MusicMiniPlayer({ audioFile }: IProps) {
-    const audio = new Audio(audioFile)
+    const [audio, setAudio] = useState(new Audio(audioFile))
     const [playing, setPlaying] = useState(false)
-    const getTrackDuration = async (filePath: string) => {
-        try {
-            const metadata = await musicMetadata.fetchFromUrl(filePath)
-            return metadata.format.duration
-        } catch (error) {
-            console.log(error)
-            notifyError('Something went wrong when reading the track.')
-        }
-    }
-    const trackDuration = getTrackDuration(audioFile)
     const [position, setPosition] = useState<number>(audio.currentTime)
+    const [duration, setDuration] = useState<number>(audio.duration)
+
     function formatDuration(seconds: number) {
         const minutes = Math.floor(seconds / 60)
-        const secondsLeft = seconds - minutes * 60
+        const secondsLeft = Math.floor(seconds - minutes * 60)
         return `${minutes}:${secondsLeft < 9 ? `0${secondsLeft}` : secondsLeft}`
     }
     const mainIconColour = '#f5faff'
+
+    useEffect(() => {
+        audio.onloadeddata = () => {
+            setAudio(new Audio(audioFile))
+            setPosition(audio.currentTime)
+            setDuration(audio.duration)
+        }
+    }, [audioFile])
 
     useEffect(() => {
         playing ? audio.play() : audio.pause()
@@ -49,16 +49,20 @@ export default function MusicMiniPlayer({ audioFile }: IProps) {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
             {
-                typeof trackDuration === 'number' &&
+                typeof duration === 'number' &&
                 <div>
-                    <Button sx={{ mx: 1 }} variant='outlined' size='small' endIcon={playing ? <PlayCircleOutlinedIcon /> : <PauseCircleOutlinedIcon />} onClick={() => setPlaying(!playing)}>Play Submitted Track</Button>
-                    <Slider
+                    <Button sx={{ mx: 2, my: 2 }} variant='outlined' size='small' endIcon={playing ? <PauseCircleOutlinedIcon /> : <PlayCircleOutlinedIcon />} onClick={() => setPlaying(!playing)}>Play Submitted Track</Button>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: -1, mx: 4 }}>
+                        <TinyText>{formatDuration(position)}</TinyText>
+                        <TinyText>{formatDuration(duration - position)}</TinyText>
+                    </Box>
+                    {/* <Slider
                         aria-label="time-indicator"
                         size="small"
                         value={audio.currentTime}
                         min={0}
                         step={1}
-                        max={trackDuration}
+                        max={duration}
                         onChange={(_, value) => setPosition(value as number)}
                         sx={{
                             color: mainIconColour,
@@ -82,11 +86,8 @@ export default function MusicMiniPlayer({ audioFile }: IProps) {
                                 opacity: 0.28,
                             },
                         }}
-                    />
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: -1 }}>
-                        <TinyText>{formatDuration(position)}</TinyText>
-                        <TinyText>{formatDuration(trackDuration - position)}</TinyText>
-                    </Box>
+                    /> */}
+
                 </div>
             }
         </Box>

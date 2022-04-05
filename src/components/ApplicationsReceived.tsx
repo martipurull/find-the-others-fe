@@ -21,7 +21,7 @@ const modalStyle = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '55%',
+    width: '65%',
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -38,6 +38,7 @@ export default function ApplicationsReceived({ projectId }: IProps) {
     const handleClose = () => setOpen(false)
     const [gigsForProject, setGigsForProject] = useState<IGig[]>()
     const [noOfApplications, setNoOfApplications] = useState<number>()
+    const [applicationsForProjectGigs, setApplicationsForProjectGigs] = useState()
     const [openGiveGig, setOpenGiveGig] = useState(false)
     const handleOpenGiveGig = () => setOpenGiveGig(true)
     const handleCloseGiveGig = () => setOpenGiveGig(false)
@@ -47,6 +48,8 @@ export default function ApplicationsReceived({ projectId }: IProps) {
 
     const fetchGigsForProject = async () => {
         const response = await axiosRequest(`/projects/${projectId}/gigs`, 'GET')
+        console.log(response.data);
+
         if (response.status === 200) setGigsForProject(response.data)
     }
 
@@ -96,11 +99,12 @@ export default function ApplicationsReceived({ projectId }: IProps) {
                                     <ListItem key={application._id} sx={{ border: '1px solid #f5faff', my: 2 }}>
                                         <Avatar sx={{ mx: 1 }} src={application.applicant.avatar} />
                                         <Typography sx={{ mx: 1 }} id="transition-modal-title" variant="h6" component="p">{application.applicant.firstName} {application.applicant.lastName}</Typography>
-                                        <Typography sx={{ mx: 1 }} id="transition-modal-title" variant="subtitle1" component="p">{gig.instrument}: {gig.specifics}</Typography>
+                                        <Typography sx={{ mx: 1 }} id="transition-modal-title" variant="subtitle1" component="p">{application.submission.notes}</Typography>
+                                        {/* <Typography sx={{ mx: 1 }} id="transition-modal-title" variant="subtitle1" component="p">{application.submission.audioFile}</Typography> */}
 
                                         <MusicMiniPlayer audioFile={application.submission.audioFile} />
 
-                                        <Button sx={{ mx: 1 }} variant='contained' size='small' endIcon={<CheckCircleOutlineOutlinedIcon />} color='success' onClick={handleOpenGiveGig}>Give Gig</Button>
+                                        <Button sx={{ mx: 2, px: 2 }} variant='contained' size='small' endIcon={<CheckCircleOutlineOutlinedIcon />} color='success' onClick={handleOpenGiveGig}>Give</Button>
                                         <Modal
                                             aria-labelledby="transition-modal-title"
                                             aria-describedby="transition-modal-description"
@@ -121,7 +125,7 @@ export default function ApplicationsReceived({ projectId }: IProps) {
                                             </Box>
                                         </Modal>
 
-                                        <Button sx={{ mx: 1 }} variant='contained' size='small' endIcon={<CancelOutlinedIcon />} color='error' onClick={handleOpenRejectApplication}>Reject Application</Button>
+                                        <Button sx={{ mx: 2, px: 2 }} variant='contained' size='small' endIcon={<CancelOutlinedIcon />} color='error' onClick={handleOpenRejectApplication}>Reject</Button>
                                         <Modal
                                             aria-labelledby="transition-modal-title"
                                             aria-describedby="transition-modal-description"

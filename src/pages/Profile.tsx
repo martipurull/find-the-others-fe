@@ -264,8 +264,10 @@ export default function MusicianProfile() {
                                 <YourProjects projects={loggedUser!.projects} />
                             </Grid>
                             <Grid item xs={12} md={12}>
-                                <Typography id="transition-modal-title" variant="h6" component="h2" sx={{ mt: 2 }}>Applications Sent</Typography>
-                                <ApplicationsSent applications={loggedUser!.applications} />
+                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <Typography id="transition-modal-title" variant="h6" component="h2" sx={{ my: 2 }}>Applications Sent</Typography>
+                                    <ApplicationsSent applications={loggedUser!.applications} />
+                                </Box>
                             </Grid>
                         </Grid>
                         <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mx: 15 }}>
