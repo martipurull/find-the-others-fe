@@ -55,16 +55,16 @@ export default function EditBand({ band }: IProps) {
     const [avatarFile, setAvatarFile] = useState<File>()
     const [avatarPreview, setAvatarPreview] = useState<string>(band.avatar)
 
-    const bandAdminIds = band.bandAdmins.map(admin => admin._id)
-    const bandMemberIds = band.members.map(member => member._id)
-
     const [bandDetails, setBandDetails] = useState<IBandDetails>({
         name: band.name || '',
-        bandAdminIds: bandAdminIds || bandAdminId,
-        memberIds: bandMemberIds || bandMemberId,
         bio: band.bio || '',
         blurb: band.blurb || ''
     })
+
+    const bandAdminIds = [...bandAdminId, loggedUser?._id]
+    const memberIds = [...bandMemberId, loggedUser?._id]
+
+
 
     const handleInput = (field: string, value: string) => {
         setBandDetails(details => ({
@@ -101,12 +101,8 @@ export default function EditBand({ band }: IProps) {
         dataToAxios.append('name', bandDetails.name)
         dataToAxios.append('blurb', bandDetails.blurb)
         dataToAxios.append('bio', bandDetails.bio)
-        for (let i = 0; i < bandDetails.bandAdminIds.length; i++) {
-            dataToAxios.append('bandAdmins[]', bandDetails.bandAdminIds[i])
-        }
-        for (let i = 0; i < bandDetails.memberIds.length; i++) {
-            dataToAxios.append('members[]', bandDetails.memberIds[i])
-        }
+        dataToAxios.append('bandAdminIds', JSON.stringify(bandAdminIds))
+        dataToAxios.append('memberIds', JSON.stringify(memberIds))
         avatarFile && dataToAxios.append('bandAvatar', avatarFile)
 
         const response = await axiosRequest(`/bands/${band._id}`, 'PUT', dataToAxios)

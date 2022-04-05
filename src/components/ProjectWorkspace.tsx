@@ -15,7 +15,7 @@ import TaskList from './TaskList'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import { IProject, ITask } from '../types'
 import useAxios from '../hooks/useAxios'
-import { notifyError } from '../hooks/useNotify'
+import { notifyError, notifySuccess } from '../hooks/useNotify'
 import albumCover from '../assets/albumCover.jpeg'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
@@ -112,9 +112,11 @@ export default function ProjectWorkspace({ project }: IProps) {
         if (response.status === 400 || response.status === 404 || response.status === 401) notifyError('Something went wrong.')
         if (response.status === 200 && project.trackToDate?.audiofile && project.trackCover?.image) {
             const sendTrackToBands = await axiosRequest(`/projects/${projectId}/send-track-to-band`, 'POST')
+            if (sendTrackToBands.status === 200) notifySuccess('Track sent!')
             if (sendTrackToBands.status === 403) notifyError('Only a project leader can complete a project.')
         }
         navigate('/')
+        notifySuccess('Project completed successfully!')
     }
 
     const handleLeaveProject = async () => {

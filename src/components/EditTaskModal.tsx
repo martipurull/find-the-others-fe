@@ -46,6 +46,7 @@ interface IProps {
 
 export default function EditTaskModal({ task }: IProps) {
     const { axiosRequest } = useAxios()
+    const loggedUser = useSelector((state: IInitialState) => state.user.currentUser)
     const currentProject = useSelector((state: IInitialState) => state.userProjects.currentProject)
     const [open, setOpen] = useState(false)
     const handleOpen = () => setOpen(true)
@@ -57,7 +58,7 @@ export default function EditTaskModal({ task }: IProps) {
     const [taskAudioFile, setTaskAudioFile] = useState<File>()
     const [audioPreview, setAudioPreview] = useState<string>('')
 
-    const musicianIds = task.musicians.map(({ _id }) => _id)
+    const musicianIds = [...musicianId, loggedUser?._id]
 
     const [taskDetails, setTaskDetails] = useState<ITaskDetails>({
         title: task.title || '',
@@ -94,7 +95,7 @@ export default function EditTaskModal({ task }: IProps) {
         const dataToAxios = new FormData()
         dataToAxios.append('title', taskDetails.title)
         taskDetails.description && dataToAxios.append('description', taskDetails.description)
-        dataToAxios.append('musicians', JSON.stringify(musicianId))
+        dataToAxios.append('musicians', JSON.stringify(musicianIds))
         taskAudioFile && dataToAxios.append('audioFile', taskAudioFile)
         const response = await axiosRequest(`/projects/${currentProject?._id}/tasks/${task._id}`, 'PUT', dataToAxios)
         if (response.status === 403) notifyError("You cannot edit someone else's task")

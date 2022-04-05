@@ -23,7 +23,7 @@ import useAxios from '../hooks/useAxios'
 import { IInitialState, IProject, IProjectDetails } from '../types'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { notifyError } from '../hooks/useNotify'
+import { notifyError, notifySuccess } from '../hooks/useNotify'
 
 function addSelectedStyle(name: string, collaborators: string[], theme: Theme) {
     return { fontWeight: collaborators.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightBold }
@@ -61,17 +61,15 @@ export default function EditProject({ project }: IProps) {
     const [projectImgFile, setProjectImgFile] = useState<File>()
     const [imgPreview, setImgPreview] = useState<string>('')
 
-    const projectMemberIds = project.members.map(member => member._id)
-    const projectBandIds = project.bands.map(band => band._id)
-
     const [projectDetails, setProjectDetails] = useState<IProjectDetails>({
         title: project.title || '',
-        projectAdminIds: project.projectAdmins || adminId,
-        memberIds: projectMemberIds || collaboratorId,
-        bandIds: projectBandIds || userBandId,
         description: project.description || '',
         dueDate: project.dueDate || dateValue
     })
+
+    const projectAdminIds = [...adminId, loggedUser?._id]
+    const memberIds = [...collaboratorId, loggedUser?._id]
+    const bandIds = [...userBandId, loggedUser?._id]
 
     const handleInput = (field: string, value: string) => {
         setProjectDetails(details => ({
@@ -112,14 +110,15 @@ export default function EditProject({ project }: IProps) {
         const dataToAxios = new FormData()
         dataToAxios.append('title', projectDetails.title)
         dataToAxios.append('description', projectDetails.description)
-        dataToAxios.append('projectAdminIds', JSON.stringify(projectDetails.projectAdminIds))
-        dataToAxios.append('memberIds', JSON.stringify(projectDetails.memberIds))
-        dataToAxios.append('bandIds', JSON.stringify(projectDetails.bandIds))
+        dataToAxios.append('projectAdminIds', JSON.stringify(projectAdminIds))
+        dataToAxios.append('memberIds', JSON.stringify(memberIds))
+        dataToAxios.append('bandIds', JSON.stringify(bandIds))
         projectImgFile && dataToAxios.append('projectImage', projectImgFile)
-        const response = await axiosRequest('projects', 'PUT', dataToAxios)
+        const response = await axiosRequest(`/projects/${project._id}`, 'PUT', dataToAxios)
         if (response.status === 403) notifyError('Only a project leader can edit a project.')
         if (response.status === 200) {
             handleClose()
+            notifySuccess('Project was successfully edited.')
         } else {
             notifyError('Something went wrong, please try again.')
         }

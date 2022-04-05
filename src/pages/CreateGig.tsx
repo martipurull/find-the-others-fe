@@ -26,17 +26,6 @@ export default function CreateGig() {
     const [selectedInstrument, setSelectedInstrument] = useState<string>('')
     const [selectedProjectId, setSelectedProjectId] = useState<string>('')
 
-    // const findSelectedProject = () => {
-    //     return userProjects.find(({ _id }) => _id === selectedProjectId)
-    // }
-
-    // const selectedProject = findSelectedProject()
-    // const selectedProjectBandIds = selectedProject?.bands.map(({ _id }) => _id)
-
-    // useEffect(() => {
-    //     findSelectedProject()
-    // }, [selectedProjectId])
-
     const [gigDetails, setGigDetails] = useState({
         title: '',
         description: '',

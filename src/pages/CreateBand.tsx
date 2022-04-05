@@ -37,8 +37,6 @@ export default function CreateBand() {
 
     const [bandDetails, setBandDetails] = useState<IBandDetails>({
         name: '',
-        bandAdminIds: bandAdminId,
-        memberIds: bandMemberId,
         bio: '',
         blurb: ''
     })
@@ -79,8 +77,8 @@ export default function CreateBand() {
         dataToAxios.append('name', bandDetails.name)
         dataToAxios.append('blurb', bandDetails.blurb)
         dataToAxios.append('bio', bandDetails.bio)
-        dataToAxios.append('bandAdminIds', JSON.stringify(bandDetails.bandAdminIds))
-        dataToAxios.append('memberIds', JSON.stringify(bandDetails.memberIds))
+        dataToAxios.append('bandAdminIds', JSON.stringify(bandAdminId))
+        dataToAxios.append('memberIds', JSON.stringify(bandMemberId))
         avatarFile && dataToAxios.append('bandAvatar', avatarFile)
 
         const response = await axiosRequest('bands', 'POST', dataToAxios)

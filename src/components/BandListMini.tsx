@@ -35,7 +35,7 @@ export default function BandListMini({ bands }: IProps) {
                             <ListItemAvatar>
                                 <Avatar src={band.avatar} />
                             </ListItemAvatar>
-                            <ListItemText primary={band.name} secondary={`Followers: ${band.noOfFollowers}`} />
+                            <ListItemText primary={band.name} />
                         </ListItemButton>
                         {
                             currentUser?.followedBands.includes(band._id)

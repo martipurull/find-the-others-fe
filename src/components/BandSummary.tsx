@@ -47,7 +47,7 @@ export default function BandSummary({ band, setterFunction }: IProps) {
                             </Box>
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', ml: 'auto', mb: 1 }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Typography sx={{ mt: 1.75, mr: 1.75 }} variant='body1' pl={1}>{`${band.noOfFollowers} followers`}</Typography>
+                                    <Typography sx={{ mt: 1.75, mr: 1.75 }} variant='body1' pl={1}>{`${band.followedBy && band.followedBy.length > 0 ? band.followedBy.length : 0} followers`}</Typography>
                                     {
                                         currentUser?.followedBands.includes(band._id)
                                             ? <Button sx={{ mt: 1.75 }} color='primary' variant='outlined' onClick={handleFollowAndUnfollow} >FOLLOWING</Button>

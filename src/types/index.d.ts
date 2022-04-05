@@ -126,9 +126,6 @@ interface IProject {
 
 interface IProjectDetails {
     title: string
-    projectAdminIds: string[]
-    memberIds: string[]
-    bandIds: string[]
     description: string
     dueDate?: date
 }
@@ -236,8 +233,6 @@ interface IBand {
 
 interface IBandDetails {
     name: string
-    bandAdminIds: string[]
-    memberIds: string[]
     blurb: string
     bio: string
 }
@@ -246,7 +241,7 @@ interface IMiniBand {
     name: string
     avatar: string
     followedBy?: string[]
-    noOfFollowers: number
+    noOfFollowers?: number
     _id: string
 }
 

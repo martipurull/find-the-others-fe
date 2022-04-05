@@ -57,7 +57,7 @@ interface IProps {
 }
 
 export default function ReleasesList({ releasedTracks, band }: IProps) {
-    const bandToMiniBand = { _id: band._id, name: band.name, avatar: band.avatar, followedBy: band.followedBy, noOfFollowers: band.noOfFollowers }
+    const bandToMiniBand = { _id: band._id, name: band.name, avatar: band.avatar, followedBy: band.followedBy, noOfFollowers: band.followedBy && band.followedBy.length > 0 ? band.followedBy.length : 0 }
 
     return (
         <Paper elevation={6} square sx={{ p: 5 }}>

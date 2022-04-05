@@ -47,12 +47,12 @@ export default function CreateProject() {
 
     const [projectDetails, setProjectDetails] = useState<IProjectDetails>({
         title: '',
-        projectAdminIds: adminId,
-        memberIds: collaboratorId,
-        bandIds: userBandId,
         description: '',
         dueDate: dateValue
     })
+
+    const projectAdminIds = [...adminId, loggedUser?._id]
+    const memberIds = [...collaboratorId, loggedUser?._id]
 
     const handleInput = (field: string, value: string) => {
         setProjectDetails(details => ({
@@ -93,12 +93,14 @@ export default function CreateProject() {
         const dataToAxios = new FormData()
         dataToAxios.append('title', projectDetails.title)
         dataToAxios.append('description', projectDetails.description)
-        dataToAxios.append('projectAdminIds', JSON.stringify(projectDetails.projectAdminIds))
-        dataToAxios.append('memberIds', JSON.stringify(projectDetails.memberIds))
-        dataToAxios.append('bandIds', JSON.stringify(projectDetails.bandIds))
+        dataToAxios.append('projectAdminIds', JSON.stringify(projectAdminIds))
+        dataToAxios.append('memberIds', JSON.stringify(memberIds))
+        dataToAxios.append('bandIds', JSON.stringify(userBandId))
         projectImgFile && dataToAxios.append('projectImage', projectImgFile)
 
         const response = await axiosRequest('/projects', 'POST', dataToAxios)
+        console.log(response.data);
+
         if (response.status === 201) {
             navigate('/')
         } else {
