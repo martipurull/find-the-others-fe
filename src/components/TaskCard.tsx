@@ -169,7 +169,6 @@ export default function TaskCard({ task, index }: IProps) {
                         task.musicians.map(({ _id }) => _id).includes(loggedUser!._id) &&
                         <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <EditTaskModal task={task} />
-                            {/* ADD DELETE TASK FUNCTIONALITY!!!! WITH WARNING MODAL!!!!!!! */}
                             <IconButton size='small' onClick={handleOpenDeleteTask}><DeleteOutlineIcon /></IconButton>
                             <Modal
                                 aria-labelledby="transition-modal-title"
